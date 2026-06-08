@@ -1,13 +1,16 @@
 package config
 
-import "os"
+import (
+	"log"
+	"os"
+)
 
-func GetJWTSecret() []byte {
+var JWT_SECRET []byte
+
+func InitJWT() {
 	secret := os.Getenv("JWT_SECRET")
-
 	if secret == "" {
-		secret = "marilancy-dev-secret"
+		log.Fatal("JWT_SECRET not set")
 	}
-
-	return []byte(secret)
+	JWT_SECRET = []byte(secret)
 }
