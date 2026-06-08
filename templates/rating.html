@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beri Penilaian - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style> 
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+      transform: translateY(-1px);
+    }
+    .btn-teal:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-4">
+
+  <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 w-full max-w-md transform transition-all duration-300">
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-teal-50 text-[#2b9c96] rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+        <i class="ri-feedback-line text-3xl"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900">Beri Penilaian</h2>
+      <p class="text-sm text-gray-500 mt-1">Bagikan pengalaman Anda bekerja dengan freelancer ini</p>
+    </div>
+
+    <div class="text-center mb-6">
+      <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Pilih Skor Bintang</label>
+      <div class="flex justify-center gap-2 mb-2" id="starsContainer">
+        <i class="star ri-star-fill text-4xl cursor-pointer text-gray-200 transition-colors duration-200" data-value="1"></i>
+        <i class="star ri-star-fill text-4xl cursor-pointer text-gray-200 transition-colors duration-200" data-value="2"></i>
+        <i class="star ri-star-fill text-4xl cursor-pointer text-gray-200 transition-colors duration-200" data-value="3"></i>
+        <i class="star ri-star-fill text-4xl cursor-pointer text-gray-200 transition-colors duration-200" data-value="4"></i>
+        <i class="star ri-star-fill text-4xl cursor-pointer text-gray-200 transition-colors duration-200" data-value="5"></i>
+      </div>
+      <span id="ratingLabel" class="text-xs font-semibold text-gray-400 italic">Klik salah satu bintang</span>
+    </div>
+
+    <div class="mb-6 text-left">
+      <label for="komentar" class="block text-sm font-bold text-gray-700 mb-2">Ulasan / Komentar</label>
+      <textarea 
+        id="komentar" 
+        rows="4"
+        placeholder="Tulis testimoni atau masukan mengenai performa kerja freelancer..." 
+        class="w-full border border-gray-200 p-3.5 rounded-xl text-sm outline-none transition-all duration-200 bg-gray-50 focus:bg-white focus:border-[#2b9c96] focus:ring-4 focus:ring-teal-500/10 resize-none"
+      ></textarea>
+    </div>
+
+    <button 
+      id="btnSubmit"
+      onclick="submitRating()" 
+      class="w-full btn-teal font-bold py-3.5 rounded-xl text-sm shadow-md shadow-teal-600/10 flex items-center justify-center gap-2"
+    >
+      <i class="ri-send-plane-fill"></i> Kirim Penilaian
+    </button>
+  </div>
+
+  <script>
+    let selectedRating = 0;
+    const stars = document.querySelectorAll(".star");
+    const ratingLabel = document.getElementById("ratingLabel");
+
+    const labels = {
+      1: "Sangat Buruk 😞",
+      2: "Kurang Memuaskan 🙁",
+      3: "Cukup Baik 🙂",
+      4: "Sangat Memuaskan 😀",
+      5: "Sempurna, Luar Biasa! 🤩"
+    };
+
+    stars.forEach(star => {
+      star.addEventListener("mouseenter", () => {
+        const hoverValue = star.dataset.value;
+        highlightStars(hoverValue);
+      });
+
+      star.addEventListener("mouseleave", () => {
+        highlightStars(selectedRating);
+      });
+
+      star.addEventListener("click", () => {
+        selectedRating = parseInt(star.dataset.value);
+        ratingLabel.innerText = labels[selectedRating];
+        ratingLabel.classList.remove("text-gray-400", "italic");
+        ratingLabel.classList.add("text-[#2b9c96]", "font-bold");
+        highlightStars(selectedRating);
+      });
+    });
+
+    function highlightStars(count) {
+      stars.forEach((s, index) => {
+        if (index < count) {
+          s.classList.remove("text-gray-200");
+          s.classList.add("text-yellow-400");
+        } else {
+          s.classList.remove("text-yellow-400");
+          s.classList.add("text-gray-200");
+        }
+      });
+    }
+
+    async function submitRating() {
+      const komentar = document.getElementById("komentar").value.trim();
+      const token = localStorage.getItem("token");
+      const btnSubmit = document.getElementById("btnSubmit");
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const freelancer_id = urlParams.get("freelancer_id");
+      const project_id = urlParams.get("project_id");
+
+      if (selectedRating === 0) {
+        alert("Harap pilih skor bintang terlebih dahulu!");
+        return;
+      }
+
+      try {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<i class="ri-loader-4-line animate-spin text-base"></i> Mengirim...`;
+        btnSubmit.classList.replace("bg-[#2b9c96]", "bg-gray-400");
+
+        const res = await fetch("/client/rating", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            nilai: parseFloat(selectedRating),
+            komentar: komentar,
+            freelancer_id: parseInt(freelancer_id),
+            project_id: parseInt(project_id)
+          })
+        });
+
+        if (res.ok) {
+          alert("Terima kasih! Rating dan ulasan berhasil dikirim.");
+          window.location.href = "/client/projects";
+        } else {
+          alert("Gagal mengirimkan rating. Silakan coba kembali.");
+          resetSubmitButton();
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Terjadi kesalahan jaringan.");
+        resetSubmitButton();
+      }
+    }
+
+    function resetSubmitButton() {
+      const btnSubmit = document.getElementById("btnSubmit");
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = `<i class="ri-send-plane-fill"></i> Kirim Penilaian`;
+      btnSubmit.classList.replace("bg-gray-400", "bg-[#2b9c96]");
+    }
+  </script>
+
+</body>
+</html>

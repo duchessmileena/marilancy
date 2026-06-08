@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    .btn-teal { background-color: #2b9c96; color: white; transition: 0.2s; }
+    .btn-teal:hover { background-color: #23827d; }
+    .tab-btn.active { color: #2b9c96; border-bottom: 2px solid #2b9c96; }
+    .custom-table th { background-color: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; padding: 12px 24px; }
+    .custom-table td { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/admin">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy <span class="text-[10px] bg-red-600 px-2 py-0.5 rounded ml-1">ADMIN</span>
+      </a>
+    </div>
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="#" onclick="showSection('stats')" class="nav-link text-white pb-1 border-b-2 border-teal-500" id="nav-stats">Overview</a>
+      <a href="#" onclick="showSection('users')" class="nav-link text-gray-400 hover:text-white" id="nav-users">User Management</a>
+      <a href="#" onclick="showSection('jobs')" class="nav-link text-gray-400 hover:text-white" id="nav-jobs">Job Moderation</a>
+      <a href="#" onclick="showSection('transactions')" class="nav-link text-gray-400 hover:text-white" id="nav-transactions">Transactions</a>
+      <a href="#" onclick="showSection('reports')" class="nav-link text-gray-400 hover:text-white" id="nav-reports">Laporan Masuk</a>
+    </div>
+    <div class="flex-1 flex justify-end items-center gap-5">
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">Logout</button>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-16 mb-8">
+    <h1 class="text-4xl font-bold">Admin Central Panel</h1>
+    <p class="text-gray-400 mt-2">Monitor data, kelola pengguna, dan awasi proyek.</p>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 pb-20">
+    <div id="section-stats">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
+          <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-3xl"><i class="ri-user-star-line"></i></div>
+          <div><p class="text-sm text-gray-500 font-medium">Freelancers</p><h3 id="totalFreelancers" class="text-3xl font-bold">-</h3></div>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
+          <div class="w-16 h-16 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center text-3xl"><i class="ri-building-line"></i></div>
+          <div><p class="text-sm text-gray-500 font-medium">Clients</p><h3 id="totalClients" class="text-3xl font-bold">-</h3></div>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
+          <div class="w-16 h-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center text-3xl"><i class="ri-briefcase-line"></i></div>
+          <div><p class="text-sm text-gray-500 font-medium">Jobs Published</p><h3 id="totalJobs" class="text-3xl font-bold">-</h3></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="section-reports" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <h3 class="font-bold text-gray-800">Daftar Laporan (Support)</h3>
+          <div class="flex gap-2">
+            <select id="filterKategori" onchange="filterReports()" class="border rounded-lg px-3 py-2 text-sm">
+              <option value="">Semua Kategori</option>
+              <option value="Bug Sistem">Bug Sistem</option>
+              <option value="Pembayaran">Pembayaran</option>
+              <option value="Masalah Chat">Masalah Chat</option>
+              <option value="Verifikasi Profil">Verifikasi Profil</option>
+              <option value="Notifikasi Error">Notifikasi Error</option>
+              <option value="Masalah Proyek">Masalah Proyek</option>
+              <option value="UI/UX Berantakan">UI/UX Berantakan</option>
+              <option value="Indikasi Penipuan Proyek">Indikasi Penipuan Proyek</option>
+              <option value="Deskripsi Tidak Jelas / Mengarah ke Scam">Deskripsi Tidak Jelas / Mengarah ke Scam</option>
+              <option value="Masalah Client Tidak Responsif">Masalah Client Tidak Responsif</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+            <input type="date" id="filterTanggal" onchange="filterReports()" class="border rounded-lg px-3 py-2 text-sm">
+            <button onclick="exportTable('xlsx')" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">Excel</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left custom-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>User</th>
+                <th>Kategori</th>
+                <th>Referensi Proyek</th>
+                <th>Judul Masalah</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="section-users" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex border-b">
+          <button onclick="toggleUserTable('freelancer')" id="btn-tab-free" class="tab-btn px-8 py-4 font-semibold text-sm active">Freelancer List</button>
+          <button onclick="toggleUserTable('client')" id="btn-tab-client" class="tab-btn px-8 py-4 font-semibold text-sm">Client List</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left custom-table">
+            <thead id="userTableHeader"></thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="section-jobs" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b"><h3 class="font-bold text-gray-800">Job Moderation List</h3></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left custom-table">
+            <thead>
+              <tr><th>Judul Proyek</th><th>Klien</th><th>Kategori</th><th>Status</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="jobTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="section-transactions" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b"><h3 class="font-bold text-gray-800">Transaction History</h3></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left custom-table">
+            <thead>
+              <tr><th>ID Proyek</th><th>Freelancer</th><th>Klien</th><th>Nominal</th><th>Status</th></tr>
+            </thead>
+            <tbody id="transactionTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    let allReports = [];
+
+    if (!token || role !== "admin") {
+      alert("Akses ditolak");
+      window.location.href = "/";
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "/"; }
+
+    function showSection(section) {
+      ["stats", "users", "jobs", "transactions", "reports"].forEach(s => {
+        const el = document.getElementById("section-" + s);
+        if(el) el.classList.add("hidden");
+        const nav = document.getElementById("nav-" + s);
+        if(nav) {
+            nav.classList.remove("text-white", "border-b-2", "border-teal-500");
+            nav.classList.add("text-gray-400");
+        }
+      });
+      document.getElementById("section-" + section).classList.remove("hidden");
+      document.getElementById("nav-" + section).classList.add("text-white", "border-b-2", "border-teal-500");
+
+      if (section === "users") loadUserTable("freelancer");
+      if (section === "jobs") loadJobTable();
+      if (section === "transactions") loadTransactions();
+      if (section === "reports") loadReports(); 
+    }
+
+    async function safeFetch(url, options = {}) {
+      try {
+        const res = await fetch(url, {
+          ...options,
+          headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }
+        });
+        return res.ok ? await res.json() : null;
+      } catch (err) {
+        console.error("Fetch error:", err);
+        return null;
+      }
+    }
+
+    async function loadDashboard() {
+      const data = await safeFetch("/admin/data");
+      if (data) {
+        document.getElementById("totalFreelancers").innerText = data.freelancers;
+        document.getElementById("totalClients").innerText = data.clients;
+        document.getElementById("totalJobs").innerText = data.jobs;
+      }
+    }
+
+    function toggleUserTable(type) {
+      document.getElementById("btn-tab-free").classList.toggle("active", type === "freelancer");
+      document.getElementById("btn-tab-client").classList.toggle("active", type === "client");
+      loadUserTable(type);
+    }
+
+    async function loadUserTable(type) {
+      const data = await safeFetch(type === "freelancer" ? "/admin/freelancers" : "/admin/clients");
+      const body = document.getElementById("userTableBody");
+      document.getElementById("userTableHeader").innerHTML = `<tr><th>Nama</th><th>Email</th><th>${type === "freelancer" ? "Skill" : "Lokasi"}</th><th>Status</th><th>Aksi</th></tr>`;
+      
+      if (!data || data.length === 0) {
+        body.innerHTML = '<tr><td colspan="5" class="text-center py-4">Kosong</td></tr>';
+        return;
+      }
+
+      body.innerHTML = data.map(u => {
+        const isSuspended = u.status === "suspended";
+        const statusBadge = isSuspended 
+            ? `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold">SUSPENDED</span>`
+            : `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">ACTIVE</span>`;
+            
+        const btnText = isSuspended ? "Aktifkan" : "Suspend";
+        const btnClass = isSuspended ? "text-green-600 hover:text-green-800" : "text-red-500 hover:text-red-700";
+
+        return `
+        <tr>
+          <td class="font-semibold">${u.nama || u.nama_client}</td>
+          <td>${u.email}</td>
+          <td>${u.skill || u.lokasi || "-"}</td>
+          <td>${statusBadge}</td>
+          <td><button onclick="toggleSuspendUser('${type}', '${u.ID}', '${isSuspended}')" class="font-bold ${btnClass}">${btnText}</button></td>
+        </tr>
+        `
+      }).join("");
+    }
+
+    async function loadJobTable() {
+      const data = await safeFetch("/admin/jobs");
+      const body = document.getElementById("jobTableBody");
+      
+      if (!data || data.length === 0) {
+        body.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Belum ada data job</td></tr>';
+        return;
+      }
+
+      body.innerHTML = data.map(j => {
+        const isDeleted = j.status === 'dihapus';
+        const rowClass = isDeleted ? 'bg-gray-50' : '';
+        
+        return `
+          <tr id="moderasi-job-${j.id || j.ID}" class="${rowClass} transition-all duration-300">
+            <td class="font-semibold ${isDeleted ? 'text-gray-400' : 'text-gray-900'}">${j.judul}</td>
+            <td>${j.client?.nama_client || "-"}</td>
+            <td>${j.kategori}</td>
+            <td>
+              <span class="px-3 py-1 rounded-full text-xs font-medium 
+                ${isDeleted ? 'bg-red-100 text-red-700' : (j.status === 'dibuka' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700')}">
+                ${j.status}
+              </span>
+            </td>
+            <td>
+              ${isDeleted 
+                ? `<button onclick="restoreJob('${j.id}')" class="text-blue-600 font-bold hover:underline">Restore</button>`
+                : `<button onclick="deleteJob('${j.id}')" class="text-red-500 font-bold hover:underline">Hapus</button>`
+              }
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+    
+    async function loadReports() {
+        const data = await safeFetch("/admin/support-tickets");
+        if (!data) return;
+        
+        allReports = data;
+        renderReports(allReports);
+    }
+    function renderReports(data) {
+        const body = document.getElementById("reportTableBody");
+        if (!data || data.length === 0) {
+            body.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">Tidak ada laporan.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = data.map(r => {
+            const judulMentah = r.judul || '-';
+            
+            const refMatch = judulMentah.match(/^\[REF:\s*(.*?)\]\s*(.*)$/);
+            
+            let referensiTeks = "-";
+            let judulClean = judulMentah;
+            let targetId = "";
+
+            if (refMatch) {
+                referensiTeks = refMatch[1]; 
+                judulClean = refMatch[2];      
+                
+                if (referensiTeks.includes("JOB-ID-")) {
+                    targetId = referensiTeks.replace("JOB-ID-", "").trim();
+                }
+            }
+
+            const referensiHTML = referensiTeks !== "-" 
+                ? `<button onclick="cariReferensiProyek('${targetId}', '${referensiTeks.replace(/'/g, "\\'")}')" class="text-left text-teal-600 font-semibold hover:underline flex items-center gap-1">
+                    <i class="ri-git-repository-private-line"></i> ${referensiTeks}
+                   </button>`
+                : `<span class="text-gray-400">-</span>`;
+
+            return `
+                <tr class="hover:bg-gray-50/50 transition">
+                    <td>${new Date(r.created_at).toLocaleDateString('id-ID')}</td>
+                    <td class="font-semibold text-gray-800">${r.nama || '-'}</td>
+                    <td>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                            ${r.kategori || '-'}
+                        </span>
+                    </td>
+                    <td>${referensiHTML}</td>
+                    <td class="text-gray-600 max-w-xs truncate" title="${judulClean}">${judulClean}</td>
+                    <td>
+                        ${r.bukti_path ? `<a href="/${r.bukti_path}" target="_blank" class="text-teal-600 font-bold hover:underline flex items-center gap-0.5"><i class="ri-image-line"></i> Bukti</a>` : '<span class="text-gray-300">-</span>'}
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    }
+    async function cariReferensiProyek(jobId, namaFallback) {
+        showSection('jobs');
+
+        setTimeout(() => {
+            let rowTarget = null;
+
+            if (jobId) {
+                rowTarget = document.getElementById(`moderasi-job-${jobId}`);
+            }
+
+            if (!rowTarget) {
+                const rows = document.querySelectorAll("#jobTableBody tr");
+                for (let row of rows) {
+                    const judulKolom = row.querySelector("td:first-child");
+                    if (judulKolom && judulKolom.innerText.toLowerCase().includes(namaFallback.toLowerCase())) {
+                        rowTarget = row;
+                        break;
+                    }
+                }
+            }
+
+            if (rowTarget) {
+                rowTarget.classList.add("bg-yellow-100", "ring-4", "ring-teal-500", "scale-[0.98]");
+
+                rowTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                setTimeout(() => {
+                    rowTarget.classList.remove("bg-yellow-100", "ring-4", "ring-teal-500", "scale-[0.98]");
+                }, 4000);
+            } else {
+                alert(`Data proyek referensi "${namaFallback}" tidak ditemukan di list moderasi (kemungkinan sudah dihapus permanen).`);
+            }
+        }, 150);
+    }
+
+    function filterReports() {
+        const kat = document.getElementById("filterKategori").value;
+        const tgl = document.getElementById("filterTanggal").value;
+
+        const filtered = allReports.filter(r => {
+            const matchKat = kat === "" || r.kategori === kat;
+            const matchTgl = tgl === "" || new Date(r.created_at).toISOString().split('T')[0] === tgl;
+            return matchKat && matchTgl;
+        });
+        renderReports(filtered);
+    }
+
+    function exportTable(type) {
+        if (type === 'xlsx') {
+            const wb = XLSX.utils.book_new();
+            const data = [];
+
+            document.querySelectorAll("#reportTableBody tr").forEach(tr => {
+                const row = [];
+                tr.querySelectorAll("td").forEach((td, index) => {
+                    if (index === 4) {
+                        const link = td.querySelector("a");
+                        row.push(link ? window.location.origin + link.getAttribute("href") : "No File");
+                    } else {
+                        row.push(td.innerText);
+                    }
+                });
+                data.push(row);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet([["Tanggal", "User", "Kategori", "Referensi Proyek", "Judul Masalah", "Link Bukti"], ...data]);
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+            XLSX.writeFile(wb, "Data_Laporan_Support.xlsx");
+        } else {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.autoTable({ html: 'table' });
+            doc.save('Data_Laporan_Support.pdf');
+        }
+    }
+    async function restoreJob(id) {
+      if (confirm("Pulihkan job ini? Status akan dikembalikan ke 'ditutup'.")) {
+        await fetch(`/admin/jobs/${id}/restore`, { 
+          method: "PUT", 
+          headers: { "Authorization": "Bearer " + token } 
+        });
+        loadJobTable(); 
+        loadDashboard();
+      }
+    }
+    async function loadTransactions() {
+      const data = await safeFetch("/admin/transactions"); 
+      const body = document.getElementById("transactionTableBody");
+      
+      if (!data || data.length === 0) {
+        body.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Tidak ada transaksi ditemukan</td></tr>';
+        return;
+      }
+
+      body.innerHTML = data.map(t => `
+        <tr>
+          <td class="font-semibold text-gray-900">${t.project_id}</td>
+          <td>${t.freelancer_name}</td>
+          <td>${t.client_name}</td>
+          <td class="font-bold text-teal-600">Rp ${t.nominal.toLocaleString('id-ID')}</td>
+          <td>
+            <span class="px-3 py-1 rounded-full text-xs font-medium 
+              ${t.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+              ${t.status}
+            </span>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function toggleSuspendUser(type, id, currentlySuspended) {
+      const isSuspending = currentlySuspended === "false"; // Jika dari HTML terkirim sbg string false
+      const actionText = isSuspending ? "suspend" : "aktifkan kembali";
+      
+      if (confirm(`Apakah Anda yakin ingin me-${actionText} user ini?`)) {
+        const endpoint = `/admin/${type}s/${id}/suspend`;
+        const res = await fetch(endpoint, { method: "PUT", headers: { "Authorization": "Bearer " + token } });
+        
+        if (res.ok) {
+            loadUserTable(type); 
+            loadDashboard();
+        } else {
+            alert("Gagal mengubah status user.");
+        }
+      }
+    }
+
+    async function deleteJob(id) {
+      if (confirm("Hapus job?")) {
+        await fetch(`/admin/jobs/${id}`, { method: "DELETE", headers: { "Authorization": "Bearer " + token } });
+        loadJobTable(); loadDashboard();
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

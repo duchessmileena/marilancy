@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .text-teal-custom { color: #2b9c96; }
+    .bg-teal-custom { background-color: #2b9c96; }
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+      transition: 0.2s;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+    }
+
+    .input-form {
+      border: 1px solid #d1d5db;
+      padding: 12px 16px;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      background-color: #ffffff;
+    }
+    .input-form:focus {
+      border-color: #2b9c96;
+      box-shadow: 0 0 0 3px rgba(43, 156, 150, 0.1);
+    }
+
+    .tag-checkbox input[type="checkbox"] { display: none; }
+    .tag-checkbox span {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #4b5563;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .tag-checkbox input[type="checkbox"]:checked + span {
+      background-color: #eaf6f4;
+      color: #2b9c96;
+      border-color: #2b9c96;
+      font-weight: 600;
+    }
+    .footer-dark { background-color: #000000; color: #e5e7eb; padding: 60px 40px 30px 40px; font-size: 14px; margin-top: 80px; }
+    .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid #1f2937; }
+    .footer-col h4 { color: white; font-weight: 600; font-size: 16px; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col ul li { margin-bottom: 12px; color: #9ca3af; cursor: pointer; transition: 0.2s; }
+    .footer-col ul li:hover { color: white; }
+    .newsletter-form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+    .newsletter-input { background-color: transparent; border: 1px solid #4b5563; color: white; padding: 12px 15px; border-radius: 8px; font-size: 13px; outline: none; }
+    .newsletter-input:focus { border-color: #2b9c96; }
+    .newsletter-btn { background-color: #2b9c96; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .newsletter-btn:hover { background-color: #23827d; }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 20px; display: flex; justify-content: space-between; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/client">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="#" onclick="setActive(this); goHome()" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/client#post-job" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Posting Job</a>
+      <a href="/client/projects" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Projects</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img" src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';" class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-20 relative">
+    <h1 class="text-4xl font-bold tracking-wide">Dashboard Klien</h1>
+    <p class="text-gray-400 mt-3 text-sm">Kelola proyek Anda, buat penawaran baru, dan tinjau pelamar.</p>
+  </div>
+
+  <section class="max-w-6xl mx-auto px-4 -mt-10 mb-12 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center gap-5">
+        <div class="w-14 h-14 rounded-full bg-[#eaf6f4] flex items-center justify-center text-teal-custom text-2xl"><i class="ri-briefcase-line"></i></div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Proyek Aktif</p>
+          <h3 class="text-2xl font-bold text-gray-900" id="statTotalJobs">0</h3>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center gap-5">
+        <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl"><i class="ri-file-user-line"></i></div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Total Pelamar</p>
+          <h3 class="text-2xl font-bold text-gray-900" id="statTotalApplicants">0</h3>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center items-start">
+        <p class="text-sm text-gray-500 font-medium mb-1">Butuh freelancer baru?</p>
+        <a href="#post-job" class="text-teal-custom font-bold hover:underline flex items-center gap-1">Posting Job<i class="ri-arrow-right-line"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-4 pb-20 flex flex-col lg:flex-row gap-8">
+    
+    <div id="post-job" class="w-full lg:w-5/12 bg-white rounded-2xl shadow-sm border border-gray-100 p-8 h-fit">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Posting Job Baru</h2>
+      
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Judul Pekerjaan <span class="text-red-500">*</span></label>
+            <input id="judul" class="input-form" placeholder="Misal: Desain Logo UMKM" oninput="this.value = this.value.replace(/[^a-zA-Z\s\-&(),./]/g, '')">
+            <span class="text-[10px] text-gray-400 mt-1 block">Huruf, spasi, dan tanda baca ( - & , . / () )</span>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Nomor/ID Job (Opsional)</label>
+            <input id="job_no" class="input-form" placeholder="Misal: 10293" oninput="this.value = this.value.replace(/[^0-9\-]/g, '')">
+            <span class="text-[10px] text-gray-400 mt-1 block">Hanya angka dan tanda strip (-)</span>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Kategori <span class="text-red-500">*</span></label>
+            <select id="kategori" class="input-form">
+              <option>Pilih Kategori</option>
+              <option>Accounting</option>
+              <option>Administration</option>
+              <option>Advertising</option>
+              <option>Architecture</option>
+              <option>Arts / Creative</option>
+              <option>Banking / Finance</option>
+              <option>Beauty / Personal Care</option>
+              <option>Business Development</option>
+              <option>Customer Service</option>
+              <option>Construction</option>
+              <option>Consulting</option>
+              <option>Design</option>
+              <option>Digital Marketing</option>
+              <option>Education</option>
+              <option>Engineering</option>
+              <option>Entertainment</option>
+              <option>Event Management</option>
+              <option>Food & Beverage</option>
+              <option>General Management</option>
+              <option>Graphic Design</option>
+              <option>Healthcare</option>
+              <option>Hospitality / Hotel</option>
+              <option>Human Resources</option>
+              <option>Information Technology</option>
+              <option>Insurance</option>
+              <option>Journalism</option>
+              <option>Legal</option>
+              <option>Logistics / Supply Chain</option>
+              <option>Manufacturing</option>
+              <option>Marketing</option>
+              <option>Media / Communication</option>
+              <option>Merchandising</option>
+              <option>NGO / Social Services</option>
+              <option>Operations</option>
+              <option>Pharmaceutical</option>
+              <option>Product Management</option>
+              <option>Project Management</option>
+              <option>Public Relations</option>
+              <option>Purchasing / Procurement</option>
+              <option>Quality Assurance</option>
+              <option>Real Estate</option>
+              <option>Research & Development</option>
+              <option>Retail</option>
+              <option>Sales</option>
+              <option>Science</option>
+              <option>Security</option>
+              <option>Skilled Labor</option>
+              <option>Social Media</option>
+              <option>Software Development</option>
+              <option>Strategy / Planning</option>
+              <option>Telecommunication</option>
+              <option>Training & Development</option>
+              <option>Transportation</option>
+              <option>UI/UX Design</option>
+              <option>Writing / Content Creator</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Status</label>
+            <select id="status" class="input-form"><option value="dibuka">Dibuka</option><option value="ditutup">Ditutup</option></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700 block mb-1">Deskripsi Pekerjaan <span class="text-red-500">*</span></label>
+          <textarea id="job_desc" rows="3" class="input-form" placeholder="Jelaskan detail pekerjaan..."></textarea>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700 block mb-1">Kebutuhan Proyek <span class="text-red-500">*</span></label>
+          <textarea id="kebutuhan_proyek" rows="2" class="input-form" placeholder="Apa saja yang harus diselesaikan?"></textarea>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700 block mb-1">Kebutuhan Skill <span class="text-red-500">*</span></label>
+          <textarea id="kebutuhan_skill" rows="2" class="input-form" placeholder="Skill apa yang dibutuhkan?"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Budget (Rp) <span class="text-red-500">*</span></label>
+            <select id="budget" class="input-form"><option value="">Pilih Budget</option><option value="100000-300000">100k - 300k</option><option value="300000-500000">300k - 500k</option><option value="500000-700000">500k - 700k</option><option value="700000-1000000">700k - 1Juta</option><option value="1000000">> 1 Juta</option></select>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Lokasi <span class="text-red-500">*</span></label>
+            <select id="lokasi_pelaksanaan" class="input-form">
+              <option>Lokasi Pelaksanaan</option>
+              <option>Aceh</option>
+              <option>Bali</option>
+              <option>Banten</option>
+              <option>Bengkulu</option>
+              <option>Daerah Istimewa Yogyakarta</option>
+              <option>Gorontalo</option>
+              <option>Jakarta Barat</option>
+              <option>Jakarta Pusat</option>
+              <option>Jakarta Selatan</option>
+              <option>Jakarta Timur</option>
+              <option>Jakarta Utara</option>
+              <option>Jambi</option>
+              <option>Jawa Barat</option>
+              <option>Jawa Tengah</option>
+              <option>Jawa Timur</option>
+              <option>Kalimantan Barat</option>
+              <option>Kalimantan Selatan</option>
+              <option>Kalimantan Tengah</option>
+              <option>Kalimantan Timur</option>
+              <option>Kalimantan Utara</option>
+              <option>Kepulauan Bangka Belitung</option>
+              <option>Kepulauan Riau</option>
+              <option>Lampung</option>
+              <option>Maluku</option>
+              <option>Maluku Utara</option>
+              <option>Nusa Tenggara Barat</option>
+              <option>Nusa Tenggara Timur</option>
+              <option>Papua</option>
+              <option>Papua Barat</option>
+              <option>Riau</option>
+              <option>Sulawesi Barat</option>
+              <option>Sulawesi Selatan</option>
+              <option>Sulawesi Tengah</option>
+              <option>Sulawesi Tenggara</option>
+              <option>Sulawesi Utara</option>
+              <option>Sumatera Barat</option>
+              <option>Sumatera Selatan</option>
+              <option>Sumatera Utara</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Level <span class="text-red-500">*</span></label>
+            <select id="level" class="input-form"><option value="">Pilih Level</option><option>Entry</option><option>Junior</option><option>Midlevel</option><option>Senior</option></select>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Tipe Kerja <span class="text-red-500">*</span></label>
+            <select id="tipe" class="input-form"><option value="">Pilih Tipe</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Pendidikan Min. <span class="text-red-500">*</span></label>
+            <select id="batas_pendidikan" class="input-form"><option value="">Pilih</option><option>SMA/SMK</option><option>D1</option><option>D2</option><option>D3</option><option>D4</option><option>S1</option><option>S2</option><option>S3</option></select>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Pengalaman Min. <span class="text-red-500">*</span></label>
+            <select id="pengalaman_kerja" class="input-form"><option value="">Pilih</option><option>1 Tahun</option><option>2 Tahun</option><option>3 Tahun</option><option>5+ Tahun</option></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700 block mb-2">Pilih Tags</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="tag-checkbox"><input type="checkbox" value="Urgently Needed" class="tags"><span>Urgently Needed</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Actively Hiring" class="tags"><span>Actively Hiring</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Open for Bids" class="tags"><span>Open for Bids</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Fast Track" class="tags"><span>Fast Track</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Beginner Friendly" class="tags"><span>Beginner Friendly</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Student Welcome" class="tags"><span>Student Welcome</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Portfolio Building" class="tags"><span>Portfolio Building</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Mentorship Included" class="tags"><span>Mentorship Included</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Final Year Only" class="tags"><span>Final Year Only</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Fixed Budget" class="tags"><span>Fixed Budget</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Negotiable" class="tags"><span>Negotiable</span></label>
+            <label class="tag-checkbox"><input type="checkbox" value="Bonus Available" class="tags"><span>Bonus Available</span></label>
+          </div>
+        </div>
+
+        <div>
+            <label class="text-sm font-semibold text-gray-700 block mb-1">Share Job (Opsional URL)</label>
+            <input type="url" id="share_job" class="input-form" placeholder="https://example.com/job-link" onblur="validateUrl(this)">
+            <p id="url_error" class="text-red-500 text-xs mt-1 hidden">Format URL tidak valid (harus dimulai dengan http:// atau https://)</p>
+        </div>
+
+        <button onclick="createJob()" class="w-full btn-teal py-3 mt-4 rounded-lg font-bold text-sm shadow-md">Posting Job</button>
+      </div>
+    </div>
+
+    <div id="my-jobs" class="w-full lg:w-7/12">
+      <div class="flex justify-between items-center mb-6 border-b pb-2">
+        <h2 class="text-2xl font-bold text-gray-900">Proyek Saya</h2>
+        <select id="sortFilter" onchange="loadJobs()" class="input-form !w-auto !py-1.5 !text-xs font-semibold cursor-pointer">
+          <option value="newest">Newest to Oldest</option>
+          <option value="oldest">Oldest to Newest</option>
+        </select>
+      </div>
+      <div id="jobList" class="space-y-5">
+        <p class="text-gray-500">Memuat data proyek...</p>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="footer-dark">
+    <div class="footer-container">
+      <div class="footer-col">
+        <a class="text-xl font-bold flex items-center gap-2 text-white mb-6" href="#"><i class="ri-briefcase-4-line text-2xl"></i> MariLancy</a>
+        <p class="text-gray-400 leading-relaxed max-w-xs">MariLancy adalah platform freelance yang menghubungkan mahasiswa dan talenta pemula dengan klien untuk mendapatkan pengalaman kerja nyata.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tentang Kami</h4>
+        <ul>
+          <li><a href="/tentang#platform" class="hover:text-white transition">Tentang Platform</a></li>
+          <li><a href="/tentang#tim" class="hover:text-white transition">Tim Pengembang</a></li>
+          <li><a href="/tentang#partners" class="hover:text-white transition">Partners</a></li>
+          <li><a href="/tentang#freelancer" class="hover:text-white transition">Untuk Freelancer</a></li>
+          <li><a href="/tentang#klien" class="hover:text-white transition">Untuk Klien</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kategori Proyek</h4>
+        <ul>
+          <li><a href="/kategori#desain-grafis" class="hover:text-white transition">Desain Grafis</a></li>
+          <li><a href="/kategori#web-development" class="hover:text-white transition">Web Development</a></li>
+          <li><a href="/kategori#content-writing" class="hover:text-white transition">Content Writing</a></li>
+          <li><a href="/kategori#social-media" class="hover:text-white transition">Social Media</a></li>
+          <li><a href="/kategori#digital-marketing" class="hover:text-white transition">Digital Marketing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Mulai Eksplorasi</h4>
+        <p class="text-gray-400 text-sm leading-relaxed mb-4">Temukan berbagai peluang proyek menarik dan mulai bangun portofoliomu sekarang.</p>
+        <a href="#" class="inline-flex items-center gap-2 bg-teal-custom hover:bg-[#23827d] text-white px-5 py-2.5 rounded-lg transition font-medium text-sm shadow-sm hover:shadow-md">
+          <i class="ri-search-line"></i> Explore Jobs
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MariLancy. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="/legal#privasi" class="hover:text-white transition">Kebijakan Privasi</a>
+        <a href="/legal#syarat" class="hover:text-white transition">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const token = localStorage.getItem("token")
+    const role = localStorage.getItem("role")
+
+    if (!token) { alert("Silakan login dulu"); window.location.href = "/"; }
+    if (role !== "client") { alert("Akses ditolak (bukan client)"); window.location.href = "/"; }
+
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options)
+      if (res.status === 401) { alert("Session habis, login ulang"); localStorage.clear(); window.location.href = "/"; return null; }
+      if (res.status === 403) { alert("Akses ditolak"); window.location.href = "/"; return null; }
+      try { return await res.json() } catch { return null }
+    }
+
+    async function loadProfileMini() {
+      const data = await safeFetch("/client/profile", { headers: { "Authorization": "Bearer " + token } })
+      if (!data) return
+      
+      localStorage.setItem("client_id", data.ID)
+      const clientName = data.nama || data.nama_client || "Klien"
+      const firstName = clientName.split(' ')[0]
+      document.getElementById("userGreeting").innerText = `Hi, ${firstName}!`
+
+      const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=2b9c96&color=fff`;
+      const profileImgElement = document.getElementById("profile_img");
+
+      if (data.foto_profil && data.foto_profil !== "") {
+          profileImgElement.src = data.foto_profil;
+          
+          profileImgElement.onerror = function() {
+              this.onerror = null;
+              this.src = fallbackAvatar;
+          };
+      } else {
+          profileImgElement.src = fallbackAvatar;
+      }
+    }
+
+    async function createJob() {
+      const shareJobInput = document.getElementById("share_job");
+      if (!validateUrl(shareJobInput)) {
+          alert("Format link Share Job tidak valid. Pastikan diawali dengan http:// atau https://");
+          shareJobInput.focus();
+          return;
+      }
+      const selectedTags = Array.from(document.querySelectorAll(".tags:checked")).map(el => el.value)
+
+      const data = {
+        judul: document.getElementById("judul").value.trim(),
+        job_no: document.getElementById("job_no").value.trim(),
+        job_desc: document.getElementById("job_desc").value.trim(),
+        kebutuhan_proyek: document.getElementById("kebutuhan_proyek").value.trim(),
+        kebutuhan_skill: document.getElementById("kebutuhan_skill").value.trim(),
+        status: document.getElementById("status").value || "dibuka",
+        kategori: document.getElementById("kategori").value,
+        budget: document.getElementById("budget").value,
+        batas_pendidikan: document.getElementById("batas_pendidikan").value,
+        pengalaman_kerja: document.getElementById("pengalaman_kerja").value,
+        tipe: document.getElementById("tipe").value,
+        lokasi_pelaksanaan: document.getElementById("lokasi_pelaksanaan").value,
+        tags: selectedTags,
+        share_job: document.getElementById("share_job").value.trim(),
+        level: document.getElementById("level").value
+      }
+
+      if (!data.judul || !data.job_desc || !data.kebutuhan_proyek || !data.kebutuhan_skill || 
+          data.kategori === "Pilih Kategori" || data.budget === "" || 
+          data.batas_pendidikan === "" || data.pengalaman_kerja === "" || 
+          data.tipe === "" || data.lokasi_pelaksanaan === "Lokasi Pelaksanaan" || data.level === "") {
+        alert("Mohon lengkapi semua field yang diwajibkan!");
+        return;
+      }
+
+      if (/\d/.test(data.judul)) {
+        alert("Judul pekerjaan hanya boleh menggunakan huruf. Gunakan field Nomor/ID Job untuk memasukkan angka.");
+        return;
+      }
+
+      try {
+          const res = await fetch("/client/jobs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+            body: JSON.stringify(data)
+          })
+
+          const result = await res.json()
+
+          if (!res.ok) {
+              alert(result.error || "Gagal mem-posting job.");
+              if (result.error && result.error.includes("Profil belum lengkap")) {
+                  window.location.href = "/client/profile/view";
+              }
+              return;
+          }
+
+          alert("Proyek berhasil diposting!")
+
+          document.getElementById("judul").value = ""
+          document.getElementById("job_no").value = ""
+          document.getElementById("job_desc").value = ""
+          document.getElementById("kebutuhan_proyek").value = ""
+          document.getElementById("kebutuhan_skill").value = ""
+          document.getElementById("share_job").value = ""
+          
+          document.getElementById("kategori").selectedIndex = 0
+          document.getElementById("status").selectedIndex = 0
+          document.getElementById("budget").selectedIndex = 0
+          document.getElementById("batas_pendidikan").selectedIndex = 0
+          document.getElementById("pengalaman_kerja").selectedIndex = 0
+          document.getElementById("tipe").selectedIndex = 0
+          document.getElementById("lokasi_pelaksanaan").selectedIndex = 0
+          document.getElementById("level").selectedIndex = 0
+
+          document.querySelectorAll(".tags:checked").forEach(el => el.checked = false)
+          
+          loadJobs()
+
+      } catch (err) {
+          console.error(err)
+          alert("Terjadi kesalahan jaringan.")
+      }
+    }
+
+    function goHome() {
+
+      const currentRole = localStorage.getItem("role");
+
+      if (currentRole === "freelancer") {
+        window.location.href = "/freelancer";
+      } else if (currentRole === "client") {
+        window.location.href = "/client";
+      } else {
+
+        window.location.href = "/guest"; 
+      }
+    }
+    function formatBudgetDisplay(budgetVal) {
+      if (!budgetVal) return "-";
+  
+      if (budgetVal === "1000000" || budgetVal === ">1000000") return "> 1.000.000";
+      
+      const str = String(budgetVal);
+      if (str.includes('-')) {
+        const parts = str.split('-');
+        return parts.map(p => {
+          const num = parseInt(p.replace(/\D/g, ''));
+          return isNaN(num) ? p.trim() : num.toLocaleString('id-ID');
+        }).join(' - ');
+      }
+      
+      const num = parseInt(str.replace(/\D/g, ''));
+      return isNaN(num) ? str : num.toLocaleString('id-ID');
+    }
+    function getTimeLabel(dateString) {
+      if (!dateString) return "";
+      const diff = Math.floor((new Date() - new Date(dateString)) / 60000);
+      if (diff < 1) return "Baru saja";
+      if (diff < 60) return diff + " menit yang lalu";
+      if (diff < 1440) return Math.floor(diff / 60) + " jam yang lalu";
+      return Math.floor(diff / 1440) + " hari yang lalu";
+    }
+
+    async function loadJobs() {
+      const data = await safeFetch("/jobs")
+      if (!data) { document.getElementById("jobList").innerHTML = "<p>Gagal memuat data job</p>"; return; }
+
+      const jobs = Array.isArray(data) ? data : (data.data || [])
+      const myClientId = Number(localStorage.getItem("client_id") || 0)
+
+      let myJobs = jobs.filter(job => Number(job.client_id || job.client?.id || 0) === myClientId)
+
+      const sortValue = document.getElementById("sortFilter") ? document.getElementById("sortFilter").value : "newest";
+      myJobs.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0).getTime();
+        const dateB = new Date(b.created_at || 0).getTime();
+        return sortValue === "newest" ? dateB - dateA : dateA - dateB;
+      });
+
+      let activeJobs = []
+      let closedJobs = []
+      let deletedJobs = []
+      let totalApplicants = 0
+
+      myJobs.forEach(job => {
+        totalApplicants += (job.applications_count || 0)
+        
+        if (job.status === "dihapus") {
+          deletedJobs.push(job)
+        } else if (job.status === "ditutup") {
+          closedJobs.push(job)
+        } else {
+          activeJobs.push(job)
+        }
+      })
+
+      document.getElementById("statTotalJobs").innerText = activeJobs.length
+      document.getElementById("statTotalApplicants").innerText = totalApplicants
+
+      let html = ""
+
+      if(activeJobs.length === 0 && closedJobs.length === 0 && deletedJobs.length === 0) {
+        html = `<div class="bg-white p-8 rounded-2xl text-center border border-gray-100"><p class="text-gray-500">Anda belum membuat proyek apa pun.</p></div>`
+      } else {
+        
+        if(activeJobs.length > 0) {
+          html += `<h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> Proyek Aktif</h3>`
+          
+          activeJobs.forEach((job, index) => {
+            const hasApplicant = (job.applications_count || 0) > 0
+            const hiddenClass = index >= 5 ? "hidden extra-job" : ""
+            const displayJudul = job.job_no ? `${job.judul || "-"} <span class="text-sm font-normal text-gray-500 ml-1">(${job.job_no})</span>` : (job.judul || "-");
+            const timeLabel = getTimeLabel(job.created_at);
+
+            html += `
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between gap-4 transition hover:border-gray-200 hover:shadow-md ${hiddenClass}">
+                <div>
+                  <div class="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 class="font-bold text-lg text-gray-900">${displayJudul}</h3>
+                      <p class="text-[11px] text-gray-400 mt-0.5"><i class="ri-time-line"></i> Diposting ${timeLabel}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize bg-green-100 text-green-700">${job.status || "Dibuka"}</span>
+                  </div>
+                  
+                  <div class="flex gap-4 flex-wrap mt-3">
+                    <span class="text-xs text-gray-500 font-medium"><i class="ri-briefcase-line text-[#2b9c96]"></i> ${job.kategori || "-"}</span>
+                    <span class="text-xs text-gray-500 font-medium"><i class="ri-map-pin-line text-[#2b9c96]"></i> ${job.lokasi_pelaksanaan || "Remote"}</span>
+                    <span class="text-xs text-gray-500 font-medium"><i class="ri-wallet-3-line text-[#2b9c96]"></i> Rp ${formatBudgetDisplay(job.budget)}</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
+                  <div class="flex items-center gap-2">
+                    <div class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                      <i class="ri-group-line"></i> ${job.applications_count || 0} Pelamar
+                    </div>
+                    ${hasApplicant ? `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Butuh Review</span>` : ''}
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button onclick="goApplicants(${job.id})" class="bg-gray-800 hover:bg-black text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition">Lihat Pelamar</button>
+                    <button onclick="goDetail(${job.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-lg text-xs font-semibold transition"><i class="ri-eye-line"></i></button>
+                    <button onclick="deleteJob(${job.id})" title="Tutup Proyek" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition"><i class="ri-delete-bin-line"></i></button>
+                  </div>
+                </div>
+              </div>
+            `
+          })
+
+          if (activeJobs.length > 5) {
+            html += `
+              <div class="text-center mt-4" id="viewAllContainer">
+                <button onclick="showAllJobs()" class="text-teal-custom font-semibold hover:underline bg-[#eaf6f4] hover:bg-[#d6f0ec] px-6 py-2.5 rounded-full transition text-sm">
+                  Lihat Semua Proyek Aktif
+                </button>
+              </div>
+            `
+          }
+        }
+
+        if(closedJobs.length > 0) {
+          html += `<h3 class="font-bold text-gray-800 mb-3 ${activeJobs.length > 0 ? 'mt-8' : ''} flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-500"></span> Proyek Ditutup</h3>`
+          
+          closedJobs.forEach((job, index) => {
+            const hasApplicant = (job.applications_count || 0) > 0
+            const displayJudul = job.job_no ? `${job.judul || "-"} <span class="text-sm font-normal text-gray-500 ml-1">(${job.job_no})</span>` : (job.judul || "-");
+            const hiddenClass = index >= 5 ? "hidden extra-closed-job" : ""
+            const timeLabel = getTimeLabel(job.created_at);
+            
+            html += `
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between gap-4 transition opacity-80 hover:opacity-100 ${hiddenClass}">
+                <div>
+                  <div class="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 class="font-bold text-lg text-gray-600">${displayJudul}</h3>
+                      <p class="text-[11px] text-gray-400 mt-0.5"><i class="ri-time-line"></i> Diposting ${timeLabel}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize bg-gray-100 text-gray-600">Ditutup</span>
+                  </div>
+                  
+                  <div class="flex gap-4 flex-wrap mt-3">
+                    <span class="text-xs text-gray-500 font-medium"><i class="ri-briefcase-line text-gray-400"></i> ${job.kategori || "-"}</span>
+                    <span class="text-xs text-gray-500 font-medium"><i class="ri-map-pin-line text-gray-400"></i> ${job.lokasi_pelaksanaan || "Remote"}</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
+                  <div class="flex items-center gap-2">
+                    <div class="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                      <i class="ri-group-line"></i> ${job.applications_count || 0} Pelamar
+                    </div>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button onclick="goApplicants(${job.id})" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-1.5 rounded-lg text-xs font-semibold transition">Lihat Pelamar</button>
+                    <button onclick="goDetail(${job.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-lg text-xs font-semibold transition"><i class="ri-eye-line"></i></button>
+                    <button onclick="deleteJob(${job.id})" title="Hapus Proyek" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition"><i class="ri-delete-bin-line"></i></button>
+                  </div>
+                </div>
+              </div>
+            `
+          })
+
+          if (closedJobs.length > 5) {
+            html += `
+              <div class="text-center mt-4" id="viewAllClosedContainer">
+                <button onclick="showAllClosedJobs()" class="text-gray-600 font-semibold hover:underline bg-gray-100 hover:bg-gray-200 px-6 py-2.5 rounded-full transition text-sm">
+                  Lihat Semua Proyek Ditutup
+                </button>
+              </div>
+            `
+          }
+        }
+
+        if(deletedJobs.length > 0) {
+          html += `<h3 class="font-bold text-gray-800 mb-3 ${(activeJobs.length > 0 || closedJobs.length > 0) ? 'mt-8' : ''} flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-500"></span> Proyek Dihapus</h3>`
+          
+          deletedJobs.forEach(job => {
+            const displayJudulDeleted = job.job_no ? `${job.judul || "-"} (${job.job_no})` : (job.judul || "-");
+            const timeLabel = getTimeLabel(job.created_at);
+
+            html += `
+              <div class="bg-gray-50 rounded-2xl border border-gray-200 p-6 opacity-50">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-bold text-gray-500 line-through">${displayJudulDeleted}</h3>
+                    <p class="text-xs text-gray-400 mt-1">Dihapus (Diposting ${timeLabel})</p>
+                  </div>
+                  <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold uppercase">Deleted</span>
+                </div>
+              </div>
+            `
+          })
+        }
+      }
+
+      document.getElementById("jobList").innerHTML = html
+    }
+
+    function showAllJobs() {
+      document.querySelectorAll('.extra-job').forEach(el => el.classList.remove('hidden'))
+      const btnContainer = document.getElementById('viewAllContainer')
+      if(btnContainer) btnContainer.style.display = 'none'
+    }
+    function showAllClosedJobs() {
+      document.querySelectorAll('.extra-closed-job').forEach(el => el.classList.remove('hidden'))
+      const btnContainer = document.getElementById('viewAllClosedContainer')
+      if(btnContainer) btnContainer.style.display = 'none'
+    }
+    function setActive(el) {
+      document.querySelectorAll('.nav-link').forEach(a => {
+        a.classList.remove('text-white', 'border-b-2', 'border-teal-500', 'pb-1');
+        a.classList.add('text-gray-400');
+      });
+
+      el.classList.remove('text-gray-400');
+      el.classList.add('text-white', 'border-b-2', 'border-teal-500', 'pb-1');
+    }
+    function validateUrl(inputElement) {
+        const url = inputElement.value.trim();
+        const errorMsg = document.getElementById("url_error");
+        
+        const urlPattern = /^(https?:\/\/)([\w\d-]+\.)+[\w\d-]+(\/[\w\d-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
+
+        if (url === "") {
+            errorMsg.classList.add("hidden");
+            return true;
+        }
+
+        if (!urlPattern.test(url)) {
+            errorMsg.classList.remove("hidden");
+            return false;
+        } else {
+            errorMsg.classList.add("hidden");
+            return true;
+        }
+    }
+
+    function setActiveByURL() {
+      const links = document.querySelectorAll('.nav-link');
+      const currentPath = window.location.pathname;
+      const currentHash = window.location.hash;
+
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+
+        if (
+          href === currentPath || 
+          href === currentPath + currentHash
+        ) {
+          link.classList.add('text-white', 'border-b-2', 'border-teal-500', 'pb-1');
+          link.classList.remove('text-gray-400');
+        }
+      });
+    }
+
+    setActiveByURL();
+
+    function goDetail(id) { window.location.href = "/job/detail?id=" + id }
+    function goApplicants(id) { window.location.href = "/client/applicants?id=" + id }
+    
+    async function deleteJob(id) {
+      if(!confirm("Yakin ingin menghapus / menutup proyek ini?")) return;
+      const result = await safeFetch("/client/jobs/" + id, {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + token }
+      })
+      if (!result) return
+      alert("Proyek berhasil diupdate (Ditutup/Dihapus)")
+      loadJobs()
+    }
+
+    function logout() { localStorage.clear(); alert("Berhasil logout"); window.location.href = "/"; }
+    function goProfile() { window.location.href = "/client/profile/view" }
+
+    loadProfileMini().then(loadJobs)
+
+  </script>
+</body>
+</html>

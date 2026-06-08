@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Klien - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff; 
+    }
+
+    .text-teal-custom { color: #2b9c96; }
+    .bg-teal-custom { background-color: #2b9c96; }
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+      transition: 0.2s;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+    }
+
+    .info-card {
+      background-color: #f4f7f7;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .profile-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid white;
+      object-fit: cover;
+      position: absolute;
+      bottom: -70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #f1f5f9;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .input-form {
+      border: 1px solid #d1d5db;
+      padding: 10px 14px;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      background-color: #f9fafb;
+    }
+    .input-form:focus {
+      border-color: #2b9c96;
+      background-color: #ffffff;
+    }
+
+    .file-upload-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    .file-upload-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file-upload-btn {
+      border: 1px dashed #d1d5db;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: #f9fafb;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .file-upload-btn:hover {
+      background-color: #f3f4f6;
+      border-color: #2b9c96;
+      color: #2b9c96;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/client">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/client" onclick="goHome()" class="text-white border-b-2 border-teal-500 pb-1">Dashboard</a>
+      <a href="/client#post-job" class="text-gray-400 hover:text-white">Posting Job</a>
+      <a href="/client/projects" class="text-gray-400 hover:text-white">Projects</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img" src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';" class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-24 relative mt-16">
+    <h1 class="text-4xl font-bold tracking-wide" id="heroName">Nama Perusahaan</h1>
+    <img id="heroAvatar" src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';" class="profile-avatar" alt="Profile Picture">
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 mt-28 pb-20">
+    
+    <div id="viewSection" class="flex flex-col lg:flex-row gap-12">
+      
+      <div class="w-full lg:w-2/3">
+        
+        <div class="mb-10">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Tentang Perusahaan</h2>
+          <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line" id="viewDeskripsi">
+            Memuat deskripsi...
+          </p>
+        </div>
+
+        <div class="mb-10">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Kultur Perusahaan</h2>
+          <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line" id="viewKultur">
+            Memuat kultur...
+          </p>
+        </div>
+
+        <div class="mb-10">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Galeri Perusahaan</h2>
+          <div id="viewGaleriContainer" class="bg-gray-50 border border-gray-100 rounded-2xl p-4 min-h-[200px] flex items-center justify-center">
+            <span class="text-sm text-gray-400" id="viewGaleriText">Belum ada foto galeri yang ditambahkan</span>
+            <img id="viewGaleriImage" src="" alt="Galeri Perusahaan" class="hidden max-h-[400px] w-auto rounded-xl shadow-sm object-cover">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="w-full lg:w-1/3">
+        
+        <div class="info-card mb-6 shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-900 mb-5">Informasi Perusahaan</h3>
+          
+          <div class="space-y-5">
+            <div class="flex gap-3">
+              <i class="ri-building-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Nama Perusahaan</p>
+                <p class="text-xs text-gray-500" id="viewNama">-</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-briefcase-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Jenis Usaha</p>
+                <p class="text-xs text-gray-500" id="viewJenisUsaha">-</p>
+              </div>
+            </div>
+            
+            <div class="flex gap-3">
+              <i class="ri-group-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Jumlah Pegawai</p>
+                <p class="text-xs text-gray-500" id="viewPegawai">-</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-map-pin-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Lokasi</p>
+                <p class="text-xs text-gray-500" id="viewLokasi">-</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-phone-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Kontak</p>
+                <p class="text-xs text-gray-500" id="viewKontak">-</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-mail-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Email</p>
+                <p class="text-xs text-gray-500" id="viewEmail">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card shadow-sm border border-gray-100 text-center">
+          <button onclick="showSection('edit')" class="w-full btn-teal py-2.5 rounded-lg text-sm font-semibold flex justify-center items-center gap-2">
+            <i class="ri-edit-box-line"></i> Edit Profil Perusahaan
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div id="editSection" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Edit Profil Perusahaan</h2>
+        <button onclick="showSection('view')" class="text-gray-500 hover:text-red-500"><i class="ri-close-line text-2xl"></i></button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="col-span-1 md:col-span-2">
+          <label class="text-sm font-semibold text-gray-700 block mb-1">Foto Profil (JPG/PNG)</label>
+          <input type="file" id="foto_profil" accept="image/png, image/jpeg, image/jpg" class="input-form mt-1 text-xs">
+        </div>
+        <div><label class="text-sm font-semibold text-gray-700">Nama Perusahaan/Klien <span class="text-red-500">*</span></label><input id="nama" class="input-form mt-1"></div>
+        <div><label class="text-sm font-semibold text-gray-700">Email Akun (Readonly)</label><input id="email" class="input-form mt-1 bg-gray-200 cursor-not-allowed" disabled></div>
+        
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Jenis Usaha <span class="text-red-500">*</span></label>
+          <select id="jenis_usaha" class="input-form mt-1">
+            <option value="">Pilih Jenis Usaha</option>
+            <option value="Micro Enterprise (Usaha Mikro)">Micro Enterprise (Usaha Mikro)</option>
+            <option value="Small Enterprise (Usaha Kecil)">Small Enterprise (Usaha Kecil)</option>
+            <option value="Medium Enterprise (Usaha Menengah)">Medium Enterprise (Usaha Menengah)</option>
+            <option value="Sole Proprietorship (Usaha Perseorangan)">Sole Proprietorship (Usaha Perseorangan)</option>
+            <option value="UD (Usaha Dagang)">UD (Usaha Dagang)</option>
+            <option value="CV">CV</option>
+            <option value="PT">PT</option>
+            <option value="PT Tbk">PT Tbk</option>
+            <option value="Cooperative (Koperasi)">Cooperative (Koperasi)</option>
+            <option value="Foundation (Yayasan)">Foundation (Yayasan)</option>
+            <option value="Government Institution">Government Institution</option>
+            <option value="BUMN / BUMD">BUMN / BUMD</option>
+            <option value="Joint Venture">Joint Venture</option>
+            <option value="Other">Other</option>
+        </select>
+        </div>
+        <div><label class="text-sm font-semibold text-gray-700">Jumlah Pegawai <span class="text-red-500">*</span></label><input id="jumlah_pegawai" type="number" min="0" class="input-form mt-1"></div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Lokasi / Kota <span class="text-red-500">*</span></label>
+          
+          <select id="lokasi" class="input-form mt-1">
+            <option value="">Pilih Lokasi</option>
+            <option>Aceh</option>
+            <option>Bali</option>
+            <option>Banten</option>
+            <option>Bengkulu</option>
+            <option>Daerah Istimewa Yogyakarta</option>
+            <option>Gorontalo</option>
+            <option>Jakarta Barat</option>
+            <option>Jakarta Pusat</option>
+            <option>Jakarta Selatan</option>
+            <option>Jakarta Timur</option>
+            <option>Jakarta Utara</option>
+            <option>Jambi</option>
+            <option>Jawa Barat</option>
+            <option>Jawa Tengah</option>
+            <option>Jawa Timur</option>
+            <option>Kalimantan Barat</option>
+            <option>Kalimantan Selatan</option>
+            <option>Kalimantan Tengah</option>
+            <option>Kalimantan Timur</option>
+            <option>Kalimantan Utara</option>
+            <option>Kepulauan Bangka Belitung</option>
+            <option>Kepulauan Riau</option>
+            <option>Lampung</option>
+            <option>Maluku</option>
+            <option>Maluku Utara</option>
+            <option>Nusa Tenggara Barat</option>
+            <option>Nusa Tenggara Timur</option>
+            <option>Papua</option>
+            <option>Papua Barat</option>
+            <option>Riau</option>
+            <option>Sulawesi Barat</option>
+            <option>Sulawesi Selatan</option>
+            <option>Sulawesi Tengah</option>
+            <option>Sulawesi Tenggara</option>
+            <option>Sulawesi Utara</option>
+            <option>Sumatera Barat</option>
+            <option>Sumatera Selatan</option>
+            <option>Sumatera Utara</option>
+          </select>
+        </div>
+        <div><label class="text-sm font-semibold text-gray-700">Nomor Telepon / Kontak <span class="text-red-500">*</span></label><input id="kontak" class="input-form mt-1" placeholder="Misal: 08123456789"></div>
+
+        <div class="col-span-1 md:col-span-2">
+          <label class="text-sm font-semibold text-gray-700 mb-1 block">Foto Galeri / Banner Perusahaan</label>
+          <div class="file-upload-wrapper mt-1">
+            <div class="file-upload-btn">
+              <i class="ri-image-add-line text-xl"></i> 
+              <span id="fileNameDisplay">Pilih Foto untuk Diunggah (Max 5MB)</span>
+            </div>
+            <input type="file" id="galeri" accept="image/*" onchange="updateFileName(this)">
+          </div>
+          <p id="currentGaleriInfo" class="text-xs text-teal-custom mt-2 hidden">Anda sudah memiliki foto galeri. Mengunggah foto baru akan menimpanya.</p>
+        </div>
+
+        <div class="col-span-1 md:col-span-2">
+          <label class="text-sm font-semibold text-gray-700">Deskripsi Perusahaan</label>
+          <textarea id="deskripsi" rows="4" class="input-form mt-1" placeholder="Ceritakan tentang bisnis Anda..."></textarea>
+        </div>
+
+        <div class="col-span-1 md:col-span-2">
+          <label class="text-sm font-semibold text-gray-700">Kultur Perusahaan</label>
+          <textarea id="kultur_perusahaan" rows="4" class="input-form mt-1" placeholder="Bagaimana lingkungan kerja di tempat Anda?"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-8">
+        <button onclick="showSection('view')" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition">Batal</button>
+        <button onclick="updateProfile()" class="btn-teal px-6 py-2 rounded-lg font-semibold">Simpan Perubahan</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function checkAuth() {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        alert("Silakan login terlebih dahulu")
+        window.location.href = "/"
+        return null
+      }
+      return token
+    }
+
+    function showSection(section) {
+      if (section === 'edit') {
+        document.getElementById("viewSection").classList.add("hidden")
+        document.getElementById("editSection").classList.remove("hidden")
+      } else {
+        document.getElementById("viewSection").classList.remove("hidden")
+        document.getElementById("editSection").classList.add("hidden")
+      }
+    }
+
+    function updateFileName(input) {
+      const display = document.getElementById("fileNameDisplay");
+      if (input.files && input.files.length > 0) {
+        display.innerText = input.files[0].name;
+        display.classList.add("text-gray-900", "font-medium");
+      } else {
+        display.innerText = "Pilih Foto untuk Diunggah (Max 5MB)";
+        display.classList.remove("text-gray-900", "font-medium");
+      }
+    }
+
+    async function loadProfile() {
+      const token = checkAuth()
+      if (!token) return
+
+      try {
+        const res = await fetch("/client/profile", {
+          headers: { "Authorization": "Bearer " + token }
+        })
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            alert("Session habis, silakan login ulang")
+            localStorage.clear()
+            window.location.href = "/"
+            return
+          }
+          alert("Gagal memuat profil")
+          return
+        }
+
+        const data = await res.json()
+        const clientName = data.nama_client || "Klien"
+        const shortName = clientName.split(' ')[0]
+
+        document.getElementById("heroName").innerText = clientName
+        document.getElementById("userGreeting").innerText = `Hi, ${shortName}!`
+        
+        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=2b9c96&color=fff`;
+        const heroAvatarElement = document.getElementById("heroAvatar");
+        const profileImgElement = document.getElementById("profile_img");
+        
+        if (data.foto_profil && data.foto_profil !== "") {
+            heroAvatarElement.src = data.foto_profil;
+            profileImgElement.src = data.foto_profil;
+            
+            const handleError = function() {
+                this.onerror = null;
+                this.src = fallbackAvatar;
+            };
+            heroAvatarElement.onerror = handleError;
+            profileImgElement.onerror = handleError;
+        } else {
+            heroAvatarElement.src = fallbackAvatar;
+            profileImgElement.src = fallbackAvatar;
+        }
+
+        document.getElementById("viewNama").innerText = clientName
+        document.getElementById("viewJenisUsaha").innerText = data.jenis_usaha || "-"
+        document.getElementById("viewPegawai").innerText = data.jumlah_pegawai ? `${data.jumlah_pegawai} Orang` : "-"
+        document.getElementById("viewLokasi").innerText = data.lokasi || "-"
+        document.getElementById("viewKontak").innerText = data.kontak || "-"
+        document.getElementById("viewEmail").innerText = data.email || "-"
+        
+        document.getElementById("viewDeskripsi").innerText = data.deskripsi || "Belum ada deskripsi perusahaan."
+        document.getElementById("viewKultur").innerText = data.kultur_perusahaan || "Belum ada info kultur perusahaan."
+
+        const galeriImage = document.getElementById("viewGaleriImage");
+        const galeriText = document.getElementById("viewGaleriText");
+        const galeriInfo = document.getElementById("currentGaleriInfo");
+        
+        if (data.galeri && data.galeri !== "") {
+          galeriImage.src = data.galeri;
+          galeriImage.classList.remove("hidden");
+          galeriText.classList.add("hidden");
+          galeriInfo.classList.remove("hidden"); 
+        } else {
+          galeriImage.classList.add("hidden");
+          galeriText.classList.remove("hidden");
+          galeriInfo.classList.add("hidden");
+        }
+
+        document.getElementById("nama").value = data.nama_client || ""
+        document.getElementById("email").value = data.email || ""
+        document.getElementById("lokasi").value = data.lokasi || ""
+        document.getElementById("jenis_usaha").value = data.jenis_usaha || ""
+        document.getElementById("jumlah_pegawai").value = data.jumlah_pegawai || ""
+        document.getElementById("kontak").value = data.kontak || ""
+        document.getElementById("deskripsi").value = data.deskripsi || ""
+        document.getElementById("kultur_perusahaan").value = data.kultur_perusahaan || ""
+
+        document.getElementById("galeri").value = "";
+        updateFileName(document.getElementById("galeri"));
+
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    function goHome() {
+      const currentRole = localStorage.getItem("role");
+      if (currentRole === "freelancer") window.location.href = "/freelancer";
+      else if (currentRole === "client") window.location.href = "/client";
+      else window.location.href = "/guest"; 
+    }
+
+    async function updateProfile() {
+      const token = checkAuth()
+      if (!token) return
+
+      const namaVal = document.getElementById("nama").value.trim();
+      const jenisUsahaVal = document.getElementById("jenis_usaha").value.trim();
+      const lokasiVal = document.getElementById("lokasi").value.trim();
+      const kontakVal = document.getElementById("kontak").value.trim();
+      const jmlPegawaiRaw = document.getElementById("jumlah_pegawai").value.trim();
+
+      if (!namaVal || !jenisUsahaVal || !lokasiVal || !kontakVal || !jmlPegawaiRaw) {
+        alert("Gagal menyimpan! Mohon lengkapi semua kolom yang wajib diisi (*).");
+        return; 
+      }
+
+      const namaError = checkNameRules(namaVal);
+      if (namaError) {
+        alert(namaError);
+        return;
+      }
+
+      const phoneRegex = /^(08|628|\+628)[0-9]{7,11}$/;
+      if (!phoneRegex.test(kontakVal)) {
+        alert("Format kontak tidak valid! Gunakan angka dengan awalan 08, 628, atau +628 (contoh: 08123456789).");
+        return;
+      }
+
+      const jmlPegawai = parseInt(jmlPegawaiRaw, 10);
+      if (isNaN(jmlPegawai) || jmlPegawai < 0) {
+        alert("Jumlah pegawai harus berupa angka yang valid dan tidak boleh bernilai minus!");
+        return;
+      }
+
+      const fotoFile = document.getElementById("foto_profil").files[0];
+      if (fotoFile) {
+          const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+          if (!validTypes.includes(fotoFile.type)) {
+              alert("Foto Profil harus berformat JPG atau PNG!");
+              return;
+          }
+      }
+
+      const formData = new FormData()
+      formData.append("nama_client", namaVal)
+      formData.append("lokasi", lokasiVal)
+      formData.append("jenis_usaha", jenisUsahaVal)
+      formData.append("jumlah_pegawai", jmlPegawai.toString())
+      formData.append("kontak", kontakVal)
+      formData.append("deskripsi", document.getElementById("deskripsi").value)
+      formData.append("kultur_perusahaan", document.getElementById("kultur_perusahaan").value)
+
+      if (fotoFile) {
+          formData.append("foto_profil", fotoFile);
+      }
+      const galeriFile = document.getElementById("galeri").files[0];
+      if (galeriFile) {
+        formData.append("galeri", galeriFile);
+      }
+
+      try {
+        const res = await fetch("/client/profile", {
+          method: "PUT",
+          headers: {
+            "Authorization": "Bearer " + token
+          },
+          body: formData
+        })
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Backend Error Response:", errText);
+          
+          let errMsg = "Gagal update profil";
+          try {
+              const errObj = JSON.parse(errText);
+              errMsg = errObj.error || errMsg;
+          } catch(e){}
+          
+          alert(errMsg);
+          return
+        }
+
+        alert("Profil dan Galeri berhasil diperbarui!")
+        loadProfile()
+        showSection('view')
+
+      } catch (err) {
+        console.error("Fetch Error:", err)
+        alert("Terjadi kesalahan pada jaringan / server")
+      }
+    }
+
+    function checkNameRules(nama) {
+      if (nama.length < 4) {
+        return "⚠️ Nama Perusahaan/Klien minimal terdiri dari 4 karakter!";
+      }
+      
+      if (!/^[A-Z]/.test(nama)) {
+        return "⚠️ Nama Perusahaan/Klien harus diawali dengan huruf kapital (contoh: PT Maju Jaya)!";
+      }
+      
+      if (!/[a-zA-Z]/.test(nama)) {
+        return "⚠️ Nama Perusahaan/Klien tidak boleh hanya berisi angka, harus mengandung huruf!";
+      }
+      
+      if (!/^[a-zA-Z0-9\s.,'-]+$/.test(nama)) {
+        return "⚠️ Nama Perusahaan/Klien mengandung karakter khusus yang tidak diizinkan!";
+      }
+      return null;
+    }
+    function goProfile() { window.location.href = "/client/profile/view" }
+    function logout() { localStorage.clear(); window.location.href = "/"; }
+
+    loadProfile()
+  </script>
+
+</body>
+</html>

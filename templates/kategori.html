@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"> <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kategori Proyek - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9fafb; 
+    }
+    .text-teal-custom { color: #2b9c96; }
+    .bg-teal-custom { background-color: #2b9c96; }
+    
+    .category-section {
+      scroll-margin-top: 100px; 
+    }
+  </style>
+</head>
+
+<body>
+
+    <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center shadow-md">
+    <div class="flex-1">
+      <a id="logoLink" class="text-xl font-bold flex items-center gap-2" href="/">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+    <div class="flex-1 flex justify-end">
+      <a href="javascript:history.back()" class="text-gray-300 hover:text-white flex items-center gap-2 text-sm font-medium transition">
+        <i class="ri-arrow-left-line"></i> Kembali
+      </a>
+    </div>
+  </nav>
+
+    <div class="bg-teal-custom text-white text-center pt-32 pb-20 mt-16 px-4">
+    <h1 class="text-4xl font-bold tracking-wide mb-4">Kategori Proyek</h1>
+    <p class="text-lg text-teal-100 max-w-2xl mx-auto">Temukan berbagai bidang proyek yang tersedia di MariLancy. Mulai bangun portofoliomu dari sekarang!</p>
+  </div>
+
+    <div class="max-w-5xl mx-auto px-4 py-16 space-y-12">
+
+        <div id="desain-grafis" class="category-section bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-start transition hover:shadow-md">
+      <div class="bg-blue-50 text-blue-600 p-4 rounded-xl text-4xl shrink-0">
+        <i class="ri-palette-line"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Desain Grafis</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">Kategori ini diperuntukkan bagi kamu yang memiliki kreativitas visual. Klien biasanya mencari desainer untuk membuat identitas visual merek mereka agar lebih menarik dan profesional.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Logo Design</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">UI/UX Design</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Brosur & Poster</span>
+        </div>
+      </div>
+    </div>
+
+        <div id="web-development" class="category-section bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-start transition hover:shadow-md">
+      <div class="bg-purple-50 text-purple-600 p-4 rounded-xl text-4xl shrink-0">
+        <i class="ri-code-box-line"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Web Development</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">Dunia pengembangan web. Mulai dari membuat *landing page* sederhana, website *company profile*, hingga memodifikasi CSS/HTML sebuah *website* atau aplikasi bisnis yang sudah berjalan.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Frontend</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Backend</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Wordpress</span>
+        </div>
+      </div>
+    </div>
+
+        <div id="content-writing" class="category-section bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-start transition hover:shadow-md">
+      <div class="bg-orange-50 text-orange-600 p-4 rounded-xl text-4xl shrink-0">
+        <i class="ri-quill-pen-line"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Content Writing</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">Cocok bagi kamu yang pandai merangkai kata. Kategori ini mencakup penulisan artikel blog, *copywriting* untuk iklan, hingga penyusunan naskah (*script*) untuk kebutuhan video.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Artikel SEO</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Copywriting</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Terjemahan</span>
+        </div>
+      </div>
+    </div>
+
+        <div id="social-media" class="category-section bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-start transition hover:shadow-md">
+      <div class="bg-pink-50 text-pink-600 p-4 rounded-xl text-4xl shrink-0">
+        <i class="ri-instagram-line"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Social Media</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">Membantu klien mengelola akun media sosial mereka. Tugasnya bisa berupa merencanakan kalender konten, berinteraksi dengan *followers*, hingga membuat konten pendek seperti Reels atau TikTok.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Admin Medsos</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Content Creator</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Video Editor</span>
+        </div>
+      </div>
+    </div>
+
+        <div id="digital-marketing" class="category-section bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-start transition hover:shadow-md">
+      <div class="bg-teal-50 text-teal-custom p-4 rounded-xl text-4xl shrink-0">
+        <i class="ri-bar-chart-box-line"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Digital Marketing</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">Berfokus pada strategi pemasaran digital untuk meningkatkan penjualan atau kesadaran merek klien. Melibatkan optimasi mesin pencari dan pemasangan iklan berbayar.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">SEO Specialist</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Google/Meta Ads</span>
+          <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs rounded-full font-medium">Email Marketing</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const role = localStorage.getItem('role');
+        const logoLink = document.getElementById('logoLink');
+        
+        if (role === 'client') {
+            logoLink.href = '/client';
+        } else if (role === 'freelancer') {
+            logoLink.href = '/freelancer';
+        } else if (role === 'admin') {
+            logoLink.href = '/admin';
+        } else {
+            logoLink.href = '/'; 
+        }
+        });
+    </script>
+
+</body>
+</html>
+

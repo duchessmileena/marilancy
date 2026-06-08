@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspace Proyek - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    .kanban-col { min-height: 400px; }
+    .task-card { cursor: grab; }
+    .task-card:active { cursor: grabbing; }
+    .drag-over { background-color: #e2e8f0; border: 2px dashed #94a3b8; }
+    .custom-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #2b9c96; }
+    
+    .input-form { border: 1px solid #d1d5db; padding: 10px 14px; border-radius: 8px; width: 100%; font-size: 14px; outline: none; transition: 0.2s; }
+    .input-form:focus { border-color: #2b9c96; }
+    .sidebar-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    .btn-teal { background-color: #2b9c96; color: white; }
+    .btn-teal:hover { background-color: #23827d; }
+  </style>
+</head>
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/freelancer">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/freelancer" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/freelancer/projects" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Projects</a>
+      <a href="/freelancer/profile/view" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Applications</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img"
+          src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff"
+          onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';"
+          class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+      <div class="relative cursor-pointer" onclick="goNotification()">
+        <i class="ri-notification-3-fill text-2xl text-yellow-500"></i>
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0 rounded-full hidden">
+          0
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-4 py-10 mt-16">
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 gap-4">
+        <div>
+          <span id="projectBadge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md mb-2 inline-block">Status</span>
+          <h1 class="text-2xl font-bold text-gray-800" id="projectName">Memuat Proyek...</h1>
+          <p class="text-sm text-gray-500 mt-1">Client: <span id="clientName" class="font-medium text-gray-700">-</span></p>
+        </div>
+        
+        <div class="text-right flex flex-col items-end gap-3 w-full md:w-auto">
+          <div class="flex items-center gap-6">
+            <div class="text-right">
+              <span class="text-3xl font-bold text-[#2b9c96]" id="progressText">0%</span>
+              <p class="text-xs text-gray-500 font-medium">Progress Penyelesaian</p>
+            </div>
+            <div class="flex flex-col gap-2 items-end">
+                <button id="btnCompleteProject" onclick="completeProject()" disabled class="px-5 py-2.5 bg-gray-300 text-white rounded-xl text-sm font-bold shadow-sm cursor-not-allowed transition-all duration-300">
+                  Menunggu Task...
+                </button>
+                <a href="#" id="btnChatClient" class="hidden bg-gray-800 hover:bg-black text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm transition items-center gap-2">
+                  <i class="ri-message-3-line"></i> Hubungi Client
+                </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="w-full bg-gray-200 rounded-full h-3">
+        <div class="bg-[#2b9c96] h-3 rounded-full transition-all duration-500" id="progressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-teal-100 mb-8 bg-teal-50/30">
+      <h3 class="font-bold text-gray-800 mb-2 text-md"><i class="ri-upload-cloud-2-line text-teal-600"></i> Penyerahan Hasil Kerja</h3>
+      <p class="text-xs text-gray-500 mb-4">Harap cantumkan link repository/drive <b>ATAU</b> unggah file hasil akhir kerja Anda sebelum menyelesaikan proyek.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-semibold text-gray-700 block mb-1">Link Eksternal (G-Drive, Figma, Github, dll)</label>
+          <input type="url" id="submissionLink" oninput="validateCompletionRules()" placeholder="https://contoh.com" class="input-form bg-white">
+          <p id="linkErrorMsg" class="text-[10px] text-red-500 font-medium mt-1 hidden">Format link tidak valid. Pastikan menggunakan http:// atau https://</p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-700 block mb-1">Atau Unggah File (.zip, .pdf, dll)</label>
+          <input type="file" id="submissionFile" onchange="validateCompletionRules()" class="input-form bg-white text-gray-600">
+        </div>
+      </div>
+      <p id="submissionStatusInfo" class="text-xs font-semibold text-teal-600 mt-3 hidden"><i class="ri-check-double-line"></i> Bukti hasil kerja sudah tersimpan.</p>
+      <div id="uploadedDocumentContainer" class="mt-4 pt-4 border-t border-teal-100 hidden">
+         <p class="text-xs font-bold text-gray-700 mb-2">Dokumen / Link Terkirim:</p>
+         <a id="btnViewDocument" href="#" target="_blank" class="px-4 py-2 bg-[#2b9c96] text-white rounded-lg text-sm font-semibold shadow-sm hover:bg-[#23827d] transition inline-flex items-center gap-2">
+           <i class="ri-file-text-line"></i> Lihat Dokumen Hasil Kerja
+         </a>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mb-6">
+      <button onclick="setView('list')" id="btnList" class="px-4 py-2 bg-[#2b9c96] text-white rounded-lg text-sm font-semibold shadow flex gap-2"><i class="ri-list-check"></i> List View</button>
+      <button onclick="setView('kanban')" id="btnKanban" class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg text-sm font-semibold shadow-sm flex gap-2 hover:bg-gray-50"><i class="ri-kanban-view"></i> Kanban View</button>
+    </div>
+
+    <div id="listView" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <h3 class="font-bold text-gray-800 mb-4 text-lg">Daftar Tugas (To-Do List)</h3>
+      <div id="listContainer" class="space-y-3">
+        <p class="text-gray-500 text-sm">Memuat tugas...</p>
+      </div>
+    </div>
+
+    <div id="kanbanView" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-gray-700">TO DO</h3>
+          <span class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full font-bold" id="count-todo">0</span>
+        </div>
+        <div class="kanban-col space-y-3" id="col-todo" data-status="todo" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)"></div>
+      </div>
+
+      <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-blue-700">IN PROGRESS</h3>
+          <span class="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full font-bold" id="count-in_progress">0</span>
+        </div>
+        <div class="kanban-col space-y-3" id="col-in_progress" data-status="in_progress" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)"></div>
+      </div>
+
+      <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-green-700">DONE</h3>
+          <span class="bg-green-200 text-green-800 text-xs px-2 py-1 rounded-full font-bold" id="count-done">0</span>
+        </div>
+        <div class="kanban-col space-y-3" id="col-done" data-status="done" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get("project_id") || 1; 
+    const token = localStorage.getItem("token");
+
+    const userId = localStorage.getItem("userId") || "guest";
+    let tasks = [];
+    let isProjectCompleted = false;
+    let currentProgress = 0;
+
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options);
+      if (res.status === 401) {
+        alert("Session habis");
+        localStorage.clear();
+        window.location.href = "/";
+        return null;
+      }
+      if (res.status === 403) {
+        alert("Akses ditolak");
+        window.location.href = "/";
+        return null;
+      }
+      try { return await res.json(); } catch { return null; }
+    }
+
+    async function loadProjectData() {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        headers: { "Authorization": "Bearer " + token }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        const p = data.project; 
+
+        const jobJudul = p.job.judul || "-";
+        const jobNo = p.job.job_no;
+        const displayJudul = jobNo 
+            ? `${jobJudul} <span class="text-lg font-medium text-gray-500 ml-2">(${jobNo})</span>` 
+            : jobJudul;
+        document.getElementById("projectName").innerHTML = displayJudul;
+
+        const rawDate = p.end_date || p.deadline || p.EndDate || (p.job && p.job.deadline);
+        const updatedDate = p.updated_at || p.UpdatedAt;
+        const overdue = calculateOverdue(rawDate, p.status, updatedDate);
+        
+        const badgeContainer = document.getElementById("projectBadge").parentElement;
+        const oldTag = document.getElementById("overdueTag");
+        if (oldTag) oldTag.remove();
+
+        if (overdue) {
+            badgeContainer.insertAdjacentHTML('beforeend', `<span id="overdueTag" class="ml-2 text-[10px] font-bold px-2 py-1 rounded shadow-sm ${overdue.class}">${overdue.label}</span>`);
+        }
+
+        const clientNameText = p.client?.nama_client || "Klien Anonim";
+        let deadlineText = "";
+        if (p.end_date && !p.end_date.startsWith("0001")) {
+            const deadlineDate = new Date(p.end_date).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+            deadlineText = ` <span class="mx-2 text-gray-300">|</span> <span class="text-xs text-red-500 font-bold"><i class="ri-calendar-event-line"></i> Deadline: ${deadlineDate}</span>`;
+        }
+        document.getElementById("clientName").innerHTML = `${clientNameText}${deadlineText}`;
+        
+        isProjectCompleted = p.status === 'completed';
+        const badge = document.getElementById("projectBadge");
+        if (isProjectCompleted) {
+            badge.innerText = "Proyek Selesai";
+            badge.className = "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md mb-2 inline-block bg-green-100 text-green-700";
+            
+            document.getElementById("submissionLink").value = p.submission_link || "";
+            document.getElementById("submissionLink").disabled = true;
+            document.getElementById("submissionFile").disabled = true;
+            document.getElementById("submissionStatusInfo").classList.remove("hidden");
+
+            const submissionUrl = p.submission_link || p.submission_file;
+            if (submissionUrl) {
+                document.getElementById("uploadedDocumentContainer").classList.remove("hidden");
+                document.getElementById("btnViewDocument").href = submissionUrl.startsWith('http') ? submissionUrl : '/' + submissionUrl; 
+            }
+        } else {
+            badge.innerText = "Proyek Aktif";
+            badge.className = "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md mb-2 inline-block bg-blue-100 text-blue-700";
+        }
+
+        currentProgress = data.progress;
+        document.getElementById("progressText").innerText = data.progress + "%";
+        document.getElementById("progressBar").style.width = data.progress + "%";
+
+        const btnChat = document.getElementById("btnChatClient");
+        if (btnChat && p.client?.ID) {
+            btnChat.href = `/chat/room?project_id=${projectId}&target_id=${p.client.ID}`;
+            btnChat.classList.remove("hidden");
+            btnChat.classList.add("flex");
+        }
+
+        tasks = p.tasks || [];
+        validateCompletionRules(); 
+        renderListView();
+        renderKanbanView();
+      }
+    }
+
+    function calculateOverdue(endDateStr, status, updatedAtStr) {
+        if (!endDateStr || String(endDateStr).startsWith("0001")) return null;
+
+        const deadline = new Date(endDateStr);
+        if (isNaN(deadline.getTime())) return null;
+        deadline.setHours(0, 0, 0, 0); 
+
+        if (status === 'completed') {
+            if (!updatedAtStr || String(updatedAtStr).startsWith("0001")) return null;
+            
+            const submitDate = new Date(updatedAtStr);
+            submitDate.setHours(0, 0, 0, 0);
+
+            const diffTime = deadline.getTime() - submitDate.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) { 
+                return { label: `DIKUMPULKAN TERLAMBAT (${Math.abs(diffDays)} HARI)`, class: "bg-red-600 text-white shadow-sm" };
+            }
+        } else {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const diffTime = deadline.getTime() - today.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) { 
+                return { label: `TUGAS TERLAMBAT (${Math.abs(diffDays)} HARI)`, class: "bg-red-600 text-white shadow-sm animate-pulse" };
+            }
+        }
+        
+        return null;
+    }
+
+    function setActive(el) {
+        const links = document.querySelectorAll('.nav-link');
+
+        links.forEach(link => {
+          link.classList.remove('border-b-2', 'border-teal-500', 'text-white');
+          link.classList.add('text-gray-400');
+        });
+
+        el.classList.remove('text-gray-400');
+        el.classList.add('text-white', 'border-b-2', 'border-teal-500');
+    }
+
+    function setActiveByURL() {
+        const links = document.querySelectorAll('.nav-link');
+        const currentPath = window.location.pathname;
+
+        links.forEach(link => {
+          if (link.getAttribute('href') === currentPath) {
+            link.classList.add('border-b-2', 'border-teal-500', 'text-white');
+            link.classList.remove('text-gray-400');
+          } else {
+            link.classList.remove('border-b-2', 'border-teal-500', 'text-white');
+            link.classList.add('text-gray-400');
+          }
+        });
+    }
+
+    setActiveByURL();
+
+    function validateCompletionRules() {
+        const btnComplete = document.getElementById("btnCompleteProject");
+        const linkInput = document.getElementById("submissionLink");
+        const linkVal = linkInput.value.trim();
+        const fileVal = document.getElementById("submissionFile").files.length;
+        const errorMsg = document.getElementById("linkErrorMsg");
+
+        if (isProjectCompleted) {
+            btnComplete.innerText = "Telah Diselesaikan \u2714";
+            btnComplete.className = "px-5 py-2.5 bg-green-500 text-white rounded-xl text-sm font-bold shadow-sm cursor-not-allowed";
+            btnComplete.disabled = true;
+            return;
+        }
+
+        let isValidLink = false;
+        if (linkVal !== "") {
+            try {
+                new URL(linkVal);
+                isValidLink = true;
+                errorMsg.classList.add("hidden");
+                linkInput.classList.remove("border-red-500", "focus:border-red-500");
+            } catch (e) {
+                isValidLink = false;
+                errorMsg.classList.remove("hidden");
+                linkInput.classList.add("border-red-500", "focus:border-red-500");
+            }
+        } else {
+            errorMsg.classList.add("hidden");
+            linkInput.classList.remove("border-red-500", "focus:border-red-500");
+        }
+
+        if (currentProgress === 100 && tasks.length > 0) {
+            if ((isValidLink || fileVal > 0) && !(linkVal !== "" && !isValidLink)) {
+                btnComplete.innerText = "Selesaikan Proyek";
+                btnComplete.className = "px-5 py-2.5 bg-[#2b9c96] hover:bg-[#23827d] text-white rounded-xl text-sm font-bold shadow-md cursor-pointer hover:-translate-y-0.5 transition-all";
+                btnComplete.disabled = false;
+            } else if (linkVal !== "" && !isValidLink) {
+                btnComplete.innerText = "Format Link Salah";
+                btnComplete.className = "px-5 py-2.5 bg-red-500 text-white rounded-xl text-sm font-bold shadow-sm cursor-not-allowed";
+                btnComplete.disabled = true;
+            } else {
+                btnComplete.innerText = "Isi Link / Upload File";
+                btnComplete.className = "px-5 py-2.5 bg-yellow-500 text-white rounded-xl text-sm font-bold shadow-sm cursor-not-allowed";
+                btnComplete.disabled = true;
+            }
+        } else {
+            btnComplete.innerText = "Menunggu Task 100%";
+            btnComplete.className = "px-5 py-2.5 bg-gray-300 text-white rounded-xl text-sm font-bold shadow-sm cursor-not-allowed";
+            btnComplete.disabled = true;
+        }
+    }
+
+    async function loadUserProfile() {
+        try {
+            const role = localStorage.getItem("role");
+            const endpoint = role === "client" ? "/client/profile" : "/freelancer/profile";
+
+            const res = await fetch(endpoint, {
+                headers: { "Authorization": "Bearer " + token }
+            });
+
+            if (!res.ok) throw new Error("Failed fetch profile");
+
+            const data = await res.json();
+
+            localStorage.setItem("client_id", data.ID);
+            const fullName = data.nama_client || data.nama || "User";
+            const firstName = fullName.split(' ')[0];
+
+            document.getElementById("userGreeting").innerText = "Hi, " + firstName + "!";
+
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=2b9c96&color=fff`;
+            const profileImgElement = document.getElementById("profile_img");
+            const profileImgUrl = data.foto_profil || data.galeri;
+
+            if (profileImgUrl && profileImgUrl !== "") {
+                profileImgElement.src = profileImgUrl;
+                profileImgElement.onerror = function() {
+                    this.onerror = null;
+                    this.src = fallbackAvatar;
+                };
+            } else {
+                profileImgElement.src = fallbackAvatar;
+            }
+
+        } catch (err) {
+            console.error("Error load profile:", err);
+            document.getElementById("userGreeting").innerText = "Hi, User!";
+        }
+    }
+
+    async function completeProject() {
+      const confirmMsg = "Apakah Anda yakin ingin mengirim dokumen dan menyelesaikan proyek ini?\n\nTekan 'OK' untuk mengunggah dokumen.\nTekan 'Cancel' untuk membatalkan.";  
+      if (!confirm(confirmMsg)) {
+            return;
+      }
+        
+        const linkVal = document.getElementById("submissionLink").value;
+        const fileInput = document.getElementById("submissionFile").files[0];
+
+        const formData = new FormData();
+        if (linkVal) formData.append("submission_link", linkVal);
+        if (fileInput) formData.append("submission_file", fileInput);
+
+        const res = await fetch(`/api/projects/${projectId}/complete`, {
+            method: "PUT",
+            headers: { "Authorization": "Bearer " + token },
+            body: formData
+        });
+        
+        if (res.ok) {
+            alert("Selamat! Proyek berhasil diselesaikan!");
+            loadProjectData(); 
+        } else {
+            const err = await res.json();
+            alert(err.error || "Gagal menyelesaikan proyek.");
+        }
+    }
+
+    async function updateStatusAPI(taskId, newStatus) {
+      if (isProjectCompleted) {
+          alert("Proyek sudah selesai, Anda tidak bisa mengubah task lagi.");
+          loadProjectData();
+          return;
+      }
+      await fetch(`/api/projects/task/${taskId}`, {
+        method: "PUT",
+        headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+      });
+      loadProjectData(); 
+    }
+
+    function setView(mode) {
+      if (mode === 'list') {
+        document.getElementById('listView').classList.remove('hidden');
+        document.getElementById('kanbanView').classList.add('hidden');
+        document.getElementById('btnList').classList.replace('bg-white', 'bg-[#2b9c96]');
+        document.getElementById('btnList').classList.replace('text-gray-700', 'text-white');
+        document.getElementById('btnKanban').classList.replace('bg-[#2b9c96]', 'bg-white');
+        document.getElementById('btnKanban').classList.replace('text-white', 'text-gray-700');
+      } else {
+        document.getElementById('listView').classList.add('hidden');
+        document.getElementById('kanbanView').classList.remove('hidden');
+        document.getElementById('btnKanban').classList.replace('bg-white', 'bg-[#2b9c96]');
+        document.getElementById('btnKanban').classList.replace('text-gray-700', 'text-white');
+        document.getElementById('btnList').classList.replace('bg-[#2b9c96]', 'bg-white');
+        document.getElementById('btnList').classList.replace('text-white', 'text-gray-700');
+      }
+    }
+    
+    async function updatePriorityAPI(taskId, newPriority) {
+        if (isProjectCompleted) return;
+        
+        await fetch(`/api/projects/task/${taskId}/priority`, {
+            method: "PUT",
+            headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ priority: newPriority })
+        });
+        loadProjectData();
+    }
+
+    function renderListView() {
+        const container = document.getElementById("listContainer");
+        container.innerHTML = "";
+        
+        tasks.forEach(task => {
+            const isChecked = task.status === 'done' ? 'checked' : '';
+            const textStyle = task.status === 'done' ? 'line-through text-gray-400' : 'text-gray-800 font-medium';
+
+            const pColor = task.priority === 'high' ? 'text-red-600 bg-red-50' : 
+                         task.priority === 'medium' ? 'text-orange-600 bg-orange-50' : 'text-blue-600 bg-blue-50';
+
+            const sColor = task.status === 'done' ? 'text-green-700 bg-green-100' :
+                           task.status === 'in_progress' ? 'text-blue-700 bg-blue-100' : 'text-gray-600 bg-gray-100';
+
+            const disableState = isProjectCompleted ? 'disabled' : '';
+
+            container.innerHTML += `
+            <div class="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition">
+                <label class="flex items-center gap-4 cursor-pointer flex-1">
+                  <input type="checkbox" class="custom-checkbox" ${isChecked} onchange="toggleCheckbox(${task.id}, this.checked)" ${disableState}>
+                  <span class="${textStyle}">${task.title}</span>
+                </label>
+                
+                <div class="flex items-center gap-3">
+                  <select onchange="updatePriorityAPI(${task.id}, this.value)" ${disableState} class="text-[10px] font-bold uppercase p-1 rounded border-none ${pColor} focus:ring-0 cursor-pointer">
+                      <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
+                      <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                      <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
+                  </select>
+                  
+                  <select onchange="updateStatusAPI(${task.id}, this.value)" ${disableState} class="text-[10px] font-bold uppercase p-1 px-2 rounded border-none ${sColor} focus:ring-0 cursor-pointer outline-none text-center">
+                      <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>TO DO</option>
+                      <option value="in_progress" ${task.status === 'in_progress' ? 'selected' : ''}>IN PROGRESS</option>
+                      <option value="done" ${task.status === 'done' ? 'selected' : ''}>DONE</option>
+                  </select>
+                </div>
+            </div>
+            `;
+        });
+    }
+
+    function toggleCheckbox(taskId, isChecked) {
+      if (isProjectCompleted) return;
+      const newStatus = isChecked ? 'done' : 'todo';
+      updateStatusAPI(taskId, newStatus);
+    }
+    
+    function goHome() {
+      const currentRole = localStorage.getItem("role");
+      if (currentRole === "freelancer") {
+        window.location.href = "/freelancer";
+      } else if (currentRole === "client") {
+        window.location.href = "/client";
+      } else {
+        window.location.href = "/guest"; 
+      }
+    }
+
+    function renderKanbanView() {
+      const cols = { todo: "", in_progress: "", done: "" };
+      let counts = { todo: 0, in_progress: 0, done: 0 };
+
+      tasks.forEach(task => {
+          counts[task.status]++;
+        
+          const borderColor = task.priority === 'high' ? 'border-l-red-500' : 
+                              task.priority === 'medium' ? 'border-l-orange-500' : 'border-l-blue-400';
+
+          cols[task.status] += `
+          <div class="task-card bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 ${borderColor} mb-3" draggable="true" ondragstart="drag(event)" id="task-${task.id}" data-id="${task.id}">
+              <div class="flex justify-between items-start mb-2">
+              <span class="text-[9px] font-extrabold uppercase tracking-tighter ${task.priority === 'high' ? 'text-red-500' : 'text-gray-400'}">${task.priority} Priority</span>
+              </div>
+              <p class="text-sm font-medium text-gray-800">${task.title}</p>
+          </div>
+          `;
+      });
+
+      document.getElementById("col-todo").innerHTML = cols.todo;
+      document.getElementById("col-in_progress").innerHTML = cols.in_progress;
+      document.getElementById("col-done").innerHTML = cols.done;
+
+      document.getElementById("count-todo").innerText = counts.todo;
+      document.getElementById("count-in_progress").innerText = counts.in_progress;
+      document.getElementById("count-done").innerText = counts.done;
+    }
+
+    function drag(ev) { if(!isProjectCompleted) ev.dataTransfer.setData("text", ev.target.id); }
+    function allowDrop(ev) { if(!isProjectCompleted) ev.preventDefault(); }
+    function dragEnter(ev) { if(!isProjectCompleted && ev.target.classList.contains('kanban-col')) ev.target.classList.add('drag-over'); }
+    function dragLeave(ev) { if(!isProjectCompleted && ev.target.classList.contains('kanban-col')) ev.target.classList.remove('drag-over'); }
+
+    function drop(ev) {
+      if (isProjectCompleted) return;
+      ev.preventDefault();
+      let targetCol = ev.target;
+      while (!targetCol.classList.contains('kanban-col') && targetCol.tagName !== 'BODY') {
+        targetCol = targetCol.parentNode;
+      }
+      
+      if(targetCol.classList.contains('kanban-col')) {
+        targetCol.classList.remove('drag-over');
+        const elementId = ev.dataTransfer.getData("text");
+        const draggedElement = document.getElementById(elementId);
+        targetCol.appendChild(draggedElement);
+        
+        const taskId = draggedElement.getAttribute("data-id");
+        const newStatus = targetCol.getAttribute("data-status");
+        updateStatusAPI(taskId, newStatus);
+      }
+    }
+
+    function getReadNotifs() { 
+        return JSON.parse(localStorage.getItem(`readNotifs_${userId}`)) || []; 
+    }
+
+    function getReadMessageNotifs() { 
+        return JSON.parse(localStorage.getItem("readMessageNotifs")) || []; 
+    }
+
+    async function loadNotificationCount() {
+
+      const appRes = await fetch("/freelancer/applications", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const appData = await appRes.json();
+
+      let unreadCount = 0;
+
+      const readNotifs = getReadNotifs();
+
+      appData.forEach(app => {
+        const job = app.job || app.Job || {};
+
+        let isNotif = false;
+
+        if (app.status === "accepted" || app.status === "rejected") {
+          isNotif = true;
+        } else if (app.status === "pending" &&
+          (job.status === "dihapus" || job.status === "ditutup")) {
+          isNotif = true;
+        }
+
+        if (isNotif && !readNotifs.includes(app.id)) {
+          unreadCount++;
+        }
+      });
+
+      try {
+        const msgRes = await fetch("/api/chat/list?role=freelancer", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (msgRes.ok) {
+          const conversations = await msgRes.json();
+          const readMessages = getReadMessageNotifs();
+
+          conversations.forEach(conv => {
+            const messageKey =
+              `${conv.project_id}-${conv.target_user_id}-${conv.created_at}`;
+
+            if (!readMessages.includes(messageKey)) {
+              unreadCount++;
+            }
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+
+      const badge = document.getElementById("notifBadge");
+
+      if (unreadCount > 0) {
+        badge.innerText = unreadCount;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+    
+    function goProfile() {
+      const currentRole = localStorage.getItem("role");
+      if (currentRole === "freelancer") window.location.href = "/freelancer/profile/view"
+      else if (currentRole === "client") window.location.href = "/client/profile/view"
+    }
+
+    function goNotification() {
+      const currentRole = localStorage.getItem("role");
+      if (currentRole === "freelancer") window.location.href = "/freelancer/notification"
+      else if (currentRole === "client") window.location.href = "/client/notification"
+    }
+    
+    function logout() { 
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/"; 
+    }
+
+    setInterval(() => {
+      if (token) loadNotificationCount();
+    }, 3000);
+    loadUserProfile()
+    loadProjectData();
+    loadNotificationCount(); 
+  </script>
+</body>
+</html>

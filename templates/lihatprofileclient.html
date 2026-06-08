@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Klien - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .custom-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+    }
+
+    .job-card-modern {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.02);
+      transition: 0.3s;
+    }
+
+    .job-card-modern:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+      border-color: #e2e8f0;
+    }
+
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+    }
+    .profile-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid white;
+      object-fit: cover;
+      position: absolute;
+      bottom: -70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #f1f5f9;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .footer-dark {
+      background-color: #000000;
+      color: #e5e7eb;
+      padding: 60px 40px 30px 40px;
+      font-size: 14px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .footer-col h4 {
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 12px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .footer-col ul li:hover {
+      color: white;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .newsletter-input {
+      background-color: transparent;
+      border: 1px solid #4b5563;
+      color: white;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .newsletter-input:focus {
+      border-color: #2b9c96;
+    }
+
+    .newsletter-btn {
+      background-color: #2b9c96;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .newsletter-btn:hover {
+      background-color: #23827d;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      color: #6b7280;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/freelancer">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/freelancer" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/freelancer/projects" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Projects</a>
+      <a href="/freelancer/profile/view" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Applications</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img"
+          src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff"
+          onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';"
+          class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+      <div class="relative cursor-pointer" onclick="goNotification()">
+        <i class="ri-notification-3-fill text-2xl text-yellow-500"></i>
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0 rounded-full hidden">
+          0
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-24 relative mt-16">
+    <h1 class="text-4xl font-bold tracking-wide" id="heroName">Memuat...</h1>
+    <img id="heroAvatar" src="https://ui-avatars.com/api/?name=Loading&background=2b9c96&color=fff" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Client&background=2b9c96&color=fff';" class="profile-avatar" alt="Profile Picture">
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 mt-28 pb-20">
+    <div class="flex flex-col lg:flex-row gap-12">
+      
+      <div class="w-full lg:w-2/3">
+        <div class="mb-10">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Tentang Perusahaan</h2>
+          <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line" id="viewDeskripsi">
+            Memuat deskripsi...
+          </p>
+        </div>
+
+        <div class="mb-10">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Kultur Perusahaan</h2>
+          <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line" id="viewKultur">
+            Memuat kultur...
+          </p>
+        </div>
+
+        <div class="mb-10">
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Galeri Perusahaan</h2>
+          <div id="viewGaleriContainer" class="bg-gray-50 border border-gray-100 rounded-2xl p-4 min-h-[200px] flex items-center justify-center">
+            <span class="text-sm text-gray-400" id="viewGaleriText">Belum ada foto galeri yang ditambahkan</span>
+            <img id="viewGaleriImage" src="" alt="Galeri Perusahaan" class="hidden max-h-[400px] w-auto rounded-xl shadow-sm object-cover">
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full lg:w-1/3">
+        <div class="info-card mb-6 shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-900 mb-5">Informasi Perusahaan</h3>
+          
+          <div class="space-y-5">
+            <div class="flex gap-3"><i class="ri-building-line text-teal-custom text-xl"></i><div><p class="text-xs font-bold text-gray-800">Nama Perusahaan</p><p class="text-xs text-gray-500" id="viewNama">-</p></div></div>
+            <div class="flex gap-3"><i class="ri-briefcase-line text-teal-custom text-xl"></i><div><p class="text-xs font-bold text-gray-800">Jenis Usaha</p><p class="text-xs text-gray-500" id="viewJenisUsaha">-</p></div></div>
+            <div class="flex gap-3"><i class="ri-group-line text-teal-custom text-xl"></i><div><p class="text-xs font-bold text-gray-800">Jumlah Pegawai</p><p class="text-xs text-gray-500" id="viewPegawai">-</p></div></div>
+            <div class="flex gap-3"><i class="ri-map-pin-line text-teal-custom text-xl"></i><div><p class="text-xs font-bold text-gray-800">Lokasi</p><p class="text-xs text-gray-500" id="viewLokasi">-</p></div></div>
+            <div class="flex gap-3"><i class="ri-phone-line text-teal-custom text-xl"></i><div><p class="text-xs font-bold text-gray-800">Kontak</p><p class="text-xs text-gray-500" id="viewKontak">-</p></div></div>
+            <div class="flex gap-3"><i class="ri-mail-line text-teal-custom text-xl"></i><div><p class="text-xs font-bold text-gray-800">Email</p><p class="text-xs text-gray-500" id="viewEmail">-</p></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get("id");
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    function getReadNotifs() {
+      return JSON.parse(localStorage.getItem("readNotifs")) || [];
+    }
+
+    async function loadNavbarData() {
+      if (!token) return;
+
+      try {
+        if (role === 'freelancer') {
+          const res = await fetch("/freelancer/profile", { headers: { "Authorization": "Bearer " + token } });
+          if (res.ok) {
+            const profile = await res.json();
+            const fullName = profile.nama || "User";
+            const firstName = fullName.split(' ')[0];
+            document.getElementById("userGreeting").innerText = `Hi, ${firstName}!`;
+            
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=2b9c96&color=fff`;
+            const profileImgElement = document.getElementById("profile_img");
+            
+            if (profile.foto_profil && profile.foto_profil !== "") {
+                profileImgElement.src = profile.foto_profil;
+                profileImgElement.onerror = function() {
+                    this.onerror = null;
+                    this.src = fallbackAvatar;
+                };
+            } else {
+                profileImgElement.src = fallbackAvatar;
+            }
+          }
+
+          const appRes = await fetch("/freelancer/applications", { headers: { "Authorization": "Bearer " + token } });
+          if (appRes.ok) {
+            const apps = await appRes.json();
+            const readNotifs = getReadNotifs();
+            
+            const unreadCount = apps.filter(app => {
+                const job = app.job || app.Job || {};
+                let isNotif = false;
+                
+                if (app.status === "accepted" || app.status === "rejected") {
+                    isNotif = true;
+                } else if (app.status === "pending" && (job.status === "dihapus" || job.status === "ditutup")) {
+                    isNotif = true;
+                }
+
+                if (isNotif && readNotifs.includes(app.id)) {
+                    isNotif = false;
+                }
+
+                return isNotif;
+            });
+
+            const badge = document.getElementById("notifBadge");
+            if (unreadCount.length > 0) {
+              badge.innerText = unreadCount.length;
+              badge.classList.remove("hidden");
+            } else {
+              badge.classList.add("hidden");
+            }
+          }
+        } else if (role === 'client') {
+          const res = await fetch("/client/profile", { headers: { "Authorization": "Bearer " + token } });
+          if (res.ok) {
+            const profile = await res.json();
+            const clientName = profile.nama_client || "Klien";
+            const firstName = clientName.split(' ')[0];
+            document.getElementById("userGreeting").innerText = `Hi, ${firstName}!`;
+            
+            const fallbackAvatarClient = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=2b9c96&color=fff`;
+            const profileImgElement = document.getElementById("profile_img");
+            
+            if (profile.foto_profil && profile.foto_profil !== "") {
+                profileImgElement.src = profile.foto_profil;
+                profileImgElement.onerror = function() {
+                    this.onerror = null;
+                    this.src = fallbackAvatarClient;
+                };
+            } else {
+                profileImgElement.src = fallbackAvatarClient;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Gagal meload data navbar:", err);
+      }
+    }
+    
+    function setActive(el) {
+      const links = document.querySelectorAll('.nav-link');
+
+      links.forEach(link => {
+        link.classList.remove('border-b-2', 'border-teal-500', 'text-white');
+        link.classList.add('text-gray-400');
+      });
+
+      el.classList.remove('text-gray-400');
+      el.classList.add('text-white', 'border-b-2', 'border-teal-500');
+    }
+
+    function setActiveByURL() {
+      const links = document.querySelectorAll('.nav-link');
+      const currentPath = window.location.pathname;
+
+      links.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          link.classList.add('border-b-2', 'border-teal-500', 'text-white');
+          link.classList.remove('text-gray-400');
+        } else {
+          link.classList.remove('border-b-2', 'border-teal-500', 'text-white');
+          link.classList.add('text-gray-400');
+        }
+      });
+    }
+
+    async function loadClientData() {
+      if (!clientId) {
+        document.getElementById("viewDeskripsi").innerText = "ID Perusahaan tidak ditemukan di URL.";
+        return;
+      }
+
+      try {
+        const headers = token ? { "Authorization": "Bearer " + token } : {};
+        const res = await fetch(`/clients/${clientId}`, { headers });
+
+        if (res.status === 403) {
+          document.body.innerHTML = `
+            <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
+              <i class="ri-user-unfollow-line text-7xl text-gray-300 mb-4 animate-pulse"></i>
+              <h1 class="text-2xl font-bold text-gray-800 mb-2">Profil Tidak Tersedia</h1>
+              <p class="text-sm text-gray-500 max-w-md">Akun perusahaan atau klien ini telah dinonaktifkan oleh sistem karena indikasi pelanggaran ketentuan layanan.</p>
+              <button onclick="goHome()" class="mt-6 bg-[#2b9c96] hover:bg-[#23827d] text-white font-bold py-2.5 px-6 rounded-xl transition text-sm">
+                <i class="ri-arrow-left-line mr-1"></i> Kembali ke Dashboard
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        if (!res.ok) {
+          document.getElementById("viewDeskripsi").innerText = "Perusahaan tidak ditemukan atau server error.";
+          return;
+        }
+
+        const data = await res.json();
+        const clientName = data.nama_client || "Klien";
+
+        document.getElementById("heroName").innerText = clientName;
+        
+        const fallbackHeroAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=2b9c96&color=fff`;
+        const heroAvatarElement = document.getElementById("heroAvatar");
+        
+        if (data.foto_profil && data.foto_profil !== "") {
+            heroAvatarElement.src = data.foto_profil;
+            heroAvatarElement.onerror = function() {
+                this.onerror = null;
+                this.src = fallbackHeroAvatar;
+            };
+        } else {
+            heroAvatarElement.src = fallbackHeroAvatar;
+        }
+
+        document.getElementById("viewNama").innerText = clientName;
+        document.getElementById("viewJenisUsaha").innerText = data.jenis_usaha || "-";
+        document.getElementById("viewPegawai").innerText = data.jumlah_pegawai ? `${data.jumlah_pegawai} Orang` : "-";
+        document.getElementById("viewLokasi").innerText = data.lokasi || "-";
+        document.getElementById("viewKontak").innerText = data.kontak || "-";
+        document.getElementById("viewEmail").innerText = data.email || "-";
+        
+        document.getElementById("viewDeskripsi").innerText = data.deskripsi || "Belum ada deskripsi perusahaan.";
+        document.getElementById("viewKultur").innerText = data.kultur_perusahaan || "Belum ada info kultur perusahaan.";
+
+        const galeriImage = document.getElementById("viewGaleriImage");
+        const galeriText = document.getElementById("viewGaleriText");
+        
+        if (data.galeri && data.galeri !== "") {
+          galeriImage.src = data.galeri;
+          galeriImage.classList.remove("hidden");
+          galeriText.classList.add("hidden");
+        } else {
+          galeriImage.classList.add("hidden");
+          galeriText.classList.remove("hidden");
+        }
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById("viewDeskripsi").innerText = "Gagal memuat data perusahaan.";
+      }
+    }
+
+    function goHome() {
+      if (role === "freelancer") window.location.href = "/freelancer";
+      else if (role === "client") window.location.href = "/client";
+      else window.location.href = "/guest"; 
+    }
+
+    function goProfile() {
+      if (role === "freelancer") window.location.href = "/freelancer/profile/view"
+      else if (role === "client") window.location.href = "/client/profile/view"
+    }
+
+    function goNotification() {
+      if (role === "freelancer") window.location.href = "/freelancer/notification"
+      else if (role === "client") window.location.href = "/client/notification"
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "/";
+    }
+
+    if (token) {
+      loadNavbarData();
+    }
+    loadClientData();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwayat Transaksi - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    .btn-teal { background-color: #2b9c96; color: white; transition: 0.2s; }
+    .btn-teal:hover { background-color: #23827d; }
+  </style>
+</head>
+<body>
+
+  <nav class="bg-black text-white px-8 py-4 flex justify-between items-center shadow-lg">
+    <a class="text-xl font-bold flex items-center gap-2" href="/client"><i class="ri-briefcase-4-line"></i> MariLancy</a>
+    <a href="/client/projects" class="text-sm text-gray-300 hover:text-white"><i class="ri-arrow-left-line"></i> Kembali ke Proyek</a>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Riwayat Transaksi</h2>
+      <div class="flex gap-2">
+        <button onclick="exportExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+            <i class="ri-file-excel-2-line"></i> Export Excel
+        </button>
+        <button onclick="exportPDF()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+            <i class="ri-file-pdf-line"></i> Export PDF
+        </button>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <table class="w-full text-sm text-left" id="txTable">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs border-b border-gray-100">
+        <tr>
+            <th class="p-4 w-1/4">Waktu</th>
+            <th class="p-4">Proyek</th>
+            <th class="p-4">Freelancer</th>
+            <th class="p-4">Nominal</th>
+            <th class="p-4">Status</th>
+        </tr>
+        </thead>
+        <tbody id="txBody" class="divide-y divide-gray-100">
+          <tr><td colspan="5" class="p-10 text-center text-gray-500">Memuat transaksi...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    async function loadTransactions() {
+        const res = await fetch("/api/projects/transactions", { 
+            headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
+        const tbody = document.getElementById("txBody");
+        
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-gray-500">Belum ada transaksi.</td></tr>';
+            return;
+        }
+
+        const latestTxIds = {};
+        data.forEach(t => {
+            if (!latestTxIds[t.project_id] || t.id > latestTxIds[t.project_id]) {
+                latestTxIds[t.project_id] = t.id;
+            }
+        });
+
+        tbody.innerHTML = data.map(t => {
+            const isLatest = t.id === latestTxIds[t.project_id];
+            
+            const dateObj = new Date(t.created_at);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const fullDate = dateObj.toLocaleDateString('id-ID', options);
+            const timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+            return `
+            <tr class="hover:bg-gray-50/50 transition">
+                <td class="p-4">
+                    <span class="block font-medium text-gray-800">${fullDate}</span>
+                    <span class="block text-xs text-gray-500 mt-0.5">Pukul ${timeStr}</span>
+                </td>
+                <td class="p-4 font-medium">${t.project.job.judul}</td>
+                <td class="p-4">${t.project.freelancer.nama}</td>
+                <td class="p-4 font-bold text-teal-600">Rp ${t.nominal.toLocaleString('id-ID')}</td>
+                <td class="p-4">
+                    <select 
+                        onchange="updateStatus(${t.id}, this.value)" 
+                        ${!isLatest ? 'disabled' : ''} 
+                        class="bg-gray-50 border border-gray-300 rounded-lg p-1.5 text-xs ${!isLatest ? 'opacity-50 cursor-not-allowed' : 'focus:ring-teal-500'}">
+                        
+                        <option ${t.status=='pending'?'selected':''} value="pending">Menunggu Konfirmasi</option>
+                        <option ${t.status=='success'?'selected':''} value="success">Sudah Dibayar</option>
+                        <option ${t.status=='process'?'selected':''} value="process">Sedang Diproses</option>
+                        <option ${t.status=='rejected'?'selected':''} value="rejected">Ditolak</option>
+                    </select>
+                    ${!isLatest ? '<span class="block text-[9px] text-gray-400 mt-1.5 font-medium tracking-wide uppercase">Riwayat lama</span>' : ''}
+                </td>
+            </tr>
+            `;
+        }).join('');
+    }
+
+    async function updateStatus(id, status) {
+        const res = await fetch(`/api/projects/transactions/${id}/status`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', "Authorization": "Bearer " + token},
+            body: JSON.stringify({status})
+        });
+        if(res.ok) alert("Status berhasil diperbarui!");
+        else alert("Gagal memperbarui status.");
+    }
+
+    function getCleanTable() {
+        var originalTable = document.getElementById('txTable');
+        var cleanTable = originalTable.cloneNode(true);
+
+        var oldSpans = cleanTable.querySelectorAll('span.uppercase');
+        oldSpans.forEach(s => s.remove());
+
+        var selects = cleanTable.getElementsByTagName('select');
+        for (var i = selects.length - 1; i >= 0; i--) {
+            var selectedText = selects[i].options[selects[i].selectedIndex].text;
+            var textNode = document.createTextNode(selectedText);
+            selects[i].parentNode.replaceChild(textNode, selects[i]);
+        }
+        return cleanTable;
+    }
+
+    function exportExcel() {
+        var cleanTable = getCleanTable();
+        var wb = XLSX.utils.table_to_book(cleanTable, {sheet: "Transaksi"});
+        XLSX.writeFile(wb, "Riwayat_Transaksi_MariLancy.xlsx");
+    }
+
+    function exportPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        var cleanTable = getCleanTable();
+        
+        doc.text("Riwayat Transaksi MariLancy", 14, 15);
+        doc.autoTable({ 
+            html: cleanTable,
+            startY: 20 
+        });
+        doc.save('Riwayat_Transaksi_MariLancy.pdf');
+    }
+
+    loadTransactions();
+  </script>
+</body>
+</html>

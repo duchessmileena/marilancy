@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pelamar Tersimpan - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    .text-teal-custom { color: #2b9c96; }
+    .bg-teal-custom { background-color: #2b9c96; }
+    .btn-teal { background-color: #2b9c96; color: white; transition: 0.2s; }
+    .btn-teal:hover { background-color: #23827d; }
+
+    .applicant-card {
+      background: #ffffff; border-radius: 16px; padding: 24px; margin-bottom: 20px;
+      border: 1px solid #f1f5f9; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.02); transition: 0.3s;
+    }
+    .applicant-card:hover { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06); border-color: #e2e8f0; }
+
+    select.status-dropdown {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z' fill='rgba(107,114,128,1)'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.7rem top 50%; background-size: 1rem auto; padding-right: 2.5rem;
+    }
+    select.status-pending { border: 1px solid #fef08a; background-color: #fef9c3; color: #a16207; }
+    select.status-accepted { border: 1px solid #bbf7d0; background-color: #dcfce7; color: #15803d; }
+    select.status-rejected { border: 1px solid #fecaca; background-color: #fee2e2; color: #b91c1c; }
+
+    .footer-dark { background-color: #000000; color: #e5e7eb; padding: 60px 40px 30px 40px; font-size: 14px; margin-top: 80px; }
+    .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid #1f2937; }
+    .footer-col h4 { color: white; font-weight: 600; font-size: 16px; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col ul li { margin-bottom: 12px; color: #9ca3af; cursor: pointer; transition: 0.2s; }
+    .footer-col ul li:hover { color: white; }
+    .newsletter-form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+    .newsletter-input { background-color: transparent; border: 1px solid #4b5563; color: white; padding: 12px 15px; border-radius: 8px; font-size: 13px; outline: none; }
+    .newsletter-input:focus { border-color: #2b9c96; }
+    .newsletter-btn { background-color: #2b9c96; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .newsletter-btn:hover { background-color: #23827d; }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 20px; display: flex; justify-content: space-between; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/client">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/client" onclick="goHome()" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/client#post-job" class="nav-link text-gray-400 hover:text-white">Posting Job</a>
+      <a href="/client/projects" class="nav-link text-gray-400 hover:text-white">Projects</a>
+      <a href="/chat" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-20 relative mt-16 mb-8">
+    <h1 class="text-4xl font-bold tracking-wide mb-3">Pelamar Tersimpan</h1>
+    <p class="text-gray-400 text-sm">Daftar kandidat terbaik pilihan Anda</p>
+    
+    <button onclick="goBack()" class="absolute left-8 top-32 text-gray-400 hover:text-white flex items-center gap-2 transition">
+      <i class="ri-arrow-left-line text-xl"></i> Kembali
+    </button>
+  </div>
+
+  <section class="max-w-5xl mx-auto px-4 pb-20">
+    <div class="flex justify-between items-center mb-8 border-b pb-4 border-gray-200">
+      <h2 class="text-xl font-bold text-gray-800" id="totalSavedText">Memuat Data...</h2>
+    </div>
+
+    <div id="savedApplicantList" class="flex flex-col gap-2"></div>
+  </section>
+
+  <footer class="footer-dark">
+    <div class="footer-container">
+      <div class="footer-col">
+        <a class="text-xl font-bold flex items-center gap-2 text-white mb-6" href="#"><i class="ri-briefcase-4-line text-2xl"></i> MariLancy</a>
+        <p class="text-gray-400 leading-relaxed max-w-xs">MariLancy adalah platform freelance yang menghubungkan mahasiswa dan talenta pemula dengan klien untuk mendapatkan pengalaman kerja nyata.</p>
+      </div>
+      <div class="footer-col"><h4>Tentang Kami</h4><ul><li>Tentang Platform</li><li>Tim Pengembang</li><li>Partners</li><li>Untuk Freelancer</li><li>Untuk Klien</li></ul></div>
+      <div class="footer-col"><h4>Kategori Proyek</h4><ul><li>Desain Grafis</li><li>Web Development</li><li>Content Writing</li><li>Social Media</li><li>Digital Marketing</li></ul></div>
+      <div class="footer-col">
+        <h4>Newsletter</h4>
+        <p class="text-gray-400 text-sm leading-relaxed">Dapatkan update proyek terbaru ke email kamu.</p>
+        <div class="newsletter-form"><input type="email" placeholder="Email Address" class="newsletter-input"><button class="newsletter-btn">Kirim</button></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MariLancy. All rights reserved.</p>
+      <div class="flex gap-6"><a href="#" class="hover:text-white transition">Kebijakan Privasi</a><a href="#" class="hover:text-white transition">Syarat & Ketentuan</a></div>
+    </div>
+  </footer>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Token kosong, silakan login ulang");
+      window.location.href = "/";
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const jobId = params.get("id");
+
+    if (!jobId) {
+      alert("Job ID tidak ditemukan di URL. Mengarahkan kembali ke dashboard.");
+      window.location.href = "/client";
+    }
+
+    function toggleDetails(appId) {
+      const detailsDiv = document.getElementById(`details-${appId}`);
+      const toggleBtn = document.getElementById(`toggleBtn-${appId}`);
+
+      if (detailsDiv.classList.contains("hidden")) {
+        detailsDiv.classList.remove("hidden");
+        toggleBtn.innerHTML = 'Hide Detail <i class="ri-arrow-up-s-line"></i>';
+      } else {
+        detailsDiv.classList.add("hidden");
+        toggleBtn.innerHTML = 'View Detail <i class="ri-arrow-down-s-line"></i>';
+      }
+    }
+
+    function removeSavedApplicant(appId) {
+      let saved = JSON.parse(localStorage.getItem("savedApplicantsData")) || [];
+      saved = saved.filter(item => item.id !== appId);
+      localStorage.setItem("savedApplicantsData", JSON.stringify(saved));
+      loadSavedApplicants();
+    }
+
+    function loadSavedApplicants() {
+        const savedData = JSON.parse(localStorage.getItem("savedApplicantsData")) || [];
+        
+        const filteredData = savedData.filter(app => String(app.job_id) === String(jobId));
+        
+        let html = "";
+
+        if (filteredData.length === 0) {
+            document.getElementById("totalSavedText").innerHTML = `Belum ada pelamar yang disimpan. <span class="text-sm font-normal text-gray-500 ml-2">(ID Proyek: ${jobId})</span>`;
+            document.getElementById("savedApplicantList").innerHTML = `
+                <div class="text-center py-20 bg-white rounded-2xl border border-gray-100">
+                    <i class="ri-bookmark-line text-4xl text-gray-300 mb-3 block"></i>
+                    <p class="text-gray-500 font-medium">Anda belum menyimpan pelamar ke dalam shortlist untuk proyek ini.</p>
+                </div>
+            `;
+            return;
+        }
+
+        document.getElementById("totalSavedText").innerHTML = `Total ${filteredData.length} Pelamar Disimpan <span class="text-sm font-normal text-gray-500 ml-2">(ID Proyek: ${jobId})</span>`;
+
+        filteredData.forEach(app => {
+            const f = app.freelancer || {}
+            const fallbackApplicantAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(f.nama || 'A')}&background=2b9c96&color=fff`;
+            const avatarUrl = f.foto_profil || fallbackApplicantAvatar;
+
+            let initialStatusClass = "status-pending"
+            if (app.status === "accepted") initialStatusClass = "status-accepted"
+            if (app.status === "rejected") initialStatusClass = "status-rejected"
+
+            const genderAge = [f.gender, f.age ? `${f.age} Tahun` : null].filter(Boolean).join(" • ");
+            const salary = f.monthly_salary_exp || "-";
+            const bio = f.bio || "Belum ada deskripsi profil.";
+
+            let skillsHtml = "";
+            if (f.skill) {
+                const skillArray = f.skill.split(",");
+                skillsHtml = skillArray.map(s => `<span class="bg-[#eaf6f4] text-[#2b9c96] px-2 py-1 rounded-md text-[10px] font-semibold border border-teal-100">${s.trim()}</span>`).join("");
+            } else {
+                skillsHtml = `<span class="text-xs text-gray-400 italic">Belum ada keahlian ditambahkan</span>`;
+            }
+
+            html += `
+                <div class="applicant-card flex flex-col md:flex-row gap-6 justify-between items-start relative">
+                  
+                  <div class="flex flex-col md:flex-row items-start gap-6 w-full">
+                    <img src="${avatarUrl}" onerror="this.onerror=null; this.src='${fallbackApplicantAvatar}';" alt="Avatar" class="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border border-gray-200 shadow-sm flex-shrink-0">
+                    
+                    <div class="flex-1 w-full pr-12 md:pr-0">
+                      
+                      <div class="flex flex-wrap items-center gap-2 mb-1 justify-between w-full">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3 class="text-lg font-bold text-gray-900">${f.nama || "Unknown Freelancer"}</h3>
+                            ${genderAge ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">${genderAge}</span>` : ""}
+                        </div>
+
+                        <button onclick="removeSavedApplicant(${app.id})" title="Hapus dari Tersimpan" class="group absolute top-6 right-6 md:static md:ml-auto">
+                            <i class="ri-bookmark-fill text-teal-600 text-2xl group-hover:text-red-500 transition"></i>
+                        </button>
+                      </div>
+
+                      <p class="text-sm text-teal-custom font-medium">${f.job_interest || "Freelancer"}</p>
+
+                      <button id="toggleBtn-${app.id}" onclick="toggleDetails(${app.id})" class="text-xs text-[#2b9c96] hover:text-[#23827d] font-bold mt-3 flex items-center gap-1 transition">
+                        View Detail <i class="ri-arrow-down-s-line"></i>
+                      </button>
+                      
+                      <div id="details-${app.id}" class="hidden mt-4 pt-4 border-t border-gray-100 transition-all w-full">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-2 gap-x-4 text-xs text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                          <span class="flex items-center gap-1.5 truncate"><i class="ri-mail-line text-gray-400 text-sm"></i> ${f.email || "-"}</span>
+                          <span class="flex items-center gap-1.5 truncate"><i class="ri-map-pin-line text-gray-400 text-sm"></i> ${f.location || "-"}</span>
+                          <span class="flex items-center gap-1.5 truncate"><i class="ri-graduation-cap-line text-gray-400 text-sm"></i> ${f.education_level || "-"}</span>
+                          <span class="flex items-center gap-1.5"><i class="ri-award-line text-gray-400 text-sm"></i> Exp: ${f.years_of_experience || 0} Tahun</span>
+                          <span class="flex items-center gap-1.5 col-span-1 sm:col-span-2 lg:col-span-1 truncate"><i class="ri-wallet-3-line text-gray-400 text-sm"></i> Gaji: Rp ${salary}</span>
+                        </div>
+
+                        <div class="mb-3">
+                          <p class="text-xs font-semibold text-gray-800 mb-1">Tentang Saya:</p>
+                          <p class="text-xs text-gray-600 leading-relaxed">${bio}</p>
+                        </div>
+
+                        <div class="mb-4">
+                          <p class="text-xs font-semibold text-gray-800 mb-1.5">Keahlian:</p>
+                          <div class="flex flex-wrap gap-1.5">
+                            ${skillsHtml}
+                          </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3 mt-4 text-xs font-semibold">
+                          ${f.resume ? `<a href="${f.resume}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg transition"><i class="ri-file-text-line"></i> Resume</a>` : ``}
+                          ${f.certificates ? `<a href="${f.certificates}" target="_blank" class="flex items-center gap-1 text-purple-600 hover:text-purple-800 bg-purple-50 px-3 py-1.5 rounded-lg transition"><i class="ri-medal-line"></i> Sertifikat</a>` : ""}
+                          ${f.attachments ? `<a href="${f.attachments}" target="_blank" class="flex items-center gap-1 text-orange-600 hover:text-orange-800 bg-orange-50 px-3 py-1.5 rounded-lg transition"><i class="ri-attachment-2"></i> Portofolio</a>` : ""}
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="w-full md:w-auto border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 flex flex-col items-start md:items-end flex-shrink-0">
+                    <label class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">Status Pelamar</label>
+                    <select id="statusSelect_${app.id}" onchange="updateStatus(${app.id}, this)" class="status-dropdown ${initialStatusClass} px-4 py-2 rounded-lg text-sm font-bold cursor-pointer outline-none w-full md:w-40 transition-colors">
+                      <option value="pending" ${app.status === "pending" ? "selected" : ""} class="bg-white text-gray-800">Menunggu</option>
+                      <option value="accepted" ${app.status === "accepted" ? "selected" : ""} class="bg-white text-gray-800">Terima Pelamar</option>
+                      <option value="rejected" ${app.status === "rejected" ? "selected" : ""} class="bg-white text-gray-800">Tolak Pelamar</option>
+                    </select>
+                  </div>
+
+                </div>
+            `;
+        });
+
+        document.getElementById("savedApplicantList").innerHTML = html;
+    }
+
+    async function updateStatus(appId, selectElement) {
+      const newStatus = selectElement.value;
+      try {
+        const res = await fetch("/client/application/status", {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ application_id: appId, status: newStatus })
+        })
+
+        if(res.ok) {
+          selectElement.classList.remove("status-pending", "status-accepted", "status-rejected")
+          if(newStatus === "pending") selectElement.classList.add("status-pending")
+          else if(newStatus === "accepted") selectElement.classList.add("status-accepted")
+          else if(newStatus === "rejected") selectElement.classList.add("status-rejected")
+
+          const originalText = selectElement.options[selectElement.selectedIndex].text;
+          selectElement.options[selectElement.selectedIndex].text = "Tersimpan ✅";
+
+          let saved = JSON.parse(localStorage.getItem("savedApplicantsData")) || [];
+          const index = saved.findIndex(item => item.id === appId);
+          if (index > -1) {
+              saved[index].status = newStatus;
+              localStorage.setItem("savedApplicantsData", JSON.stringify(saved));
+          }
+
+          setTimeout(() => { selectElement.options[selectElement.selectedIndex].text = originalText; }, 1500)
+        } else {
+          alert("Gagal memperbarui status.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan jaringan.");
+      }
+    }
+
+    function goHome() { window.location.href = "/client"; }
+    function goBack() { window.history.back(); }
+    function logout() { localStorage.clear(); window.location.href = "/"; }
+
+    loadSavedApplicants();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="stylesheet" href="/static/css/style.css?v=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marilancy - Dashboard Guest</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'poppins', sans-serif;
+      background-color: #f5f7fa;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #000000;
+      color: white;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+    .navbar-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 20px; 
+    }
+    
+    .btn-register {
+      background-color: #14b8a6;
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .hero-section {
+    text-align: center;
+    padding: 120px 20px 100px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+    color: white;
+    }
+
+    .hero-title {
+    font-size: 52px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    }
+
+    .hero-subtitle {
+    font-size: 16px;
+    color: #d1d5db;
+    margin-bottom: 50px;
+    font-weight: 400;
+    }
+
+    .search-bar {
+    display: flex;
+    background: white;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 0 auto 70px auto;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-input-wrapper {
+    flex: 2;
+    padding: 5px 25px;
+    }
+
+    .search-input-wrapper input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    }
+
+    .search-divider {
+    width: 1px;
+    height: 40px;
+    background: #e2e8f0;
+    }
+
+    .search-select-wrapper {
+    flex: 1.5;
+    padding: 5px 25px;
+    position: relative;
+    }
+
+    .search-select-wrapper select {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    color: #6b7280;
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    }
+
+    .select-icon {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+    }
+
+    .search-btn {
+    background-color: #38a3a5;
+    color: white;
+    border: none;
+    padding: 22px 35px;
+    border-radius: 0 12px 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.3s;
+    white-space: nowrap;
+    }
+
+    .search-btn:hover {
+    background-color: #2c7a7b;
+    }
+
+    .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    flex-wrap: wrap;
+    }
+
+    .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+    }
+
+    .stat-icon {
+    width: 55px;
+    height: 55px;
+    background-color: #2c6e6b; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #38a3a5; 
+    }
+
+    .stat-info h4 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: white;
+    }
+
+    .stat-info p {
+    font-size: 14px;
+    color: #d1d5db;
+    margin: 0;
+    }
+
+    .joblist-section {
+      padding: 80px 20px;
+      background-color: #f8fafc; 
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .joblist-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .joblist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 30px;
+    }
+
+    .header-text h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 5px 0;
+    }
+
+    .header-text p {
+      font-size: 14px;
+      color: #4b5563;
+      margin: 0;
+    }
+
+    .view-all-link {
+      color: #38a3a5;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: underline;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    .view-all-link:hover {
+      color: #2c7a7b;
+    }
+
+    .job-card-modern {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #f3f4f6; 
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); 
+      display: flex;
+      flex-direction: column;
+      gap: 18px; 
+      transition: 0.3s;
+    }
+
+    .job-card-modern:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+      border-color: #e5e7eb;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-badge {
+      background-color: #eaf6f4;
+      color: #38a3a5;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .card-bookmark {
+      color: #9ca3af;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .card-bookmark:hover {
+      color: #111827;
+    }
+
+    .card-middle {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #f3f4f6;
+    }
+
+    .card-info h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 4px 0;
+    }
+
+    .card-info p {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 5px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .card-tags span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    .card-tags i {
+      color: #38a3a5;
+      font-size: 18px;
+    }
+
+    .card-btn {
+      background-color: #38a3a5;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .card-btn:hover {
+      background-color: #2c7a7b;
+    }
+    .projectcon {
+        background-color: #eaf6f4;
+        padding: 60px 20px;
+        font-family: 'Poppins', sans-serif;
+        }
+
+        .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 25px;
+        }
+
+        .category-card {
+        background: #f8f9f9;
+        padding: 30px 20px;
+        border-radius: 16px;
+        text-align: center;
+        transition: 0.3s;
+        cursor: pointer;
+        }
+
+        .category-card.hidden-category {
+        display: none;
+        }
+
+        .category-card:hover {
+        transform: translateY(-5px);
+        background: white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .category-card .icon {
+        font-size: 40px;
+        color: #14b8a6;
+        margin-bottom: 15px;
+        }
+
+        .category-card h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        }
+
+        .category-card span {
+        font-size: 12px;
+        background: #d1fae5;
+        color: #047857;
+        padding: 5px 10px;
+        border-radius: 999px;
+        }
+
+        .btn-view-all-category {
+          margin-top: 30px;
+          background-color: transparent;
+          color: #14b8a6;
+          border: 2px solid #14b8a6;
+          padding: 10px 24px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        .btn-view-all-category:hover {
+          background-color: #14b8a6;
+          color: white;
+        }
+
+    .job-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .job-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .job-company {
+      color: gray;
+      margin-bottom: 10px;
+    }
+
+    .job-info {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    .btn-detail {
+      background-color: #14b8a6;
+      color: white;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-detail:hover {
+      background-color: #0d9488;
+    }
+    .career-section {
+  background: #f5f7fa;
+  padding: 60px 20px;
+}
+
+.career-container {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.career-image {
+  width: 400px;
+  height: 300px;
+  background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f') center/cover;
+  border-radius: 20px;
+}
+
+.career-content h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.career-content p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.career-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.btn-primary {
+  background: #14b8a6;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+}
+
+.btn-primary:hover {
+  background: #0d9488;
+}
+
+.career-buttons a {
+  color: #14b8a6;
+  text-decoration: underline;
+}
+
+.career-stats {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 50px;
+}
+
+.career-stats h3 {
+  color: #14b8a6;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.career-stats p {
+  font-size: 14px;
+  color: #555;
+}
+
+
+.career-banner {
+  max-width: 1100px;
+  margin: auto;
+  background: black;
+  color: white;
+  padding: 40px;
+  border-radius: 20px;
+  background-image: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf');
+  background-size: cover;
+  background-position: right;
+}
+
+.banner-text {
+  max-width: 400px;
+}
+
+.banner-text h2 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.banner-text p {
+  font-size: 14px;
+  margin: 10px 0 20px;
+}
+
+.job-item {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.job-item:hover {
+  transform: translateY(-3px);
+}
+
+.job-left {
+  display: flex;
+  gap: 15px;
+}
+
+.job-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #e6fffa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #14b8a6;
+}
+
+.job-main h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.job-main p {
+  font-size: 13px;
+  color: #777;
+  margin: 3px 0 10px;
+}
+
+.job-tags {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: #555;
+  flex-wrap: wrap;
+}
+
+.job-tags span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.job-right {
+  text-align: right;
+}
+
+.badge-time {
+  font-size: 11px;
+  background: #e6fffa;
+  color: #0f766e;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.btn-detail-modern {
+  background: #14b8a6;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.btn-detail-modern:hover {
+  background: #0d9488;
+}
+
+
+.review-section {
+  background-color: #eff6f6; 
+  padding: 80px 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+    .footer-dark {
+      background-color: #000000;
+      color: #e5e7eb;
+      padding: 60px 40px 30px 40px;
+      font-size: 14px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .footer-col h4 {
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 12px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .footer-col ul li:hover {
+      color: white;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .newsletter-input {
+      background-color: transparent;
+      border: 1px solid #4b5563;
+      color: white;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .newsletter-input:focus {
+      border-color: #2b9c96;
+    }
+
+    .newsletter-btn {
+      background-color: #2b9c96;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .newsletter-btn:hover {
+      background-color: #23827d;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+.review-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.review-header h2 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.review-header p {
+  font-size: 15px;
+  color: #4b5563;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.review-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.stars {
+  color: #fbbf24; 
+  font-size: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  gap: 5px;
+}
+
+.review-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #111827;
+  line-height: 1.4;
+}
+
+.review-card > p {
+  font-size: 14px;
+  color: #4b5563;
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  flex-grow: 1; 
+}
+
+.quote-icon {
+  position: absolute;
+  right: 30px;
+  bottom: 45px;
+  font-size: 45px;
+  color: #38a3a5;
+  opacity: 0.9;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto;
+}
+
+.user-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #e5e7eb;
+}
+
+.user-text h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  color: #111827;
+}
+
+.user-text span {
+  font-size: 13px;
+  color: #9ca3af;
+}
+  </style>
+</head>
+<body>
+  <nav class="navbar-custom bg-black">
+    <div class="navbar-inner flex justify-between items-center py-4 px-10 text-white">
+        <a class="logo font-bold text-xl flex items-center gap-2" href="#"><i class="ri-briefcase-4-line"></i> MariLancy</a>
+        
+        <div class="nav-menu" id="navbarNav">
+        <ul class="flex gap-6 mb-0">
+            <li><a class="nav-link-underline text-white font-semibold" href="/guest">Dashboard</a></li>
+            <li><a class="nav-link-underline text-gray-400 hover:text-white transition" href="#joblist">Projects</a></li>
+        </ul>
+        </div>
+
+        <div class="navbar-right flex items-center gap-6">
+        <a href="/login" class="text-white hover:text-teal-400 transition">Login</a>
+        <a href="/register" class="btn-register text-white hover:bg-teal-600 transition">Register</a>
+        </div>
+    </div>
+  </nav>
+
+  <div class="hero-section">
+  <h1 class="hero-title">Temukan Proyek Freelance<br>Pertamamu!</h1>
+  <p class="hero-subtitle">Menghubungkan talenta muda dengan peluang kerja nyata untuk membangun pengalaman dan portofolio.</p>
+
+  <div class="search-bar">
+    <div class="search-input-wrapper">
+      <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="Cari Proyek atau Skill">
+    </div>
+    <div class="search-divider"></div>
+    <div class="search-select-wrapper">
+      <select id="locationSelect" onchange="applyFilters()">
+        <option value="" selected>Semua Lokasi</option>
+        <option value="Aceh">Aceh</option>
+        <option value="Bali">Bali</option>
+        <option value="Banten">Banten</option>
+        <option value="Bengkulu">Bengkulu</option>
+        <option value="Daerah Istimewa Yogyakarta">Daerah Istimewa Yogyakarta</option>
+        <option value="Gorontalo">Gorontalo</option>
+        <option value="Jakarta Barat">Jakarta Barat</option>
+        <option value="Jakarta Pusat">Jakarta Pusat</option>
+        <option value="Jakarta Selatan">Jakarta Selatan</option>
+        <option value="Jakarta Timur">Jakarta Timur</option>
+        <option value="Jakarta Utara">Jakarta Utara</option>
+        <option value="Jambi">Jambi</option>
+        <option value="Jawa Barat">Jawa Barat</option>
+        <option value="Jawa Tengah">Jawa Tengah</option>
+        <option value="Jawa Timur">Jawa Timur</option>
+        <option value="Kalimantan Barat">Kalimantan Barat</option>
+        <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+        <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+        <option value="Kalimantan Timur">Kalimantan Timur</option>
+        <option value="Kalimantan Utara">Kalimantan Utara</option>
+        <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+        <option value="Kepulauan Riau">Kepulauan Riau</option>
+        <option value="Lampung">Lampung</option>
+        <option value="Maluku">Maluku</option>
+        <option value="Maluku Utara">Maluku Utara</option>
+        <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+        <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+        <option value="Papua">Papua</option>
+        <option value="Papua Barat">Papua Barat</option>
+        <option value="Riau">Riau</option>
+        <option value="Sulawesi Barat">Sulawesi Barat</option>
+        <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+        <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+        <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+        <option value="Sulawesi Utara">Sulawesi Utara</option>
+        <option value="Sumatera Barat">Sumatera Barat</option>
+        <option value="Sumatera Selatan">Sumatera Selatan</option>
+        <option value="Sumatera Utara">Sumatera Utara</option>
+      </select>
+      <i class="ri-arrow-down-s-line select-icon"></i>
+    </div>
+    <div class="search-divider"></div>
+    <div class="search-select-wrapper">
+      <select id="categorySelect" onchange="applyFilters()">
+        <option value="" selected>Semua Kategori</option>
+        <option value="Accounting">Accounting</option>
+        <option value="Administration">Administration</option>
+        <option value="Advertising">Advertising</option>
+        <option value="Architecture">Architecture</option>
+        <option value="Arts / Creative">Arts / Creative</option>
+        <option value="Banking / Finance">Banking / Finance</option>
+        <option value="Beauty / Personal Care">Beauty / Personal Care</option>
+        <option value="Business Development">Business Development</option>
+        <option value="Customer Service">Customer Service</option>
+        <option value="Construction">Construction</option>
+        <option value="Consulting">Consulting</option>
+        <option value="Design">Design</option>
+        <option value="Digital Marketing">Digital Marketing</option>
+        <option value="Education">Education</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Event Management">Event Management</option>
+        <option value="Food & Beverage">Food & Beverage</option>
+        <option value="General Management">General Management</option>
+        <option value="Graphic Design">Graphic Design</option>
+        <option value="Healthcare">Healthcare</option>
+        <option value="Hospitality / Hotel">Hospitality / Hotel</option>
+        <option value="Human Resources">Human Resources</option>
+        <option value="Information Technology">Information Technology</option>
+        <option value="Insurance">Insurance</option>
+        <option value="Journalism">Journalism</option>
+        <option value="Legal">Legal</option>
+        <option value="Logistics / Supply Chain">Logistics / Supply Chain</option>
+        <option value="Manufacturing">Manufacturing</option>
+        <option value="Marketing">Marketing</option>
+        <option value="Media / Communication">Media / Communication</option>
+        <option value="Merchandising">Merchandising</option>
+        <option value="NGO / Social Services">NGO / Social Services</option>
+        <option value="Operations">Operations</option>
+        <option value="Pharmaceutical">Pharmaceutical</option>
+        <option value="Product Management">Product Management</option>
+        <option value="Project Management">Project Management</option>
+        <option value="Public Relations">Public Relations</option>
+        <option value="Purchasing / Procurement">Purchasing / Procurement</option>
+        <option value="Quality Assurance">Quality Assurance</option>
+        <option value="Real Estate">Real Estate</option>
+        <option value="Research & Development">Research & Development</option>
+        <option value="Retail">Retail</option>
+        <option value="Sales">Sales</option>
+        <option value="Science">Science</option>
+        <option value="Security">Security</option>
+        <option value="Skilled Labor">Skilled Labor</option>
+        <option value="Social Media">Social Media</option>
+        <option value="Software Development">Software Development</option>
+        <option value="Strategy / Planning">Strategy / Planning</option>
+        <option value="Telecommunication">Telecommunication</option>
+        <option value="Training & Development">Training & Development</option>
+        <option value="Transportation">Transportation</option>
+        <option value="UI/UX Design">UI/UX Design</option>
+        <option value="Writing / Content Creator">Writing / Content Creator</option>
+      </select>
+      <i class="ri-arrow-down-s-line select-icon"></i>
+    </div>
+    <button class="search-btn" onclick="applyFilters()">
+      <i class="ri-search-line"></i> Cari Proyek
+    </button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-icon"><i class="ri-briefcase-line"></i></div>
+      <div class="stat-info">
+        <h4>25,850</h4>
+        <p>Proyek</p>
+      </div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon"><i class="ri-group-line"></i></div>
+      <div class="stat-info">
+        <h4>10,250</h4>
+        <p>Freelancer</p>
+      </div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon"><i class="ri-building-4-line"></i></div>
+      <div class="stat-info">
+        <h4>18,400</h4>
+        <p>Klien / UMKM</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <section class="joblist-section" id="joblist">
+    <div class="joblist-container">
+      
+      <div class="joblist-header">
+        <div class="header-text">
+          <h2>Proyek Freelance Terbaru</h2>
+          <p>Temukan proyek terbaru yang sesuai dengan skill dan mulai bangun pengalaman kerjamu</p>
+        </div>
+        <a id="btnViewAllJobs" onclick="showAllJobs()" class="view-all-link">View all</a>
+      </div>
+
+      <div id="jobList">
+        <div class="text-center py-10"><p class="text-gray-500">Memuat pekerjaan...</p></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="projectcon">
+    <div class="max-w-6xl mx-auto text-center">
+
+        <h2 style="font-size:32px; font-weight:700; margin-bottom:10px;">
+        Jelajahi Berdasarkan Kategori
+        </h2>
+
+        <p style="color:#666; margin-bottom:40px;">
+        Pilih kategori proyek sesuai minat dan keahlianmu untuk mulai bekerja
+        </p>
+
+        <div class="category-grid" id="categoryGrid">
+            <div class="category-card" onclick="selectCategory('Graphic Design')">
+                <i class="ri-palette-line icon"></i>
+                <h3>Desain Grafis</h3>
+                <span class="category-count" data-category="Graphic Design">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Video Editing')">
+                <i class="ri-video-line icon"></i>
+                <h3>Video Editing</h3>
+                <span class="category-count" data-category="Video Editing">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Digital Marketing')">
+                <i class="ri-megaphone-line icon"></i>
+                <h3>Digital Marketing</h3>
+                <span class="category-count" data-category="Digital Marketing">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Software Development')">
+                <i class="ri-code-line icon"></i>
+                <h3>Web Development</h3>
+                <span class="category-count" data-category="Software Development">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('UI/UX Design')">
+                <i class="ri-layout-4-line icon"></i>
+                <h3>UI/UX Design</h3>
+                <span class="category-count" data-category="UI/UX Design">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Writing / Content Creator')">
+                <i class="ri-article-line icon"></i>
+                <h3>Content Writing</h3>
+                <span class="category-count" data-category="Writing / Content Creator">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Administration')">
+                <i class="ri-database-2-line icon"></i>
+                <h3>Data Entry & Admin</h3>
+                <span class="category-count" data-category="Administration">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Social Media')">
+                <i class="ri-share-forward-line icon"></i>
+                <h3>Social Media</h3>
+                <span class="category-count" data-category="Social Media">0 jobs</span>
+            </div>
+
+            <div class="category-card" onclick="selectCategory('Accounting')">
+                <i class="ri-calculator-line icon"></i>
+                <h3>Accounting</h3>
+                <span class="category-count" data-category="Accounting">0 jobs</span>
+            </div>
+            <div class="category-card" onclick="selectCategory('Advertising')">
+                <i class="ri-advertisement-line icon"></i>
+                <h3>Advertising</h3>
+                <span class="category-count" data-category="Advertising">0 jobs</span>
+            </div>
+            <div class="category-card" onclick="selectCategory('Architecture')">
+                <i class="ri-building-line icon"></i>
+                <h3>Architecture</h3>
+                <span class="category-count" data-category="Architecture">0 jobs</span>
+            </div>
+            <div class="category-card" onclick="selectCategory('Arts / Creative')">
+                <i class="ri-brush-line icon"></i>
+                <h3>Arts / Creative</h3>
+                <span class="category-count" data-category="Arts / Creative">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Banking / Finance')">
+                <i class="ri-bank-line icon"></i>
+                <h3>Banking / Finance</h3>
+                <span class="category-count" data-category="Banking / Finance">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Beauty / Personal Care')">
+                <i class="ri-sparkling-line icon"></i>
+                <h3>Beauty / Personal Care</h3>
+                <span class="category-count" data-category="Beauty / Personal Care">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Business Development')">
+                <i class="ri-briefcase-3-line icon"></i>
+                <h3>Business Development</h3>
+                <span class="category-count" data-category="Business Development">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Customer Service')">
+                <i class="ri-customer-service-2-line icon"></i>
+                <h3>Customer Service</h3>
+                <span class="category-count" data-category="Customer Service">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Construction')">
+                <i class="ri-hammer-line icon"></i>
+                <h3>Construction</h3>
+                <span class="category-count" data-category="Construction">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Consulting')">
+                <i class="ri-chat-3-line icon"></i>
+                <h3>Consulting</h3>
+                <span class="category-count" data-category="Consulting">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Education')">
+                <i class="ri-book-read-line icon"></i>
+                <h3>Education</h3>
+                <span class="category-count" data-category="Education">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Engineering')">
+                <i class="ri-settings-4-line icon"></i>
+                <h3>Engineering</h3>
+                <span class="category-count" data-category="Engineering">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Entertainment')">
+                <i class="ri-film-line icon"></i>
+                <h3>Entertainment</h3>
+                <span class="category-count" data-category="Entertainment">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Event Management')">
+                <i class="ri-calendar-event-line icon"></i>
+                <h3>Event Management</h3>
+                <span class="category-count" data-category="Event Management">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Food & Beverage')">
+                <i class="ri-restaurant-line icon"></i>
+                <h3>Food & Beverage</h3>
+                <span class="category-count" data-category="Food & Beverage">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('General Management')">
+                <i class="ri-team-line icon"></i>
+                <h3>General Management</h3>
+                <span class="category-count" data-category="General Management">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Healthcare')">
+                <i class="ri-heart-pulse-line icon"></i>
+                <h3>Healthcare</h3>
+                <span class="category-count" data-category="Healthcare">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Hospitality / Hotel')">
+                <i class="ri-hotel-line icon"></i>
+                <h3>Hospitality / Hotel</h3>
+                <span class="category-count" data-category="Hospitality / Hotel">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Human Resources')">
+                <i class="ri-user-search-line icon"></i>
+                <h3>Human Resources</h3>
+                <span class="category-count" data-category="Human Resources">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Information Technology')">
+                <i class="ri-macbook-line icon"></i>
+                <h3>Information Technology</h3>
+                <span class="category-count" data-category="Information Technology">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Insurance')">
+                <i class="ri-shield-check-line icon"></i>
+                <h3>Insurance</h3>
+                <span class="category-count" data-category="Insurance">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Journalism')">
+                <i class="ri-newspaper-line icon"></i>
+                <h3>Journalism</h3>
+                <span class="category-count" data-category="Journalism">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Legal')">
+                <i class="ri-scales-3-line icon"></i>
+                <h3>Legal</h3>
+                <span class="category-count" data-category="Legal">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Logistics / Supply Chain')">
+                <i class="ri-truck-line icon"></i>
+                <h3>Logistics / Supply Chain</h3>
+                <span class="category-count" data-category="Logistics / Supply Chain">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Manufacturing')">
+                <i class="ri-factory-line icon"></i>
+                <h3>Manufacturing</h3>
+                <span class="category-count" data-category="Manufacturing">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Media / Communication')">
+                <i class="ri-broadcast-line icon"></i>
+                <h3>Media / Communication</h3>
+                <span class="category-count" data-category="Media / Communication">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Merchandising')">
+                <i class="ri-store-2-line icon"></i>
+                <h3>Merchandising</h3>
+                <span class="category-count" data-category="Merchandising">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('NGO / Social Services')">
+                <i class="ri-earth-line icon"></i>
+                <h3>NGO / Social Services</h3>
+                <span class="category-count" data-category="NGO / Social Services">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Operations')">
+                <i class="ri-list-settings-line icon"></i>
+                <h3>Operations</h3>
+                <span class="category-count" data-category="Operations">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Pharmaceutical')">
+                <i class="ri-capsule-line icon"></i>
+                <h3>Pharmaceutical</h3>
+                <span class="category-count" data-category="Pharmaceutical">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Product Management')">
+                <i class="ri-product-hunt-line icon"></i>
+                <h3>Product Management</h3>
+                <span class="category-count" data-category="Product Management">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Project Management')">
+                <i class="ri-task-line icon"></i>
+                <h3>Project Management</h3>
+                <span class="category-count" data-category="Project Management">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Public Relations')">
+                <i class="ri-mic-line icon"></i>
+                <h3>Public Relations</h3>
+                <span class="category-count" data-category="Public Relations">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Purchasing / Procurement')">
+                <i class="ri-shopping-cart-2-line icon"></i>
+                <h3>Purchasing / Procurement</h3>
+                <span class="category-count" data-category="Purchasing / Procurement">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Quality Assurance')">
+                <i class="ri-checkbox-circle-line icon"></i>
+                <h3>Quality Assurance</h3>
+                <span class="category-count" data-category="Quality Assurance">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Real Estate')">
+                <i class="ri-home-smile-line icon"></i>
+                <h3>Real Estate</h3>
+                <span class="category-count" data-category="Real Estate">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Research & Development')">
+                <i class="ri-flask-line icon"></i>
+                <h3>Research & Development</h3>
+                <span class="category-count" data-category="Research & Development">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Retail')">
+                <i class="ri-store-line icon"></i>
+                <h3>Retail</h3>
+                <span class="category-count" data-category="Retail">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Sales')">
+                <i class="ri-bar-chart-box-line icon"></i>
+                <h3>Sales</h3>
+                <span class="category-count" data-category="Sales">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Science')">
+                <i class="ri-microscope-line icon"></i>
+                <h3>Science</h3>
+                <span class="category-count" data-category="Science">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Security')">
+                <i class="ri-shield-user-line icon"></i>
+                <h3>Security</h3>
+                <span class="category-count" data-category="Security">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Skilled Labor')">
+                <i class="ri-tools-line icon"></i>
+                <h3>Skilled Labor</h3>
+                <span class="category-count" data-category="Skilled Labor">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Strategy / Planning')">
+                <i class="ri-lightbulb-line icon"></i>
+                <h3>Strategy / Planning</h3>
+                <span class="category-count" data-category="Strategy / Planning">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Telecommunication')">
+                <i class="ri-smartphone-line icon"></i>
+                <h3>Telecommunication</h3>
+                <span class="category-count" data-category="Telecommunication">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Training & Development')">
+                <i class="ri-presentation-line icon"></i>
+                <h3>Training & Development</h3>
+                <span class="category-count" data-category="Training & Development">0 jobs</span>
+            </div>
+            <div class="category-card hidden-category" onclick="selectCategory('Transportation')">
+                <i class="ri-bus-line icon"></i>
+                <h3>Transportation</h3>
+                <span class="category-count" data-category="Transportation">0 jobs</span>
+            </div>
+        </div>
+        
+        <button id="btnViewAllCategories" class="btn-view-all-category" onclick="showAllCategories()">Tampilkan Semua Kategori</button>
+
+    </div>
+  </section>
+
+  <section class="career-section">
+
+  <div class="career-container">
+
+    <div class="career-image"></div>
+
+    <div class="career-content">
+      <h2>Mulai Karier Freelance-mu Sekarang</h2>
+
+      <p>
+        Dapatkan pengalaman kerja nyata melalui proyek freelance dari klien terpercaya.
+        Bangun portofolio, tingkatkan skill, dan mulai perjalanan kariermu bersama MariLancy.
+      </p>
+
+      <div class="career-buttons">
+        <button class="btn-primary" onclick="document.getElementById('joblist').scrollIntoView({behavior: 'smooth'})">Cari Proyek</button>
+        <a href="#">Pelajari Lebih Lanjut</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="career-stats">
+
+    <div>
+      <h3>12k+</h3>
+      <p><b>Klien Terdaftar</b><br>UMKM & startup yang membuka proyek</p>
+    </div>
+
+    <div>
+      <h3>20k+</h3>
+      <p><b>Freelancer Aktif</b><br>Siap mengerjakan proyek</p>
+    </div>
+
+    <div>
+      <h3>18k+</h3>
+      <p><b>Proyek Tersedia</b><br>Untuk pengalaman & portfolio</p>
+    </div>
+
+  </div>
+
+  <div class="career-banner">
+    <div class="banner-text">
+      <h2>Bangun Kariermu Lewat Proyek Nyata</h2>
+      <p>Mulai dari proyek kecil, tingkatkan skill dan bangun portfolio.</p>
+      <a class="btn-primary" href="#" onclick="document.getElementById('joblist').scrollIntoView({behavior: 'smooth'})">Cari Proyek</a>
+    </div>
+  </div>
+
+</section>
+<section class="review-section">
+    <div class="review-header">
+      <h2>Cerita dari Pengguna MariLancy</h2>
+      <p>Pengalaman mahasiswa dan klien dalam menggunakan platform untuk menyelesaikan proyek freelance.</p>
+    </div>
+
+    <div class="review-grid">
+      
+      <div class="review-card">
+        <div class="stars">
+          <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+        </div>
+        <h3>Sangat Membantu untuk Pemula</h3>
+        <p>"Saya bisa mendapatkan pengalaman kerja pertama melalui proyek kecil di MariLancy. Sangat cocok untuk mahasiswa seperti saya."</p>
+        <i class="ri-double-quotes-r quote-icon"></i>
+        <div class="user-info">
+          <img src="https://ui-avatars.com/api/?name=Muhammad+Hario&background=d1d5db&color=374151" alt="User">
+          <div class="user-text">
+            <h4>Muhammad Hario</h4>
+            <span>Freelancer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">
+          <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+        </div>
+        <h3>Platform Mudah Digunakan</h3>
+        <p>"Proses mencari proyek dan mengajukan bidding sangat mudah. Saya jadi lebih percaya diri untuk mulai freelance."</p>
+        <i class="ri-double-quotes-r quote-icon"></i>
+        <div class="user-info">
+          <img src="https://ui-avatars.com/api/?name=Kristin+Hester&background=d1d5db&color=374151" alt="User">
+          <div class="user-text">
+            <h4>Kristin Hester</h4>
+            <span>Freelancer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">
+          <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+        </div>
+        <h3>Membantu UMKM Mendapat Freelancer</h3>
+        <p>"Saya bisa menemukan freelancer dengan cepat untuk membantu bisnis saya. Hasilnya juga memuaskan."</p>
+        <i class="ri-double-quotes-r quote-icon"></i>
+        <div class="user-info">
+          <img src="https://ui-avatars.com/api/?name=Zion+Cisneros&background=d1d5db&color=374151" alt="User">
+          <div class="user-text">
+            <h4>Zion Cisneros</h4>
+            <span>Klien</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    let globalJobs = []; 
+    let filteredJobsData = [];
+    let isShowingAllJobs = false;
+
+    async function loadJobs() {
+        try {
+            const res = await fetch("/jobs");
+            const jobs = await res.json();
+
+            globalJobs = jobs.filter(job => job.status !== "dihapus");
+            
+            updateCategoryCounts(globalJobs);
+            applyFilters();
+            
+        } catch (err) {
+            console.error("Gagal load jobs:", err);
+            document.getElementById("jobList").innerHTML = `<div class="text-center py-10"><p class="text-red-500">Gagal memuat pekerjaan. Silakan coba lagi.</p></div>`;
+        }
+    }
+
+    function updateCategoryCounts(jobs) {
+        let counts = {};
+
+        jobs.forEach(job => {
+            if (job.kategori) {
+                let cat = job.kategori.trim(); 
+                counts[cat] = (counts[cat] || 0) + 1;
+            }
+        });
+
+        document.querySelectorAll('.category-count').forEach(el => {
+            let catName = el.getAttribute('data-category');
+            
+            let total = 0;
+            Object.keys(counts).forEach(key => {
+                if (key.toLowerCase() === catName.toLowerCase()) {
+                    total += counts[key];
+                }
+            });
+
+            el.innerText = total + " jobs";
+        });
+    }
+
+    function applyFilters() {
+        isShowingAllJobs = false; 
+        document.getElementById('btnViewAllJobs').style.display = 'block';
+
+        const searchVal = document.getElementById("searchInput").value.toLowerCase();
+        const locationVal = document.getElementById("locationSelect").value;
+        const categoryVal = document.getElementById("categorySelect").value;
+
+        filteredJobsData = globalJobs.filter(job => {
+            const matchSearch = 
+                (job.judul && job.judul.toLowerCase().includes(searchVal)) ||
+                (job.kategori && job.kategori.toLowerCase().includes(searchVal)) ||
+                (job.client && job.client.nama_client && job.client.nama_client.toLowerCase().includes(searchVal));
+
+            const matchLocation = !locationVal || locationVal === "Semua Lokasi" || (job.lokasi_pelaksanaan && job.lokasi_pelaksanaan.toLowerCase().includes(locationVal.toLowerCase()));
+            const matchCategory = !categoryVal || categoryVal === "Semua Kategori" || (job.kategori && job.kategori.toLowerCase().includes(categoryVal.toLowerCase()));
+
+            return matchSearch && matchLocation && matchCategory;
+        });
+
+        renderJobs();
+    }
+
+    function selectCategory(categoryName) {
+        document.getElementById('categorySelect').value = categoryName;
+        applyFilters();
+        document.getElementById('joblist').scrollIntoView({behavior: 'smooth'});
+    }
+
+    function renderJobs() {
+        let html = "";
+        let jobsToDisplay = isShowingAllJobs ? filteredJobsData : filteredJobsData.slice(0, 5);
+
+        if (filteredJobsData.length === 0) {
+            html = `<div class="text-center py-10"><p class="text-gray-500">Tidak ada proyek yang sesuai dengan kata kunci atau filter.</p></div>`;
+            document.getElementById('btnViewAllJobs').style.display = 'none';
+            document.getElementById("jobList").innerHTML = html;
+            return;
+        }
+
+        jobsToDisplay.forEach(job => {
+            html += `
+            <div class="job-card-modern">
+                <div class="card-top">
+                    <span class="card-badge">${getTimeLabel(job.created_at)}</span>
+                    <i class="ri-bookmark-line card-bookmark" onclick="redirectLogin()"></i>
+                </div>
+
+                <div class="card-middle">
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client && job.client.nama_client ? job.client.nama_client : 'Client')}&background=2b9c96&color=fff" alt="Logo" class="card-logo">
+                    <div class="card-info">
+                        <h3>${job.judul}</h3>
+                        <p>${job.client && job.client.nama_client ? job.client.nama_client : "Klien Anonim"}</p>
+                    </div>
+                </div>
+
+                <div class="card-bottom">
+                    <div class="card-tags">
+                        <span><i class="ri-briefcase-line"></i> ${job.kategori || "-"}</span>
+                        <span><i class="ri-time-line"></i> ${job.tipe || "-"}</span>
+                        <span><i class="ri-wallet-3-line"></i> Rp ${job.budget?.toLocaleString('id-ID') || 0}</span>
+                        <span><i class="ri-map-pin-line"></i> ${job.lokasi_pelaksanaan || "Remote"}</span>
+                    </div>
+                    <button class="card-btn" onclick="redirectLogin()">Lihat Detail</button>
+                </div>
+            </div>
+            `;
+        });
+
+        if (filteredJobsData.length <= 5 || isShowingAllJobs) {
+            document.getElementById('btnViewAllJobs').style.display = 'none';
+        } else {
+            document.getElementById('btnViewAllJobs').style.display = 'block';
+        }
+
+        document.getElementById("jobList").innerHTML = html;
+    }
+
+    function showAllJobs() {
+        isShowingAllJobs = true;
+        renderJobs();
+    }
+
+    function showAllCategories() {
+        const hiddenCategories = document.querySelectorAll('.hidden-category');
+        hiddenCategories.forEach(cat => {
+            cat.classList.remove('hidden-category');
+        });
+        document.getElementById('btnViewAllCategories').style.display = 'none';
+    }
+
+    function getTimeLabel(date) {
+        if (!date) return "Baru";
+
+        const diff = Math.floor((new Date() - new Date(date)) / 60000);
+
+        if (diff < 1) return "Now";
+        if (diff < 60) return diff + " min ago";
+        if (diff < 1440) return Math.floor(diff / 60) + " jam ago";
+        return Math.floor(diff / 1440) + " hari lalu";
+    }
+
+    function redirectLogin() {
+      alert("Silakan login terlebih dahulu untuk mengakses fitur ini.");
+      window.location.href = "/login";
+    }
+
+    loadJobs();
+  </script>
+  <footer class="footer-dark">
+    <div class="footer-container">
+      
+      <div class="footer-col">
+        <a class="text-xl font-bold flex items-center gap-2 text-white mb-6" href="#">
+          <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+        </a>
+        <p class="text-gray-400 leading-relaxed max-w-xs">
+          MariLancy adalah platform freelance yang menghubungkan mahasiswa dan talenta pemula dengan klien untuk mendapatkan pengalaman kerja nyata serta membangun portofolio melalui proyek digital.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Tentang Kami</h4>
+        <ul>
+          <li>Tentang Platform</li>
+          <li>Tim Pengembang</li>
+          <li>Partners</li>
+          <li>Untuk Freelancer</li>
+          <li>Untuk Klien</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Kategori Proyek</h4>
+        <ul>
+          <li>Desain Grafis</li>
+          <li>Web Development</li>
+          <li>Content Writing</li>
+          <li>Social Media</li>
+          <li>Video Editing</li>
+          <li>Data Entry</li>
+          <li>Digital Marketing</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Dapatkan Info Proyek Terbaru</h4>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Dapatkan update proyek terbaru dan kesempatan freelance langsung ke email kamu.
+        </p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Email Address" class="newsletter-input">
+          <button class="newsletter-btn">Kirim</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MariLancy. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
+        <a href="#" class="hover:text-white transition">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

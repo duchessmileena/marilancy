@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freelancer Profile - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+    }
+
+    .text-teal-custom { color: #2b9c96; }
+    .bg-teal-custom { background-color: #2b9c96; }
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+      transition: 0.2s;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+    }
+
+    .info-card {
+      background-color: #f4f7f7;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .profile-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid white;
+      object-fit: cover;
+      position: absolute;
+      bottom: -70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #f1f5f9;
+    }
+
+    .input {
+      border: 1px solid #d1d5db;
+      padding: 10px 14px;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input:focus {
+      border-color: #2b9c96;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .custom-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+    }
+
+    .job-card-modern {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.02);
+      transition: 0.3s;
+    }
+
+    .job-card-modern:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+      border-color: #e2e8f0;
+    }
+
+    .footer-dark {
+      background-color: #000000;
+      color: #e5e7eb;
+      padding: 60px 40px 30px 40px;
+      font-size: 14px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .footer-col h4 {
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 12px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .footer-col ul li:hover {
+      color: white;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .newsletter-input {
+      background-color: transparent;
+      border: 1px solid #4b5563;
+      color: white;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .newsletter-input:focus {
+      border-color: #2b9c96;
+    }
+
+    .newsletter-btn {
+      background-color: #2b9c96;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .newsletter-btn:hover {
+      background-color: #23827d;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .rating-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .rating-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2 w-max" href="/freelancer">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/freelancer" onclick="setActive(this); goHome()" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/freelancer/projects" class="text-gray-400 hover:text-white transition">Projects</a>
+      <a href="/freelancer/profile/view" class="text-white border-b-2 border-[#2b9c96] pb-1 font-semibold">Applications</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-6">
+      
+      <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition" onclick="showSection('view')">
+        <span id="navUserName" class="text-sm font-medium">Hi, Freelancer!</span>
+        <img id="navAvatar"
+          src="https://ui-avatars.com/api/?name=F&background=2b9c96&color=fff"
+          class="w-10 h-10 rounded-full object-cover" alt="User"
+          onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';">
+      </div>
+      
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+      
+      <div class="relative cursor-pointer flex items-center" onclick="goNotification()">
+        <i class="ri-notification-3-fill text-2xl text-yellow-500"></i>
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden">
+          0
+        </span>
+      </div>
+
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-24 relative mt-16">
+    <h1 class="text-4xl font-bold tracking-wide" id="heroName">Nama Freelancer</h1>
+    <img id="heroAvatar" src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff" class="profile-avatar" alt="Profile Picture" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';">
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 mt-28 pb-20">
+    
+    <div id="viewSection" class="flex flex-col md:flex-row gap-12">
+      
+      <div class="w-full md:w-2/3">
+              
+          <div class="mb-10">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Tentang Saya</h2>
+            <p class="text-sm text-gray-700 leading-relaxed" id="viewBio">
+              Saya adalah freelancer pemula yang memiliki minat di bidang desain grafis...
+            </p>
+          </div>
+
+          <div class="mb-10">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Keahlian</h2>
+            <div id="viewKeahlian" class="space-y-3 text-sm text-gray-700">
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4 mb-10">
+            <a href="/freelancer/projects" class="info-card flex flex-col items-center justify-center text-center shadow-sm border border-gray-100 hover:shadow-md hover:border-teal-300 transition cursor-pointer p-4 group">
+              <i class="ri-checkbox-circle-fill text-teal-custom text-4xl mb-2 group-hover:scale-110 transition-transform"></i>
+              <p class="text-xs font-bold text-gray-600 uppercase tracking-wide">Proyek Selesai</p>
+              <p class="text-2xl font-extrabold text-gray-900 mt-1" id="viewProyekSelesaiCard">0</p>
+            </a>
+
+            <div onclick="openRatingModal()" class="info-card flex flex-col items-center justify-center text-center shadow-sm border border-gray-100 hover:shadow-md hover:border-yellow-300 transition cursor-pointer p-4 group">
+              <i class="ri-star-fill text-yellow-500 text-4xl mb-2 group-hover:scale-110 transition-transform"></i>
+              <p class="text-xs font-bold text-gray-600 uppercase tracking-wide">Rating Profil</p>
+              <p class="text-2xl font-extrabold text-gray-900 mt-1 flex items-baseline gap-1" id="viewRatingCard">-</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 text-gray-900">
+            <span class="font-bold text-sm">Bagikan Profil:</span>
+            <a href="https://www.facebook.com/login" class="hover:text-teal-custom"><i class="ri-facebook-circle-fill text-2xl"></i></a>
+            <a href="https://x.com/" class="hover:text-teal-custom"><i class="ri-twitter-x-line text-xl bg-black text-white p-1 rounded-md"></i></a>
+            <a href="https://www.linkedin.com/" class="hover:text-teal-custom"><i class="ri-linkedin-box-fill text-2xl"></i></a>
+          </div>
+
+      </div>
+
+      <div class="w-full md:w-1/3">
+        
+
+        <div class="info-card mb-6 shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-900 mb-5">Informasi Freelancer</h3>
+          
+          <div class="space-y-5">
+            <div class="flex gap-3">
+              <i class="ri-user-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Nama</p>
+                <p class="text-xs text-gray-500" id="viewNamaCard">Freelancer</p>
+              </div>
+            </div>
+            
+            <div class="flex gap-3">
+              <i class="ri-macbook-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Sistem Kerja</p>
+                <p class="text-xs text-gray-500" id="viewWorkPre">-</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-briefcase-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Kategori</p>
+                <p class="text-xs text-gray-500" id="viewKategori">Desain Grafis</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-award-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Pengalaman</p>
+                <p class="text-xs text-gray-500" id="viewLevel">0 Tahun</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-graduation-cap-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Pendidikan</p>
+                <p class="text-xs text-gray-500" id="viewPendidikan">SMA/SMK Sederajat</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-wallet-3-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Ekspektasi Gaji</p>
+                <p class="text-xs text-gray-500" id="viewGaji">-</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <i class="ri-map-pin-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Lokasi</p>
+                <p class="text-xs text-gray-500" id="viewLokasi">Remote</p>
+              </div>
+            </div>
+            
+            <div class="flex gap-3">
+              <i class="ri-bank-card-line text-teal-custom text-xl"></i>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Rekening Bank</p>
+                <p class="text-xs text-gray-500" id="viewRekening">-</p>
+              </div>
+            </div>
+            <div class="border-t border-gray-200 pt-4 text-left">
+              <p class="text-sm font-bold mb-2">Berkas Pendukung:</p>
+              <a id="viewResume" target="_blank" class="block text-xs text-teal-custom hover:underline mb-1"></a>
+              <a id="viewCert" target="_blank" class="block text-xs text-teal-custom hover:underline mb-1"></a>
+            </div>
+            
+          </div>
+        </div>
+
+        
+
+        <div class="info-card shadow-sm border border-gray-100 text-center">
+          <button onclick="showSection('edit')" class="w-full btn-teal py-2.5 rounded-lg text-sm font-semibold mb-3 flex justify-center items-center gap-2">
+            <i class="ri-edit-box-line"></i> Edit Profil
+          </button>
+
+          <button onclick="showSection('history')" class="w-full bg-white border border-[#2b9c96] text-[#2b9c96] hover:bg-[#eaf6f4] py-2.5 rounded-lg text-sm font-semibold transition flex justify-center items-center gap-2">
+            <i class="ri-history-line"></i> Riwayat Lamaran
+          </button>
+
+          <div class="relative flex py-4 items-center mt-2">
+            <div class="flex-grow border-t border-gray-200"></div>
+            <span class="flex-shrink mx-3 text-[10px] text-gray-400 font-bold uppercase tracking-wider">Butuh Bantuan?</span>
+            <div class="flex-grow border-t border-gray-200"></div>
+          </div>
+
+          <button onclick="openSupportModal()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2.5 rounded-lg text-sm font-semibold transition flex justify-center items-center gap-2 shadow-sm">
+            <i class="ri-customer-service-2-line text-base"></i> Lapor (Support)
+          </button>
+
+          <div id="supportModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex justify-center items-center px-4 transition-all duration-300">
+            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden transform transition-transform">
+
+              <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+                <h3 class="font-bold text-lg text-gray-900 flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shadow-sm">
+                    <i class="ri-alert-line"></i>
+                  </div>
+                  Laporan Kendala
+                </h3>
+                <button onclick="closeSupportModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center transition">
+                  <i class="ri-close-line text-2xl"></i>
+                </button>
+              </div>
+
+              <div class="p-6 overflow-y-auto sidebar-scroll">
+                <form id="supportForm" class="space-y-5">
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Nama Anda</label>
+                      <div class="relative">
+                        <i class="ri-user-3-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input readonly class="w-full bg-gray-100 border border-gray-200 text-gray-500 cursor-not-allowed rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none" type="text" id="sup_nama">
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Email</label>
+                      <div class="relative">
+                        <i class="ri-mail-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input readonly class="w-full bg-gray-100 border border-gray-200 text-gray-500 cursor-not-allowed rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none" type="email" id="sup_email">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="border-t border-gray-100 pt-4">
+                    <label class="text-sm font-bold text-gray-700 mb-1.5 block">Kontak (WhatsApp/Telp) <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                      <i class="ri-phone-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                      <input required class="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none focus:border-[#2b9c96] focus:ring-4 focus:ring-teal-500/10 transition bg-white" type="text" id="sup_kontak" maxlength="13" minlength="10" placeholder="081234567890" pattern="^(\+62|0|(\(\d{3}\)))\d{8,11}$">
+                    </div>
+                    <p class="text-[11px] text-gray-500 mt-1 flex items-center gap-1"><i class="ri-information-line text-teal-600"></i> Wajib diisi 10-13 digit angka aktif.</p>
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-bold text-gray-700 mb-1.5 block">Kategori Kendala <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                      <i class="ri-list-check absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                      <select required class="w-full border border-gray-300 rounded-lg pl-9 pr-10 py-2.5 text-sm outline-none focus:border-[#2b9c96] focus:ring-4 focus:ring-teal-500/10 transition bg-white appearance-none cursor-pointer" id="sup_kategori">
+                        <option value="">Pilih Kategori Kendala</option>
+                        <option>Bug Sistem</option>
+                        <option>Pembayaran</option>
+                        <option>Masalah Chat</option>
+                        <option>Verifikasi Profil</option>
+                        <option>Notifikasi Error</option>
+                        <option>Masalah Proyek</option>
+                        <option>UI/UX Berantakan</option>
+                        <option>Lainnya</option>
+                      </select>
+                      <i class="ri-arrow-down-s-line absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-lg"></i>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-bold text-gray-700 mb-1.5 block">Judul Kendala <span class="text-red-500">*</span></label>
+                    <input required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#2b9c96] focus:ring-4 focus:ring-teal-500/10 transition bg-white" type="text" id="sup_judul" placeholder="Contoh: Tombol edit profil tidak bisa ditekan">
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-bold text-gray-700 mb-1.5 block">Detail Kendala <span class="text-red-500">*</span></label>
+                    <textarea required class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm outline-none focus:border-[#2b9c96] focus:ring-4 focus:ring-teal-500/10 transition bg-white resize-none" rows="3" id="sup_detail" placeholder="Jelaskan secara rinci kronologi kendala yang Anda alami..."></textarea>
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-bold text-gray-700 mb-1.5 block">Bukti (Screenshot/Foto)</label>
+                    <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-[#2b9c96] hover:bg-teal-50/30 transition-colors cursor-pointer group flex flex-col items-center justify-center min-h-[150px]">
+                      
+                      <div id="uploadDefaultState" class="flex flex-col items-center">
+                        <i class="ri-image-add-line text-3xl text-gray-400 group-hover:text-[#2b9c96] transition-colors"></i>
+                        <p class="text-sm text-gray-600 font-medium mt-2">Klik untuk memilih file gambar</p>
+                        <p class="text-[10px] text-gray-400 mt-1">Maksimal 2MB (Format: JPG, JPEG, PNG)</p>
+                      </div>
+
+                      <div id="uploadPreviewState" class="hidden w-full flex flex-col items-center gap-2">
+                        <img id="sup_preview_img" src="" alt="Preview Bukti" class="max-h-40 rounded-lg object-contain border shadow-sm">
+                        <span id="sup_file_name" class="text-xs font-semibold text-teal-600 max-w-[250px] truncate">nama_file.png</span>
+                        <span class="text-[10px] text-red-500 font-medium hover:underline flex items-center gap-0.5"><i class="ri-refresh-line"></i> Ganti gambar</span>
+                      </div>
+
+                      <input type="file" accept="image/png, image/jpeg, image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="sup_bukti" onchange="previewSupportImage(this)">
+                    </div>
+                  </div>
+
+                  <div class="pt-2">
+                    <button type="submit" class="w-full bg-[#2b9c96] hover:bg-teal-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-teal-500/20 flex justify-center items-center gap-2 transition-all">
+                      <i class="ri-send-plane-fill"></i> Kirim Laporan
+                    </button>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div id="editSection" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Edit Profil</h2>
+        <button onclick="showSection('view')" class="text-gray-500 hover:text-red-500"><i class="ri-close-line text-2xl"></i></button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-5">
+        <div class="col-span-2">
+          <label class="text-xs font-semibold text-gray-600 block mb-1">Foto Profil (JPG/PNG)</label>
+          <input type="file" id="foto_profil" accept="image/png, image/jpeg, image/jpg" class="text-xs w-full input mt-1">
+        </div>
+        <div><label class="text-sm font-semibold text-gray-700">Nama Lengkap <span class="text-red-500">*</span></label><input id="nama" class="input mt-1"></div>
+        <div><label class="text-sm font-semibold text-gray-700">Email</label><input id="email" class="input mt-1" disabled></div>
+        
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Gender <span class="text-red-500">*</span></label>
+          <select id="gender" class="input mt-1"><option value="">Pilih Gender</option><option value="Pria">Pria</option><option value="Wanita">Wanita</option></select>
+        </div>
+        <div><label class="text-sm font-semibold text-gray-700">Umur <span class="text-red-500">*</span></label><input id="age" type="number" min="0" class="input mt-1"></div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Pendidikan Terakhir <span class="text-red-500">*</span></label>
+          <select id="education_level" class="input mt-1">
+            <option value="">Pilih Pendidikan</option><option>SMA/SMK</option><option>D1</option><option>D2</option><option>D3</option><option>D4</option><option>S1</option><option>S2</option><option>S3</option>
+          </select>
+        </div>
+        <div><label class="text-sm font-semibold text-gray-700">Pengalaman (Tahun) <span class="text-red-500">*</span></label><input id="years_of_experience" type="number" min="0" class="input mt-1"></div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Lokasi <span class="text-red-500">*</span></label>
+          <input list="locData" id="location" class="input mt-1" placeholder="Cari lokasi...">
+          <datalist id="locData">
+            <option>Lokasi</option>
+            <option value="Aceh"><option value="Bali"><option value="Banten"><option value="Bengkulu"><option value="Daerah Istimewa Yogyakarta"><option value="Gorontalo"><option value="Jakarta Barat"><option value="Jakarta Pusat"><option value="Jakarta Selatan"><option value="Jakarta Timur"><option value="Jakarta Utara"><option value="Jambi"><option value="Jawa Barat"><option value="Jawa Tengah"><option value="Jawa Timur"><option value="Kalimantan Barat"><option value="Kalimantan Selatan"><option value="Kalimantan Tengah"><option value="Kalimantan Timur"><option value="Kalimantan Utara"><option value="Kepulauan Bangka Belitung"><option value="Kepulauan Riau"><option value="Lampung"><option value="Maluku"><option value="Maluku Utara"><option value="Nusa Tenggara Barat"><option value="Nusa Tenggara Timur"><option value="Papua"><option value="Papua Barat"><option value="Riau"><option value="Sulawesi Barat"><option value="Sulawesi Selatan"><option value="Sulawesi Tengah"><option value="Sulawesi Tenggara"><option value="Sulawesi Utara"><option value="Sumatera Barat"><option value="Sumatera Selatan"><option value="Sumatera Utara">
+          </datalist>
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Sistem Kerja</label>
+          <select id="work_pre" class="input mt-1"><option value="">Pilih Sistem Kerja</option><option>On-site</option><option>Hybrid</option><option>Remote</option></select>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Minat Pekerjaan <span class="text-red-500">*</span></label>
+          <select id="job_interest" class="input mt-1">
+            <option value="">Pilih Minat Pekerjaan</option>
+            <option>Accounting</option>
+            <option>Administration</option>
+            <option>Advertising</option>
+            <option>Architecture</option>
+            <option>Arts / Creative</option>
+            <option>Banking / Finance</option>
+            <option>Beauty / Personal Care</option>
+            <option>Business Development</option>
+            <option>Customer Service</option>
+            <option>Construction</option>
+            <option>Consulting</option>
+            <option>Design</option>
+            <option>Digital Marketing</option>
+            <option>Education</option>
+            <option>Engineering</option>
+            <option>Entertainment</option>
+            <option>Event Management</option>
+            <option>Food & Beverage</option>
+            <option>General Management</option>
+            <option>Graphic Design</option>
+            <option>Healthcare</option>
+            <option>Hospitality / Hotel</option>
+            <option>Human Resources</option>
+            <option>Information Technology</option>
+            <option>Insurance</option>
+            <option>Journalism</option>
+            <option>Legal</option>
+            <option>Logistics / Supply Chain</option>
+            <option>Manufacturing</option>
+            <option>Marketing</option>
+            <option>Media / Communication</option>
+            <option>Merchandising</option>
+            <option>NGO / Social Services</option>
+            <option>Operations</option>
+            <option>Pharmaceutical</option>
+            <option>Product Management</option>
+            <option>Project Management</option>
+            <option>Public Relations</option>
+            <option>Purchasing / Procurement</option>
+            <option>Quality Assurance</option>
+            <option>Real Estate</option>
+            <option>Research & Development</option>
+            <option>Retail</option>
+            <option>Sales</option>
+            <option>Science</option>
+            <option>Security</option>
+            <option>Skilled Labor</option>
+            <option>Social Media</option>
+            <option>Software Development</option>
+            <option>Strategy / Planning</option>
+            <option>Telecommunication</option>
+            <option>Training & Development</option>
+            <option>Transportation</option>
+            <option>UI/UX Design</option>
+            <option>Writing / Content Creator</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Ekspektasi Gaji</label>
+          <select id="monthly_salary_exp" class="input mt-1">
+            <option value="">Ekspektasi Gaji</option><option value="100000-300000">100k - 300k</option><option value="300000-500000">300k - 500k</option><option value="500000-700000">500k - 700k</option><option value="700000-1000000">700k - 1Juta</option><option value="1000000">> 1 Juta</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Nama Bank Tujuan</label>
+          <select id="nama_bank" class="input mt-1" onchange="validateRekening()">
+            <option value="">Pilih Bank</option>
+            <option value="BCA">BCA (Bank Central Asia)</option>
+            <option value="BNI">BNI (Bank Negara Indonesia)</option>
+            <option value="BSI">BSI (Bank Syariah Indonesia)</option>
+            <option value="Mandiri">Bank Mandiri</option>
+            <option value="BRI">BRI (Bank Rakyat Indonesia)</option>
+            <option value="BTN">BTN (Bank Tabungan Negara)</option>
+            <option value="CIMB Niaga">CIMB Niaga</option>
+            <option value="OCBC NISP">OCBC NISP</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Nomor Rekening</label>
+          <input id="no_rekening" type="text" class="input mt-1" placeholder="Masukkan nomor rekening" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateRekening();">
+          <p id="rek_error" class="text-[11px] text-red-500 mt-1 hidden font-medium">Format tidak sesuai.</p>
+        </div>
+
+        <div class="col-span-2">
+          <label class="text-sm font-semibold text-gray-700">Keahlian (Pisahkan dengan koma) <span class="text-red-500">*</span></label>
+          <input id="skillInput" class="input mt-1" placeholder="Misal: Canva, Adobe Illustrator, Copywriting">
+        </div>
+
+        <div class="col-span-2">
+          <label class="text-sm font-semibold text-gray-700">Tentang Saya (Bio)</label>
+          <textarea id="bio" rows="4" class="input mt-1"></textarea>
+        </div>
+
+        <div class="col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <p class="text-sm font-bold text-gray-800 mb-3">Upload Berkas</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+            <label class="text-xs font-semibold text-gray-600 block mb-1">Resume / CV <span class="text-red-500">*</span></label>
+            <input type="file" id="resume" accept="application/pdf" class="text-xs w-full">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 block mb-1">Sertifikat Pendukung <span class="text-red-500">*</span></label>
+            <input type="file" id="certificates" accept="application/pdf" class="text-xs w-full">
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-8">
+        <button onclick="showSection('view')" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition">Batal</button>
+        <button onclick="updateProfile()" class="btn-teal px-6 py-2 rounded-lg font-semibold">Simpan Perubahan</button>
+      </div>
+    </div>
+
+
+    <div id="historySection" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Riwayat Lamaran</h2>
+        <button onclick="showSection('view')" class="text-sm bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg font-semibold transition">
+          <i class="ri-arrow-left-line"></i> Kembali ke Profil
+        </button>
+      </div>
+      <div id="applicationList" class="space-y-4">
+        </div>
+    </div>
+
+  </div>
+
+  <div id="ratingModal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-[100] flex justify-center items-center px-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[80vh]">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <h3 class="font-bold text-gray-800 text-lg"><i class="ri-star-half-line text-yellow-500 mr-2"></i> Ulasan Klien</h3>
+        <button onclick="closeRatingModal()" class="text-gray-400 hover:text-red-500 text-2xl transition"><i class="ri-close-line"></i></button>
+      </div>
+      <div id="ratingListContainer" class="p-6 overflow-y-auto rating-scroll space-y-4 flex-1">
+        <p class="text-center text-gray-500 text-sm">Memuat ulasan...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search)
+    const openTab = params.get("tab")
+    const openAppId = params.get("app")
+
+    const token = localStorage.getItem("token")
+    const userId = localStorage.getItem("userId") || "guest";
+    let currentFreelancerId = null;
+
+    function checkAuth() {
+      if (!token) {
+        alert("Silakan login terlebih dahulu")
+        window.location.href = "/"
+        return null
+      }
+      return token
+    }
+    function setActive(el) {
+      const links = document.querySelectorAll('.nav-link');
+
+      links.forEach(link => {
+        link.classList.remove('border-b-2', 'border-teal-500', 'text-white');
+        link.classList.add('text-gray-400');
+      });
+
+      el.classList.remove('text-gray-400');
+      el.classList.add('text-white', 'border-b-2', 'border-teal-500');
+    }
+
+    function setActiveByURL() {
+      const links = document.querySelectorAll('.nav-link');
+      const currentPath = window.location.pathname;
+
+      links.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          link.classList.add('border-b-2', 'border-teal-500', 'text-white');
+          link.classList.remove('text-gray-400');
+        } else {
+          link.classList.remove('border-b-2', 'border-teal-500', 'text-white');
+          link.classList.add('text-gray-400');
+        }
+      });
+    }
+
+    function showSection(section) {
+      document.getElementById("viewSection").classList.add("hidden")
+      document.getElementById("editSection").classList.add("hidden")
+      document.getElementById("historySection").classList.add("hidden")
+
+      if (section === 'edit') {
+        document.getElementById("editSection").classList.remove("hidden")
+      } else if (section === 'history') {
+        document.getElementById("historySection").classList.remove("hidden")
+        loadApplications()
+      } else {
+        document.getElementById("viewSection").classList.remove("hidden")
+      }
+    }
+    document.getElementById('supportModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSupportModal();
+        }
+    });
+    function closeSupportModal() {
+        document.getElementById('supportModal').classList.add('hidden');
+        resetSupportFormPreview();
+    }
+
+    function goHome() {
+      const currentRole = localStorage.getItem("role");
+
+      if (currentRole === "freelancer") {
+        window.location.href = "/freelancer";
+      } else if (currentRole === "client") {
+        window.location.href = "/client";
+      } else {
+        window.location.href = "/guest"; 
+      }
+    }
+    
+    function validateRekening() {
+        const bank = document.getElementById("nama_bank").value;
+        const rekInput = document.getElementById("no_rekening");
+        const rekError = document.getElementById("rek_error");
+        const rekValue = rekInput.value;
+
+        if (!bank || !rekValue) {
+            rekError.classList.add("hidden");
+            return true;
+        }
+
+        let isValid = false;
+        let errMsg = "";
+
+        switch (bank) {
+            case "BCA":
+            case "BNI":
+            case "BSI":
+                isValid = rekValue.length === 10;
+                errMsg = "Nomor rekening harus 10 digit.";
+                break;
+            case "OCBC NISP":
+                isValid = rekValue.length === 12;
+                errMsg = "Nomor rekening harus 12 digit.";
+                break;
+            case "Mandiri":
+                isValid = rekValue.length === 13;
+                errMsg = "Nomor rekening harus 13 digit.";
+                break;
+            case "BRI":
+                isValid = rekValue.length === 15;
+                errMsg = "Nomor rekening harus 15 digit.";
+                break;
+            case "BTN":
+                isValid = rekValue.length === 16;
+                errMsg = "Nomor rekening harus 16 digit.";
+                break;
+            case "CIMB Niaga":
+                isValid = (rekValue.length === 10 || rekValue.length === 13);
+                errMsg = "Nomor rekening harus 10 atau 13 digit.";
+                break;
+            default:
+                isValid = true;
+        }
+
+        if (!isValid) {
+            rekError.innerText = errMsg;
+            rekError.classList.remove("hidden");
+            return false;
+        } else {
+            rekError.classList.add("hidden");
+            return true;
+        }
+    }
+
+    async function loadProfile() {
+      const t = checkAuth()
+      if (!t) return
+
+      try {
+        const res = await fetch("/freelancer/profile", {
+          headers: { "Authorization": "Bearer " + t }
+        })
+        const data = await res.json()
+
+        currentFreelancerId = data.ID || data.id;
+        const fullName = data.nama || "Freelancer"
+        const firstName = fullName.split(' ')[0]
+
+        document.getElementById("heroName").innerText = fullName
+        document.getElementById("navUserName").innerText = `Hi, ${firstName}!`
+        document.getElementById("viewNamaCard").innerText = fullName
+
+        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=2b9c96&color=fff`;
+        const heroAvatarElement = document.getElementById("heroAvatar");
+        const navAvatarElement = document.getElementById("navAvatar");
+
+        if (data.foto_profil && data.foto_profil !== "") {
+            heroAvatarElement.src = data.foto_profil;
+            navAvatarElement.src = data.foto_profil;
+            
+            const handleError = function() {
+                this.onerror = null;
+                this.src = fallbackAvatar;
+            };
+            
+            heroAvatarElement.onerror = handleError;
+            navAvatarElement.onerror = handleError;
+        } else {
+            heroAvatarElement.src = fallbackAvatar;
+            navAvatarElement.src = fallbackAvatar;
+        }
+
+        document.getElementById("viewBio").innerText = data.bio || "Belum ada deskripsi tentang saya."
+        document.getElementById("viewKategori").innerText = data.job_interest || "-"
+        document.getElementById("viewWorkPre").innerText = data.work_pre || "-"
+        document.getElementById("viewPendidikan").innerText = data.education_level || "-"
+        document.getElementById("viewLokasi").innerText = data.location || "Remote"
+        document.getElementById("viewLevel").innerText = data.years_of_experience ? `${data.years_of_experience} Tahun` : "Pemula"
+        document.getElementById("viewGaji").innerText = data.monthly_salary_exp ? `Rp ${data.monthly_salary_exp}` : "-"
+
+        if(data.nama_bank && data.no_rekening) {
+            document.getElementById("viewRekening").innerText = `${data.nama_bank} - ${data.no_rekening}`;
+        } else {
+            document.getElementById("viewRekening").innerText = "Belum diatur";
+        }
+
+        let completed = data.jumlah_proyek_selesai || 0;
+        let rating = data.penilaian || data.AvgRating || data.avg_rating || 0;
+
+        try {
+            const projRes = await fetch("/freelancer/my-projects", { headers: { "Authorization": "Bearer " + t } });
+            if (projRes.ok) {
+                const projects = await projRes.json();
+                if (projects && projects.length > 0) {
+                    const completedProjects = projects.filter(p => p.status === 'completed');
+                    completed = completedProjects.length;
+                }
+            }
+
+            if (currentFreelancerId) {
+                const ratingRes = await fetch(`/freelancer/${currentFreelancerId}/rating-summary`, { headers: { "Authorization": "Bearer " + t } });
+                if (ratingRes.ok) {
+                    const ratingData = await ratingRes.json();
+                    rating = ratingData.average_rating || ratingData.avg_rating || ratingData.Penilaian || rating;
+                }
+            }
+        } catch (e) {
+            console.error("Gagal mengambil data kalkulasi tambahan:", e);
+        }
+
+        document.getElementById("viewProyekSelesaiCard").innerText = completed;
+
+        if (rating > 0) {
+            document.getElementById("viewRatingCard").innerHTML = `${parseFloat(rating).toFixed(1)} <span class="text-sm text-gray-500 font-normal">/ 5.0</span>`;
+        } else {
+            document.getElementById("viewRatingCard").innerHTML = `<span class="text-sm text-gray-400 font-normal">Belum Dinilai</span>`;
+        }
+
+        let skills = data.skill ? data.skill.split(',') : []
+        if (skills.length > 0) {
+          document.getElementById("viewKeahlian").innerHTML = skills.map(s => `<p class="flex items-center gap-3"><i class="ri-check-line text-teal-custom text-lg"></i> ${s.trim()}</p>`).join('')
+        } else {
+          document.getElementById("viewKeahlian").innerHTML = "<p class='text-gray-400 italic'>Belum ada keahlian ditambahkan</p>"
+        }
+
+        if (data.resume) {
+          document.getElementById("viewResume").href = data.resume
+          document.getElementById("viewResume").innerText = "📄 Lihat Resume / CV"
+        }
+        if (data.certificates) {
+          document.getElementById("viewCert").href = data.certificates
+          document.getElementById("viewCert").innerText = "📜 Lihat Sertifikat"
+        }
+
+        document.getElementById("nama").value = data.nama || ""
+        document.getElementById("email").value = data.email || ""
+        document.getElementById("gender").value = data.gender || ""
+        document.getElementById("age").value = data.age || ""
+        document.getElementById("location").value = data.location || ""
+        document.getElementById("education_level").value = data.education_level || ""
+        document.getElementById("years_of_experience").value = data.years_of_experience || ""
+        document.getElementById("monthly_salary_exp").value = data.monthly_salary_exp || ""
+        document.getElementById("job_interest").value = data.job_interest || ""
+        document.getElementById("bio").value = data.bio || ""
+        document.getElementById("skillInput").value = data.skill || ""
+        document.getElementById("work_pre").value = data.work_pre || ""
+        document.getElementById("nama_bank").value = data.nama_bank || ""
+        document.getElementById("no_rekening").value = data.no_rekening || ""
+
+      } catch (err) {
+        console.error("Gagal load profile", err)
+      }
+
+      if (openTab === "history") {
+        showSection("history")
+      }
+    }
+
+    async function openRatingModal() {
+        document.getElementById('ratingModal').classList.remove('hidden');
+        const container = document.getElementById('ratingListContainer');
+        container.innerHTML = '<p class="text-center text-gray-500 text-sm">Memuat ulasan...</p>';
+
+        if (!currentFreelancerId) return;
+
+        try {
+            const res = await fetch(`/freelancer/${currentFreelancerId}/rating-summary`, {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            
+            if (res.ok) {
+                const data = await res.json();
+                console.log("Data Rating dari Backend:", data);
+                
+                let ratings = [];
+                if (Array.isArray(data)) {
+                    ratings = data; 
+                } else if (data.Ratings && Array.isArray(data.Ratings)) { 
+                    ratings = data.Ratings;
+                } else if (data.ratings && Array.isArray(data.ratings)) { 
+                    ratings = data.ratings;
+                } else if (data.Data && Array.isArray(data.Data)) {
+                    ratings = data.Data;
+                } else if (data.data && Array.isArray(data.data)) {
+                    ratings = data.data;
+                }
+                
+                if (ratings.length === 0) {
+                    container.innerHTML = `
+                    <div class="text-center py-10">
+                        <i class="ri-chat-off-line text-4xl text-gray-300 mb-2 block"></i>
+                        <p class="text-gray-500 text-sm">Belum ada klien yang memberikan ulasan.</p>
+                    </div>`;
+                    return;
+                }
+
+                let html = '';
+                ratings.forEach(r => {
+                    const nilai = parseFloat(r.Nilai || r.nilai || 0);
+                    
+                    let starsHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHTML += i <= nilai 
+                            ? '<i class="ri-star-fill text-yellow-400"></i>' 
+                            : '<i class="ri-star-line text-gray-300"></i>';
+                    }
+                    
+                    const komentar = r.Komentar || r.komentar || 'Tidak meninggalkan komentar';
+                    
+                    const rawDate = r.CreatedAt || r.created_at;
+                    const dateInfo = rawDate ? new Date(rawDate).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
+
+                    html += `
+                    <div class="border border-gray-100 p-4 rounded-xl bg-white shadow-sm hover:shadow transition mb-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex text-sm">${starsHTML}</div>
+                            <span class="text-[10px] text-gray-400 font-medium">${dateInfo}</span>
+                        </div>
+                        <p class="text-sm text-gray-700 italic leading-relaxed">"${komentar}"</p>
+                    </div>`;
+                });
+                
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<p class="text-center text-red-500 text-sm">Gagal memuat ulasan dari server.</p>';
+            }
+        } catch (e) {
+            console.error("Modal fetch error:", e);
+            container.innerHTML = '<p class="text-center text-red-500 text-sm">Terjadi kesalahan saat memuat data.</p>';
+        }
+    }
+
+    function closeRatingModal() {
+        document.getElementById('ratingModal').classList.add('hidden');
+    }
+
+    function checkNameRules(nama) {
+      if (nama.length < 4) {
+        return "⚠️ Nama Lengkap minimal terdiri dari 4 karakter!";
+      }
+      
+      if (!/^[A-Z]/.test(nama)) {
+        return "⚠️ Nama Lengkap harus diawali dengan huruf kapital (contoh: Budi)!";
+      }
+      
+      if (!/[a-zA-Z]/.test(nama)) {
+        return "⚠️ Nama Lengkap tidak boleh hanya berisi angka, harus mengandung huruf!";
+      }
+      
+      if (!/^[a-zA-Z0-9\s.,'-]+$/.test(nama)) {
+        return "⚠️ Nama Lengkap mengandung karakter khusus yang tidak diizinkan!";
+      }
+      return null;
+    }
+
+    async function updateProfile() {
+        const namaVal = document.getElementById("nama").value.trim();
+        
+        if (!namaVal) {
+            alert("Nama Lengkap wajib diisi!");
+            return;
+        }
+
+        const namaError = checkNameRules(namaVal);
+        if (namaError) {
+            alert(namaError);
+            return;
+        }
+        const ageVal = document.getElementById("age").value;
+        const expVal = document.getElementById("years_of_experience").value;
+        const resumeFile = document.getElementById("resume").files[0];
+        const certFile = document.getElementById("certificates").files[0];
+        const fotoFile = document.getElementById("foto_profil").files[0];
+        
+        if (ageVal !== "" && parseInt(ageVal) < 0) {
+            alert("Umur tidak boleh bernilai minus!");
+            return;
+        }
+        if (expVal !== "" && parseInt(expVal) < 0) {
+            alert("Pengalaman kerja tidak boleh bernilai minus!");
+            return;
+        }
+
+        if (resumeFile && resumeFile.type !== "application/pdf") {
+            alert("Dokumen Resume harus berformat PDF!");
+            return;
+        }
+        if (certFile && certFile.type !== "application/pdf") {
+            alert("Dokumen Sertifikat harus berformat PDF!");
+            return;
+        }
+        if (fotoFile) {
+            const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+            if (!validTypes.includes(fotoFile.type)) {
+                alert("Dokumen Foto Profil harus berformat JPG atau PNG!");
+                return;
+            }
+        }
+
+        if (!validateRekening()) {
+            alert("Format nomor rekening tidak sesuai dengan bank yang dipilih! Harap periksa kembali.");
+            return;
+        }
+
+        const formData = new FormData()
+        formData.append("nama", document.getElementById("nama").value)
+        formData.append("gender", document.getElementById("gender").value)
+        formData.append("age", ageVal)
+        formData.append("location", document.getElementById("location").value)
+        formData.append("education_level", document.getElementById("education_level").value)
+        formData.append("years_of_experience", expVal)
+        formData.append("monthly_salary_exp", document.getElementById("monthly_salary_exp").value)
+        formData.append("job_interest", document.getElementById("job_interest").value)
+        formData.append("bio", document.getElementById("bio").value)
+        formData.append("skill", document.getElementById("skillInput").value)
+        formData.append("work_pre", document.getElementById("work_pre").value)
+        formData.append("nama_bank", document.getElementById("nama_bank").value)
+        formData.append("no_rekening", document.getElementById("no_rekening").value)
+
+        if (resumeFile) formData.append("resume", resumeFile)
+        if (certFile) formData.append("certificates", certFile)
+        if (fotoFile) formData.append("foto_profil", fotoFile)
+
+        try {
+            const res = await fetch("/freelancer/profile", {
+                method: "PUT",
+                headers: { "Authorization": "Bearer " + token },
+                body: formData
+            })
+            
+            const data = await res.json()
+            
+            if(res.ok) {
+                alert("Profil berhasil diperbarui!")
+                loadProfile()
+                showSection('view')
+            } else {
+                alert("Gagal: " + (data.error || "Terjadi kesalahan saat menyimpan data"));
+            }
+        } catch (err) {
+            console.error(err)
+            alert("Terjadi kesalahan jaringan.");
+        }
+    }
+
+    async function loadApplications() {
+      const res = await fetch("/freelancer/applications", {
+        headers: { "Authorization": "Bearer " + token }
+      })
+      const data = await res.json()
+      let html = ""
+
+      if(data.length === 0) {
+        html = "<p class='text-gray-500 text-center py-8'>Belum ada riwayat lamaran.</p>"
+      } else {
+        data.forEach(app => {
+          const job = app.job || app.Job || {}
+          
+          let finalStatus = app.status; 
+          let badgeColor = "bg-gray-100 text-gray-700";
+
+          if (app.status === "accepted") {
+              finalStatus = "accepted";
+          } 
+          else if (app.status === "rejected") {
+              finalStatus = "rejected";
+          } 
+          else if (app.status === "pending") {
+              if (job.status === "dihapus") {
+                  finalStatus = "ditolak (job dihapus)";
+              } else if (job.status === "ditutup") {
+                  finalStatus = "ditolak (job ditutup)";
+              } else {
+                  finalStatus = "pending";
+              }
+          }
+          else if (app.status === "withdrawn") {
+              finalStatus = "mengundurkan diri";
+          }
+
+          if (finalStatus === "accepted") {
+              badgeColor = "bg-green-100 text-green-700";
+          } else if (finalStatus.includes("ditolak") || finalStatus === "rejected") {
+              badgeColor = "bg-red-100 text-red-700";
+          } else if (finalStatus === "pending") {
+              badgeColor = "bg-yellow-100 text-yellow-700";
+          } else {
+              badgeColor = "bg-gray-100 text-gray-500"; 
+          }
+
+          const canWithdraw = app.status === "pending" && job.status !== "dihapus" && job.status !== "ditutup"
+
+          const displayJudul = job.job_no 
+            ? `${job.judul} <span class="text-sm font-normal text-gray-500 ml-1">(${job.job_no})</span>` 
+            : (job.judul ? job.judul : "Job Tidak Tersedia");
+
+          html += `
+            <div id="app-${app.id}" class="border border-gray-200 rounded-xl p-5 flex justify-between items-center bg-gray-50 hover:bg-white transition">
+              <div>
+                <p class="font-bold text-lg text-gray-900 mb-1">${displayJudul}</p>
+                <p class="text-xs text-gray-500 mb-3">Tanggal Lamaran: ${new Date(app.tanggal_daftar).toLocaleDateString('id-ID')}</p>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize ${badgeColor}">${finalStatus}</span>
+              </div>
+              <div>
+                ${canWithdraw ? `
+                  <button onclick="withdrawJob(${app.job_id})" class="text-xs bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg font-bold transition">
+                    Batalkan Lamaran
+                  </button>
+                ` : `
+                  <span class="text-xs text-gray-400 italic">Tidak bisa diubah</span>
+                `}
+              </div>
+            </div>
+          `
+        })
+      }
+      document.getElementById("applicationList").innerHTML = html
+
+      if (openAppId) {
+        setTimeout(() => {
+          const el = document.getElementById("app-" + openAppId)
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" })
+            el.classList.add("ring-2", "ring-teal-500", "bg-white")
+          }
+        }, 300)
+      }
+    }
+
+    async function withdrawJob(jobId) {
+      const confirmWithdraw = confirm("Yakin ingin membatalkan lamaran?")
+      if (!confirmWithdraw) return
+
+      const res = await fetch("/freelancer/withdraw", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ job_id: jobId })
+      })
+
+      if (res.ok) {
+        alert("Berhasil membatalkan lamaran")
+        loadApplications()
+      } else {
+        alert("Gagal membatalkan lamaran")
+      }
+    }
+    function previewSupportImage(input) {
+        const defaultState = document.getElementById("uploadDefaultState");
+        const previewState = document.getElementById("uploadPreviewState");
+        const previewImg = document.getElementById("sup_preview_img");
+        const fileNameLabel = document.getElementById("sup_file_name");
+
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Ukuran file terlalu besar! Maksimal batas file adalah 2MB.");
+                input.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                fileNameLabel.innerText = file.name;
+
+                defaultState.classList.add("hidden");
+                previewState.classList.remove("hidden");
+            }
+            
+            reader.readAsDataURL(file);
+        }
+    }
+    function resetSupportFormPreview() {
+        document.getElementById("uploadDefaultState").classList.remove("hidden");
+        document.getElementById("uploadPreviewState").classList.add("hidden");
+        document.getElementById("sup_preview_img").src = "";
+        document.getElementById("sup_file_name").innerText = "";
+        
+        const form = document.getElementById("supportForm");
+        form.reset(); 
+        
+        document.getElementById("sup_bukti").value = "";
+    }
+    function openSupportModal() {
+        const elNama = document.getElementById('sup_nama');
+        const elEmail = document.getElementById('sup_email');
+        elNama.value = document.getElementById("navUserName").innerText.replace("Hi, ", "").replace("!", "") || "User";
+        elEmail.value = document.getElementById("email").value || "Email tidak ditemukan";
+        document.getElementById('supportModal').classList.remove('hidden');
+    }
+
+    function closeSupportModal() {
+        document.getElementById('supportModal').classList.add('hidden');
+        resetSupportFormPreview();
+    }
+    const kontakInput = document.getElementById('sup_kontak');
+
+    if (kontakInput) {
+        kontakInput.addEventListener('input', function() {
+            const numericValue = this.value.replace(/\D/g, ''); 
+
+            const phonePattern = /^(\+62|08|02)\d{8,11}$/;
+
+            if (this.value.length > 0 && (numericValue.length < 10 || numericValue.length > 13)) {
+                this.setCustomValidity("Nomor harus terdiri dari 10 hingga 13 digit.");
+            } else if (!/^(\+62|08|02)\d+$/.test(numericValue)) {
+                this.setCustomValidity("Format tidak valid. Gunakan awalan 08 (HP) atau 02 (Telp).");
+            } else {
+                this.setCustomValidity("");
+            }
+        });
+    }
+
+    document.getElementById('supportForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append("nama", document.getElementById("sup_nama").value);
+        formData.append("email", document.getElementById("sup_email").value);
+        formData.append("kontak", document.getElementById("sup_kontak").value);
+        formData.append("kategori", document.getElementById("sup_kategori").value);
+        formData.append("judul", document.getElementById("sup_judul").value);
+        formData.append("detail", document.getElementById("sup_detail").value);
+        
+        const fotoFile = document.getElementById("sup_bukti").files[0];
+        if (fotoFile) formData.append("bukti", fotoFile);
+
+        const res = await fetch("/api/support/lapor", {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + token },
+            body: formData
+        });
+
+        if(res.ok) {
+            alert("Laporan berhasil dikirim!");
+            closeSupportModal();
+        }
+    });
+
+    function getReadNotifs() {
+        return JSON.parse(localStorage.getItem(`readNotifs_${userId}`)) || [];
+    }
+
+    function getReadMessageNotifs() {
+        return JSON.parse(localStorage.getItem("readMessageNotifs")) || [];
+    }
+
+    async function loadNotificationCount() {
+
+      const appRes = await fetch("/freelancer/applications", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const appData = await appRes.json();
+
+      let unreadCount = 0;
+
+      const readNotifs = getReadNotifs();
+
+      appData.forEach(app => {
+        const job = app.job || app.Job || {};
+
+        let isNotif = false;
+
+        if (app.status === "accepted" || app.status === "rejected") {
+          isNotif = true;
+        } else if (app.status === "pending" &&
+          (job.status === "dihapus" || job.status === "ditutup")) {
+          isNotif = true;
+        }
+
+        if (isNotif && !readNotifs.includes(app.id)) {
+          unreadCount++;
+        }
+      });
+
+      try {
+        const msgRes = await fetch("/api/chat/list?role=freelancer", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (msgRes.ok) {
+          const conversations = await msgRes.json();
+          const readMessages = getReadMessageNotifs();
+
+          conversations.forEach(conv => {
+            const messageKey =
+              `${conv.project_id}-${conv.target_user_id}-${conv.created_at}`;
+
+            if (!readMessages.includes(messageKey)) {
+              unreadCount++;
+            }
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+
+      const badge = document.getElementById("notifBadge");
+
+      if (unreadCount > 0) {
+        badge.innerText = unreadCount;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+
+    function goNotification() { window.location.href = "/freelancer/notification" }
+    function logout() { 
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/"; 
+    }
+
+    setInterval(() => {
+      if (token) loadNotificationCount();
+    }, 3000);
+
+    loadProfile()
+    loadNotificationCount()
+  </script>
+
+</body>
+</html>

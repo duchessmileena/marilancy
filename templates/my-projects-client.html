@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantau Proyek - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style> 
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .text-teal-custom { color: #2b9c96; }
+    .bg-teal-custom { background-color: #2b9c96; }
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+      transition: 0.2s;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+    }
+
+    .input-form {
+      border: 1px solid #d1d5db;
+      padding: 12px 16px;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      background-color: #ffffff;
+    }
+    .input-form:focus {
+      border-color: #2b9c96;
+      box-shadow: 0 0 0 3px rgba(43, 156, 150, 0.1);
+    }
+  </style>
+</head>
+<body class="overflow-y-scroll flex flex-col">
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/client">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/client" onclick="setActive(this); goHome()" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/client#post-job" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Posting Job</a>
+      <a href="/client/projects" onclick="setActive(this)" class="text-white border-b-2 border-[#2b9c96] pb-1 font-semibold">Projects</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img" src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';" class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-20 mt-16">
+    <h1 class="text-4xl font-bold tracking-wide">Pantau Proyek</h1>
+    <p class="text-gray-400 mt-2 text-sm">Lihat progress dan hasil kerja dari para freelancer Anda</p>
+  </div>
+
+  <div class="max-w-5xl mx-auto w-full px-4 py-10">
+    
+    <div class="flex gap-4 mb-10" id="filterGroup">
+      <button onclick="filterClientProjects('all')" id="btn-all" class="bg-[#2b9c96] text-white px-6 py-2 rounded-full text-sm font-bold shadow-sm transition">All</button>
+      <button onclick="filterClientProjects('active')" id="btn-active" class="bg-gray-200 text-gray-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-gray-300 transition">Sedang Dikerjakan</button>
+      <button onclick="filterClientProjects('completed')" id="btn-completed" class="bg-gray-200 text-gray-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-gray-300 transition">Proyek Selesai</button>
+      <select id="paymentStatusFilter" onchange="applyFilters()" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-bold shadow-sm focus:outline-none focus:border-[#2b9c96] focus:ring-1 focus:ring-[#2b9c96] cursor-pointer ml-auto">
+        <option value="all">Semua Status Bayar</option>
+        <option value="unpaid">Belum Dibayar</option>
+        <option value="pending">Menunggu Konfirmasi (Proses)</option>
+        <option value="success">Sudah Dibayar (Lunas)</option>
+        <option value="rejected">Pembayaran Ditolak</option>
+      </select>
+      <a href="/client/transactions" class="bg-gray-800 text-white px-6 py-2 rounded-full text-sm font-bold shadow-sm transition hover:bg-black">
+        <i class="ri-history-line mr-2"></i> Riwayat Transaksi
+      </a>
+    </div>
+
+    <div id="projectsContainer" class="space-y-6">
+      <p class="text-center text-gray-500 py-10">Memuat data proyek...</p>
+    </div>
+
+  </div>
+
+  <div id="paymentModal" class="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 relative shadow-2xl">
+      <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800">
+        <i class="ri-close-line text-2xl"></i>
+      </button>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Lakukan Pembayaran</h3>
+      <p class="text-sm text-gray-500 mb-6">Selesaikan pembayaran di luar platform, lalu konfirmasi di sini.</p>
+
+      <div id="contentRekening" class="hidden">
+        <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-4">
+          <p class="text-xs text-blue-600 font-semibold mb-1 uppercase tracking-wide">Tujuan Transfer</p>
+          <p class="text-lg font-bold text-gray-900" id="bankNameDisplay">-</p>
+          <div class="flex items-center gap-2 mt-1">
+            <p class="text-2xl font-mono text-gray-800 tracking-wider" id="bankAccountDisplay">-</p>
+            <i class="ri-file-copy-line text-gray-400 cursor-pointer hover:text-blue-600" onclick="copyRekening()"></i>
+          </div>
+          <p class="text-sm text-gray-600 mt-2 font-medium" id="bankOwnerDisplay">-</p>
+        </div>
+        
+        <div class="mb-6 text-left">
+          <label class="block text-sm font-bold text-gray-700 mb-2">Unggah Bukti Transaksi <span class="text-red-500">*</span></label>
+          <input type="file" id="buktiTransfer" accept="image/png, image/jpeg, image/jpg" class="w-full text-sm border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-teal-500 bg-gray-50 cursor-pointer">
+          <p class="text-xs text-gray-500 mt-1">Format gambar: JPG, JPEG, atau PNG.</p>
+        </div>
+
+        <div class="mb-4 text-left">
+          <label class="block text-sm font-bold text-gray-700 mb-2">Nominal Pembayaran (Rp)</label>
+          <input type="number" id="nominalInput" class="input-form" placeholder="Masukkan jumlah nominal transfer">
+        </div>
+
+        <p class="text-xs text-gray-500 mb-4">* Pastikan Anda telah mengunggah bukti yang sah sebelum menekan tombol konfirmasi di bawah ini.</p>
+        <button id="btnConfirmPayment" class="w-full bg-[#2b9c96] hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition shadow-md">
+          Saya Sudah Bayar
+        </button>
+      </div>
+
+      <div id="contentNoRekening" class="hidden text-center py-4">
+        <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="ri-error-warning-fill text-3xl"></i>
+        </div>
+        <h4 class="font-bold text-gray-800 mb-2">Rekening Belum Diisi</h4>
+        <p class="text-sm text-gray-500 mb-6">Freelancer belum melengkapi data nomor rekening di profilnya. Silakan minta detail rekening via chat.</p>
+        <button id="btnAskRekening" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-3 rounded-xl transition shadow-md flex justify-center items-center gap-2">
+          <i class="ri-chat-3-line"></i> Minta via Chat
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token")
+    const role = localStorage.getItem("role")
+
+    if (!token) { alert("Silakan login dulu"); window.location.href = "/"; }
+    if (role !== "client") { alert("Akses ditolak (bukan client)"); window.location.href = "/"; }
+
+    let allClientProjects = [];
+
+    function calculateOverdue(endDateStr, status, updatedAtStr) {
+        if (status === 'dibatalkan') return null;
+        if (!endDateStr || String(endDateStr).startsWith("0001")) return null;
+        const deadline = new Date(endDateStr);
+        if (isNaN(deadline.getTime())) return null;
+        deadline.setHours(0, 0, 0, 0); 
+
+        if (status === 'completed') {
+            if (!updatedAtStr || String(updatedAtStr).startsWith("0001")) return null;
+            const submitDate = new Date(updatedAtStr);
+            submitDate.setHours(0, 0, 0, 0);
+            const diffTime = deadline.getTime() - submitDate.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) return { label: `DIKUMPULKAN TERLAMBAT (${Math.abs(diffDays)} HARI)`, class: "bg-red-600 text-white shadow-sm", isOverdue: true };
+        } else {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const diffTime = deadline.getTime() - today.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) return { label: `TUGAS TERLAMBAT (${Math.abs(diffDays)} HARI)`, class: "bg-red-600 text-white shadow-sm animate-pulse", isOverdue: true };
+        }
+        return null;
+    }
+
+    async function loadClientProjects() {
+        if (!token) return;
+
+        try {
+            const res = await fetch("/client/my-projects", {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            
+            if (!res.ok) throw new Error("Gagal memuat data");
+
+            const projects = await res.json();
+            
+            const hasChanged = JSON.stringify(allClientProjects) !== JSON.stringify(projects);
+            
+            if (hasChanged) {
+                allClientProjects = projects;
+                applyFilters(); 
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById("projectsContainer").innerHTML = `<p class="text-center text-red-500 py-10">Gagal memuat data.</p>`;
+        }
+    }
+
+    let currentTabFilter = 'all';
+
+    function filterClientProjects(type) {
+        currentTabFilter = type;
+        
+        const buttons = {
+            'all': document.getElementById('btn-all'),
+            'active': document.getElementById('btn-active'),
+            'completed': document.getElementById('btn-completed')
+        };
+
+        const activeStyle = "bg-[#2b9c96] text-white px-6 py-2 rounded-full text-sm font-bold shadow-sm transition";
+        const inactiveStyle = "bg-gray-200 text-gray-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-gray-300 transition";
+
+        for (const key in buttons) {
+            if (buttons[key]) buttons[key].className = (key === type) ? activeStyle : inactiveStyle;
+        }
+
+        const dropdown = document.getElementById("paymentStatusFilter");
+        if (type === 'active') {
+            dropdown.value = 'all';
+            dropdown.disabled = true;
+            dropdown.classList.add("opacity-50", "cursor-not-allowed");
+        } else {
+            dropdown.disabled = false;
+            dropdown.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+
+        applyFilters();
+    }
+
+    function applyFilters() {
+        let filtered = [...allClientProjects];
+        const paymentFilter = document.getElementById("paymentStatusFilter").value;
+
+        if (currentTabFilter === 'active') {
+            filtered = filtered.filter(p => p.status !== 'completed');
+        } else if (currentTabFilter === 'completed') {
+            filtered = filtered.filter(p => p.status === 'completed');
+        }
+
+        if (paymentFilter !== 'all') {
+            filtered = filtered.filter(p => {
+                if (p.status !== 'completed') {
+                    return false; 
+                }
+
+                const statusClean = (p.status_pembayaran || 'belum dibayar').toLowerCase().trim();
+                
+                if (paymentFilter === 'pending') {
+                    return statusClean === 'pending' || statusClean === 'proses' || statusClean === 'process' || statusClean === 'sedang diproses' || statusClean === 'menunggu konfirmasi';
+                } else if (paymentFilter === 'success') {
+                    return statusClean === 'success' || statusClean === 'sudah bayar';
+                } else if (paymentFilter === 'rejected') {
+                    return statusClean === 'rejected' || statusClean === 'ditolak';
+                } else if (paymentFilter === 'unpaid') {
+                    return statusClean === 'belum dibayar' || statusClean === '';
+                }
+                return true;
+            });
+        }
+
+        filtered.sort((a, b) => new Date(b.created_at || b.CreatedAt || 0) - new Date(a.created_at || a.CreatedAt || 0));
+        renderClientProjectsHTML(filtered, currentTabFilter);
+    }
+    
+
+    async function renderClientProjectsHTML(projects, filterType) {
+        const container = document.getElementById("projectsContainer");
+        container.innerHTML = "";
+
+        if (!projects || projects.length === 0) {
+            let emptyMsg = "Anda belum memiliki proyek.";
+            if (filterType === 'active') emptyMsg = "Tidak ada proyek yang sedang dikerjakan oleh freelancer.";
+            if (filterType === 'completed') emptyMsg = "Belum ada proyek yang selesai.";
+            container.innerHTML = `<p class="text-center text-gray-500 py-10">${emptyMsg}</p>`;
+            return;
+        }
+
+        for (const p of projects) {
+            const isCompleted = p.status === 'completed';
+            const isCancelled = p.status === 'cancelled' || p.status === 'dibatalkan';
+            const isInProgress = p.progress > 0 && !isCompleted && !isCancelled;
+
+            const paymentStatus = p.status_pembayaran || 'belum dibayar'; 
+            const statusClean = (p.status_pembayaran || '').toLowerCase().trim();
+
+            const isPaymentPending = [
+                'pending', 'proses', 'process', 'sedang diproses', 'menunggu konfirmasi'
+            ].includes(statusClean);
+
+            let badgeText = 'Active (0%)';
+            let badgeClass = 'bg-blue-50 text-blue-600 border border-blue-200';
+            let barColor = '#3b82f6';
+
+            if (isCompleted) {
+                badgeText = 'Proyek Selesai';
+                badgeClass = 'bg-teal-50 text-[#2b9c96] border border-teal-200';
+                barColor = '#2b9c96'; 
+            } else if (isCancelled) {
+                badgeText = 'Proyek Dibatalkan';
+                badgeClass = 'bg-red-100 text-red-600 border border-red-200';
+                barColor = '#f87171';
+            } else if (isInProgress) {
+                badgeText = 'In Progress';
+                badgeClass = 'bg-orange-50 text-orange-600 border border-orange-200';
+                barColor = '#f97316';
+            }
+            
+            let paymentBadge = '';
+
+            if (isCompleted) {
+                if (statusClean === 'sudah bayar' || statusClean === 'success') {
+                    paymentBadge = `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold border border-green-200"><i class="ri-check-line"></i> Sudah Bayar</span>`;
+                } else if (isPaymentPending) {
+                    paymentBadge = `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-bold border border-yellow-200"><i class="ri-loader-4-line animate-spin"></i> Sedang Diproses</span>`;
+                } else if (statusClean === 'ditolak' || statusClean === 'rejected') {
+                    paymentBadge = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold border border-red-200"><i class="ri-close-line"></i> Pembayaran Ditolak</span>`;
+                } else {
+                    paymentBadge = `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-[10px] font-bold border border-gray-200"><i class="ri-wallet-3-line"></i> Belum Dibayar</span>`;
+                }
+            }
+            
+            const rawDate = p.end_date || p.deadline || p.EndDate || (p.job && p.job.deadline);
+            const updatedDate = p.updated_at || p.UpdatedAt;
+            const overdueStatus = calculateOverdue(rawDate, p.status, updatedDate);
+            
+            const overdueTag = (overdueStatus && !isCancelled) 
+                ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded shadow-sm ${overdueStatus.class}">${overdueStatus.label}</span>` 
+                : "";
+            const isOverdue = overdueStatus && overdueStatus.isOverdue;
+
+            const freelancerName = p.freelancer?.nama || 'User';
+            const fallbackFreelancerAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(freelancerName)}&background=2b9c96&color=fff`;
+            const avatarFreelancer = (p.freelancer?.foto_profil && p.freelancer?.foto_profil.trim() !== "") ? p.freelancer.foto_profil : fallbackFreelancerAvatar;
+            const displayJudul = p.job?.job_no ? `${p.job.judul || "-"} <span class="text-sm font-normal text-gray-500 ml-2">(${p.job.job_no})</span>` : (p.job?.judul || "-");
+            const rawJudul = p.job?.judul ? p.job.judul.replace(/'/g, "\\'") : "Proyek";
+
+            const f_id = p.freelancer?.ID || p.freelancer_id || '';
+            const f_bank = p.freelancer?.nama_bank || '';
+            const f_rek = p.freelancer?.no_rekening || '';
+
+            let actionButtons = `
+                <div class="flex flex-col gap-2 items-end">
+                <a href="/client/workspace?project_id=${p.id}" class="bg-[#2b9c96] hover:bg-teal-700 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition w-full text-center">Pantau Proyek</a>
+                <a href="/chat/room?project_id=${p.id}&target_id=${f_id}" class="bg-gray-800 hover:bg-black text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center justify-center gap-2 w-full">
+                    <i class="ri-message-3-line"></i> Kirim Pesan
+                </a>
+                </div>`;
+
+            if (isCancelled) {
+                actionButtons = `
+                    <div class="flex flex-col gap-2 items-end">
+                        <a href="/client/workspace?project_id=${p.id}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition w-full text-center">Lihat Detail</a>
+                        <a href="/chat/room?project_id=${p.id}&target_id=${f_id}" class="bg-gray-800 hover:bg-black text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center justify-center gap-2 w-full">
+                            <i class="ri-message-3-line"></i> Kirim Pesan
+                        </a>
+                    </div>`;
+            } else if (isCompleted) {
+                if (statusClean === 'sudah bayar' || statusClean === 'success') {
+                    let isRated = false;
+                    try {
+                        const resRating = await fetch(`/api/projects/${p.id}/rating`, { headers: { "Authorization": "Bearer " + token }});
+                        if (resRating.ok) {
+                            const ratingData = await resRating.json();
+                            if (ratingData && (ratingData.id > 0 || ratingData.ID > 0 || ratingData.nilai > 0)) {
+                                isRated = true;
+                            }
+                        }
+                    } catch (e) { console.error("Gagal mengecek status rating", e); }
+
+                    if (isRated) {
+                        actionButtons = `
+                            <div class="flex flex-col gap-2 items-end">
+                            <a href="/client/workspace?project_id=${p.id}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition w-full text-center">Lihat Hasil & Unduh</a>
+                            <span class="bg-gray-300 text-gray-500 px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm w-full text-center cursor-not-allowed">Sudah Dinilai</span>
+                            </div>`;
+                    } else {
+                        actionButtons = `
+                            <div class="flex flex-col gap-2 items-end">
+                            <a href="/client/workspace?project_id=${p.id}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition w-full text-center">Lihat Hasil & Unduh</a>
+                            <a href="/client/rating?project_id=${p.id}&freelancer_id=${f_id}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition w-full text-center shadow-yellow-500/30">Beri Penilaian</a>
+                            </div>`;
+                    }
+                } else {
+                    actionButtons = `
+                        <div class="flex flex-col gap-2 items-end relative group">
+                        <button 
+                            onclick="openPaymentModal('${p.id}', '${f_id}', '${f_bank}', '${f_rek}', '${freelancerName}')" 
+                            ${isPaymentPending ? "disabled" : ""}
+                            class="w-full text-center px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center justify-center gap-1
+                            ${isPaymentPending 
+                                ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-70" 
+                                : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30"
+                            }
+                            "
+                        >
+                            <i class="ri-bank-card-line mr-1"></i> Lakukan Pembayaran
+                        </button>
+                        
+                        ${isPaymentPending ? `
+                            <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-md pointer-events-none whitespace-nowrap z-10 transition-all duration-200">
+                            Menunggu konfirmasi freelancer
+                            </div>
+                        ` : ""}
+
+                        <a href="/client/workspace?project_id=${p.id}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg text-xs font-bold transition w-full text-center border border-gray-300">Lihat Hasil & Unduh</a>
+                        </div>`;
+                }
+            } else if (p.progress === 100) {
+                actionButtons = `
+                    <div class="flex flex-col gap-2 items-end">
+                        <a href="/client/workspace?project_id=${p.id}" class="bg-yellow-500 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm w-full text-center">Menunggu File</a>
+                    </div>`;
+            } else {
+                let cancelBtnHTML = "";
+
+                if (isOverdue) {
+                    cancelBtnHTML = `
+                    <button onclick="executeCancelProject('${p.id}', '${f_id}', '${rawJudul}')" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition w-full text-center shadow-red-500/30 mt-2">
+                        <i class="ri-close-circle-line mr-1"></i> Batalkan Proyek
+                    </button>`;
+                }
+
+                actionButtons = `
+                    <div class="flex flex-col gap-2 items-end relative group">
+                    <button
+                        onclick="openPaymentModal('${p.id}', '${f_id}', '${f_bank}', '${f_rek}', '${freelancerName}')"
+                        ${isPaymentPending ? "disabled" : ""}
+                        class="w-full text-center px-6 py-2.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center justify-center gap-1
+                        ${isPaymentPending 
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-70" 
+                            : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30"
+                        }
+                        "
+                    >
+                        <i class="ri-bank-card-line mr-1"></i> Lakukan Pembayaran
+                    </button>
+
+                    ${isPaymentPending ? `
+                        <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-md pointer-events-none whitespace-nowrap z-10 transition-all duration-200">
+                        Menunggu konfirmasi freelancer
+                        </div>
+                    ` : ""}
+
+                    <a href="/client/workspace?project_id=${p.id}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg text-xs font-bold transition w-full text-center border border-gray-300">Pantau & Unduh</a>
+                    ${cancelBtnHTML}
+                    </div>`;
+            }
+
+            container.innerHTML += `
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative transition hover:shadow-md">
+                    
+                    <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold px-3 py-1 rounded-full ${badgeClass}">${badgeText}</span>
+                        ${paymentBadge}
+                        ${overdueTag}
+                    </div>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-5">
+                    <img src="${avatarFreelancer}" onerror="this.onerror=null; this.src='${fallbackFreelancerAvatar}';" class="w-14 h-14 rounded-full object-cover border border-gray-100">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900">${displayJudul}</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Dikerjakan oleh: <span class="font-bold text-gray-700">${freelancerName}</span></p>
+                        
+                        <div class="flex items-center gap-3 mt-4 pr-0 md:pr-32">
+                            <div class="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
+                                <div class="h-2.5 rounded-full" style="width: ${p.progress}%; background-color: ${barColor};"></div>
+                            </div>
+                            <span class="text-xs font-bold text-gray-600">${p.progress}%</span>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mt-8 gap-6">
+                    <div class="flex flex-wrap gap-6 text-xs font-semibold text-gray-500">
+                        <span class="flex items-center gap-1.5"><i class="ri-wallet-3-line text-[#2b9c96] text-base"></i> Rp ${p.job?.budget ? p.job.budget.toLocaleString('id-ID') : "0"}</span>
+                        <span class="flex items-center gap-1.5"><i class="ri-calendar-line text-[#2b9c96] text-base"></i> Deadline: ${p.end_date && !p.end_date.startsWith("0001") ? new Date(p.end_date).toLocaleDateString('id-ID') : "Belum diatur"}</span>
+                    </div>
+                    ${actionButtons}
+                    </div>
+                </div>`;
+        }
+    }
+
+    function openPaymentModal(projectId, freelancerId, bankName, bankAccount, freelancerName) {
+      const modal = document.getElementById('paymentModal');
+      const contentRekening = document.getElementById('contentRekening');
+      const contentNoRekening = document.getElementById('contentNoRekening');
+      
+      const fileInput = document.getElementById('buktiTransfer');
+      if (fileInput) fileInput.value = "";
+
+      const btnConfirm = document.getElementById('btnConfirmPayment');
+      if (btnConfirm) {
+          btnConfirm.innerHTML = `Saya Sudah Bayar`;
+          btnConfirm.disabled = false;
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => { modal.classList.remove('opacity-0'); modal.firstElementChild.classList.remove('scale-95'); }, 10);
+
+      if (bankAccount && bankAccount.trim() !== "" && bankAccount !== "undefined" && bankAccount !== "null") {
+        contentRekening.classList.remove('hidden');
+        contentNoRekening.classList.add('hidden');
+        
+        document.getElementById('bankNameDisplay').innerText = bankName || 'Bank';
+        document.getElementById('bankAccountDisplay').innerText = bankAccount;
+        document.getElementById('bankOwnerDisplay').innerText = "a.n " + freelancerName;
+
+        btnConfirm.onclick = () => confirmPayment(projectId, freelancerId);
+      } else {
+        contentRekening.classList.add('hidden');
+        contentNoRekening.classList.remove('hidden');
+        
+        document.getElementById('btnAskRekening').onclick = () => redirectToChatForBank(projectId, freelancerId);
+      }
+    }
+
+    function closePaymentModal() {
+      const modal = document.getElementById('paymentModal');
+      modal.classList.add('opacity-0');
+      modal.firstElementChild.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    function copyRekening() {
+      const rek = document.getElementById('bankAccountDisplay').innerText;
+      navigator.clipboard.writeText(rek);
+      alert("Nomor rekening berhasil disalin!");
+    }
+
+    function redirectToChatForBank(projectId, freelancerId) {
+      const templateMsg = encodeURIComponent("Halo, saya bersiap untuk melakukan pembayaran/pengiriman salary untuk proyek ini. Boleh minta informasi nama bank beserta nomor rekening yang kamu gunakan dengan cara melengkapi data rekening diprofile kamu");
+      window.location.href = `/chat/room?project_id=${projectId}&target_id=${freelancerId}&text=${templateMsg}`;
+    }
+
+    async function confirmPayment(projectId, freelancerId) {
+      const fileInput = document.getElementById('buktiTransfer');
+      const nominal = document.getElementById('nominalInput').value;
+      if (!nominal) { alert("Nominal wajib diisi!"); return; }
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Harap unggah bukti transaksi terlebih dahulu sebelum mengonfirmasi.");
+        return;
+      }
+
+      const isConfirm = confirm("Apakah Anda yakin sudah melakukan transfer untuk proyek ini?");
+      if(!isConfirm) return;
+
+      try {
+        const btn = document.getElementById('btnConfirmPayment');
+        btn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Memproses...`;
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('nominal', nominal);
+        formData.append('bukti_transfer', fileInput.files[0]);
+
+        const res = await fetch(`/api/projects/${projectId}/pay`, {
+          method: 'POST', 
+          headers: { 
+            'Authorization': 'Bearer ' + token 
+          },
+          body: formData
+        });
+        
+        if (res.ok) {
+          alert("Konfirmasi pembayaran berhasil! Status proyek telah diperbarui.");
+          closePaymentModal();
+
+          await loadClientProjects();
+
+          const templateMsg = encodeURIComponent("Halo, saya telah melakukan pembayaran untuk proyek ini dan bukti transfer sudah saya unggah di sistem. Silakan dicek ya!");
+          window.location.href = `/chat/room?project_id=${projectId}&target_id=${freelancerId}&text=${templateMsg}`;
+        } else {
+          alert("Gagal mengonfirmasi pembayaran. Coba lagi.");
+          btn.innerHTML = `Saya Sudah Bayar`;
+          btn.disabled = false;
+        }
+      } catch(e) {
+        console.error(e);
+        alert("Terjadi kesalahan jaringan.");
+        const btn = document.getElementById('btnConfirmPayment');
+        btn.innerHTML = `Saya Sudah Bayar`;
+        btn.disabled = false;
+      }
+    }
+
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options)
+      if (res.status === 401) { alert("Session habis"); window.location.href = "/"; return null; }
+      try { return await res.json() } catch { return null }
+    }
+    async function executeCancelProject(projectId, freelancerId, projectTitle) {
+        const isConfirm = confirm(`Apakah Anda yakin ingin membatalkan proyek "${projectTitle}"?\n\nTindakan pemutusan kontrak sepihak dilakukan karena freelancer melewati batas waktu tanpa penyelesaian. Status lowongan kerja ini akan otomatis dibuka kembali.`);
+        if (!isConfirm) return;
+
+        try {
+            const cancelRes = await fetch(`/api/projects/${projectId}/cancel`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ status: 'cancelled' })
+            });
+
+            const cancelResult = await cancelRes.json();
+            
+            if (!cancelRes.ok) {
+                alert(cancelResult.error || "Gagal membatalkan proyek.");
+                return;
+            }
+
+            alert(cancelResult.message || "Proyek berhasil dibatalkan!");
+
+            try {
+                const chatRes = await fetch(`/api/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                        project_id: parseInt(projectId),
+                        receiver_id: parseInt(freelancerId),
+                        content: "Client membatalkan proyek",
+                        sender_role: role 
+                    })
+                });
+
+                if (!chatRes.ok) {
+                    const errorText = await chatRes.text();
+                    console.error("Gagal kirim chat, respons dari backend:", chatRes.status, errorText);
+                } else {
+                    console.log("Chat otomatis berhasil terkirim!");
+                }
+            } catch (chatError) {
+                console.error("Proyek berhasil dibatalkan, tapi gagal kirim notif chat:", chatError);
+            }
+
+            loadClientProjects(); 
+
+        } catch (err) {
+            console.error("Error eksekusi batal:", err);
+            alert("Terjadi kesalahan jaringan.");
+        }
+    }
+
+    async function loadProfileMini() {
+      const data = await safeFetch("/client/profile", { headers: { "Authorization": "Bearer " + token } })
+      if (!data) return
+      
+      localStorage.setItem("client_id", data.ID)
+      const clientName = data.nama || data.nama_client || "Klien"
+      const firstName = clientName.split(' ')[0]
+      document.getElementById("userGreeting").innerText = `Hi, ${firstName}!`
+
+      const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=2b9c96&color=fff`;
+      const profileImgElement = document.getElementById("profile_img");
+
+      if (data.foto_profil && data.foto_profil !== "") {
+          profileImgElement.src = data.foto_profil;
+          profileImgElement.onerror = function() {
+              this.onerror = null;
+              this.src = fallbackAvatar;
+          };
+      } else {
+          profileImgElement.src = fallbackAvatar;
+      }
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "/"; }
+    function goProfile() { window.location.href = "/client/profile/view" }
+
+    loadProfileMini();
+    loadClientProjects();
+    setInterval(() => {
+      if (token) {
+        loadClientProjects();
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

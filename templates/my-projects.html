@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyek Saya - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    .sidebar-scroll::-webkit-scrollbar { width: 5px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-checkbox { width: 16px; height: 16px; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; }
+    .job-card-modern { background: #ffffff; border-radius: 16px; padding: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.02); transition: 0.3s; }
+    .job-card-modern:hover { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06); border-color: #e2e8f0; }
+    .btn-teal { background-color: #2b9c96; color: white; }
+    .btn-teal:hover { background-color: #23827d; }
+    .pagination-container { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      gap: 8px; 
+      margin-top: 24px; 
+      padding-bottom: 20px;
+    }
+    .page-btn { 
+      width: 40px; height: 40px; border-radius: 50%; 
+      display: flex; justify-content: center; align-items: center; 
+      background-color: white; color: #4b5563; font-weight: 700; 
+      font-size: 14px; cursor: pointer; transition: 0.2s; 
+      border: 1px solid #e5e7eb;
+      position: relative;
+      z-index: 10;
+    }
+    .page-btn:hover:not(.disabled):not(.active) { background-color: #f3f4f6; }
+    .page-btn.active { background: #2b9c96; color: white; border: none; }
+    .page-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+<body class="overflow-y-scroll flex flex-col">
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/freelancer">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/freelancer" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/freelancer/projects" onclick="setActive(this)" class="text-white border-b-2 border-[#2b9c96] pb-1 font-semibold">Projects</a>
+      <a href="/freelancer/profile/view" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Applications</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img" src="https://ui-avatars.com/api/?name=User" class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+      <div class="relative cursor-pointer" onclick="goNotification()">
+        <i class="ri-notification-3-fill text-2xl text-yellow-500"></i>
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0 rounded-full hidden">
+          0
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center pt-32 pb-20 mt-16">
+    <h1 class="text-4xl font-bold tracking-wide">Proyek Saya</h1>
+  </div>
+
+  <div class="max-w-5xl mx-auto w-full px-4 py-10">
+    <div class="flex gap-4 mb-10" id="filterGroup">
+      <button onclick="filterProjects('all')" id="btn-all" class="bg-[#2b9c96] text-white px-6 py-2 rounded-full text-sm font-bold shadow-sm transition">All</button>
+      <button onclick="filterProjects('active')" id="btn-active" class="bg-gray-200 text-gray-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-gray-300 transition">Proyek Aktif</button>
+      <button onclick="filterProjects('completed')" id="btn-completed" class="bg-gray-200 text-gray-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-gray-300 transition">Selesai</button>
+      <select id="paymentStatusFilter" onchange="applyFilters()" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-bold shadow-sm focus:outline-none focus:border-[#2b9c96] focus:ring-1 focus:ring-[#2b9c96] cursor-pointer ml-auto">
+        <option value="all">Semua Status Bayar</option>
+        <option value="unpaid">Belum Dibayar</option>
+        <option value="pending">Menunggu Konfirmasi (Proses)</option>
+        <option value="success">Sudah Dibayar (Lunas)</option>
+        <option value="rejected">Pembayaran Ditolak</option>
+      </select>
+    </div>
+
+    <div id="projectsContainer" class="space-y-6">
+      <p class="text-center text-gray-500 py-10">Belum Ada Proyek</p>
+    </div>
+    <div id="paginationProjects" class="pagination-container hidden"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    const userId = localStorage.getItem("userId") || "guest";
+    if (!token) {
+      alert("Silakan login dulu");
+      window.location.href = "/";
+    }
+
+    if (role !== "freelancer") {
+      alert("Akses ditolak (bukan freelancer)");
+      window.location.href = "/";
+    }
+
+    let allMyProjects = [];
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    
+    function getValidDate(p) {
+        const datesToCheck = [
+            p.end_date, p.EndDate, p.deadline, p.Deadline,
+            p.job?.deadline, p.job?.end_date, p.job?.EndDate,
+            p.Job?.deadline, p.Job?.end_date, p.Job?.EndDate
+        ];
+        for (let d of datesToCheck) {
+            if (d && typeof d === 'string' && !d.startsWith("0001")) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    function calculateOverdue(endDateStr, status, updatedAtStr) {
+        if (!endDateStr || String(endDateStr).startsWith("0001")) return null;
+
+        const deadline = new Date(endDateStr);
+        if (isNaN(deadline.getTime())) return null;
+        deadline.setHours(0, 0, 0, 0);
+
+        if (status === 'completed') {
+            if (!updatedAtStr || String(updatedAtStr).startsWith("0001")) return null;
+            
+            const submitDate = new Date(updatedAtStr);
+            submitDate.setHours(0, 0, 0, 0);
+
+            const diffTime = deadline.getTime() - submitDate.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) { 
+                return { label: `DIKUMPULKAN TERLAMBAT (${Math.abs(diffDays)} HARI)`, class: "bg-red-600 text-white shadow-sm" };
+            }
+        } else {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const diffTime = deadline.getTime() - today.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) { 
+                return { label: `TUGAS TERLAMBAT (${Math.abs(diffDays)} HARI)`, class: "bg-red-600 text-white shadow-sm animate-pulse" };
+            }
+        }
+        return null;
+    }
+
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options);
+      if (res.status === 401) {
+        alert("Session habis");
+        localStorage.clear();
+        window.location.href = "/";
+        return null;
+      }
+      if (res.status === 403) {
+        alert("Akses ditolak");
+        window.location.href = "/";
+        return null;
+      }
+      try { return await res.json(); } catch { return null; }
+    }
+
+    async function loadMyProjects() {
+      if (!token) return;
+
+      const profileRes = await fetch("/freelancer/profile", { headers: { "Authorization": "Bearer " + token } });
+      if (profileRes.ok) {
+        const profile = await profileRes.json();
+        const firstName = (profile.nama || "Freelancer").split(' ')[0];
+        document.getElementById("userGreeting").innerText = `Hi, ${firstName}!`;
+
+        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=2b9c96&color=fff`;
+        const profileImgElement = document.getElementById("profile_img");
+
+        if (profile.foto_profil && profile.foto_profil !== "") {
+            profileImgElement.src = profile.foto_profil;
+            profileImgElement.onerror = function() {
+                this.onerror = null;
+                this.src = fallbackAvatar;
+            };
+        } else {
+            profileImgElement.src = fallbackAvatar;
+        }
+      }
+
+      const res = await fetch("/freelancer/my-projects", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      if (res.ok) {
+        const projects = await res.json();
+        if (JSON.stringify(allMyProjects) !== JSON.stringify(projects)) {
+            allMyProjects = projects;
+            applyFilters();
+        }
+      } else {
+        document.getElementById("projectsContainer").innerHTML = `<p class="text-center text-red-500 py-10">Gagal memuat data. Pastikan kamu sudah login.</p>`;
+      }
+    }
+
+    let currentTabFilter = 'all';
+
+    function filterProjects(type, resetPage = true) {
+        if (resetPage) {
+            currentPage = 1;
+        }
+
+        currentTabFilter = type;
+
+        const buttons = {
+            'all': document.getElementById('btn-all'),
+            'active': document.getElementById('btn-active'),
+            'completed': document.getElementById('btn-completed')
+        };
+
+        const activeClass = "bg-[#2b9c96] text-white px-6 py-2 rounded-full text-sm font-bold shadow-sm transition";
+        const inactiveClass = "bg-gray-200 text-gray-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-gray-300 transition";
+
+        for (const key in buttons) {
+            if (buttons[key]) buttons[key].className = (key === type) ? activeClass : inactiveClass;
+        }
+
+        const dropdown = document.getElementById("paymentStatusFilter");
+        if (type === 'active') {
+            dropdown.value = 'all';
+            dropdown.disabled = true;
+            dropdown.classList.add("opacity-50", "cursor-not-allowed");
+        } else {
+            dropdown.disabled = false;
+            dropdown.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+
+        applyFilters();
+    }
+
+    function applyFilters() {
+        let filtered = [...allMyProjects];
+        const paymentFilter = document.getElementById("paymentStatusFilter").value;
+
+        if (currentTabFilter === 'active') {
+            filtered = filtered.filter(p => p.status !== 'completed');
+        } else if (currentTabFilter === 'completed') {
+            filtered = filtered.filter(p => p.status === 'completed');
+        }
+
+        if (paymentFilter !== 'all') {
+            filtered = filtered.filter(p => {
+                if (p.status !== 'completed') {
+                    return false;
+                }
+
+                const statusClean = (p.status_pembayaran || 'belum dibayar').toLowerCase().trim();
+                
+                if (paymentFilter === 'pending') {
+                    return statusClean === 'pending' || statusClean === 'proses' || statusClean === 'process' || statusClean === 'sedang diproses' || statusClean === 'menunggu konfirmasi';
+                } else if (paymentFilter === 'success') {
+                    return statusClean === 'success' || statusClean === 'sudah bayar';
+                } else if (paymentFilter === 'rejected') {
+                    return statusClean === 'rejected' || statusClean === 'ditolak';
+                } else if (paymentFilter === 'unpaid') {
+                    return statusClean === 'belum dibayar' || statusClean === '';
+                }
+                return true;
+            });
+        }
+        filtered.sort((a, b) => {
+            const dateA = new Date(a.created_at || a.CreatedAt || 0);
+            const dateB = new Date(b.created_at || b.CreatedAt || 0);
+            return dateB - dateA;
+        });
+
+        renderProjectsHTML(filtered, currentTabFilter);
+    }
+
+    async function renderProjectsHTML(projects, filterType) {
+        const container = document.getElementById("projectsContainer");
+        const paginationContainer = document.getElementById("paginationProjects");
+        container.innerHTML = "";
+
+        if (!projects || projects.length === 0) {
+            let emptyMsg = "Kamu belum memiliki proyek.";
+            if (filterType === 'active') emptyMsg = "Tidak ada proyek yang sedang berjalan.";
+            else if (filterType === 'completed') emptyMsg = "Belum ada proyek yang selesai.";
+            else emptyMsg = "Tidak ada proyek yang sesuai dengan kriteria filter.";
+            
+            container.innerHTML = `<p class="text-center text-gray-500 py-10">${emptyMsg}</p>`;
+            paginationContainer.classList.add("hidden");
+            return;
+        }
+
+        const totalPages = Math.ceil(projects.length / itemsPerPage);
+        const start = (currentPage - 1) * itemsPerPage;
+        const paginated = projects.slice(start, start + itemsPerPage);
+
+        for (const p of paginated) {
+            const isCompleted = p.status === 'completed';
+            const isCancelled = p.status === 'cancelled' || p.status === 'dibatalkan'; 
+            
+            let badgeText = 'Sedang dikerjakan';
+            let badgeClass = 'bg-green-50 text-green-600';
+            let barColor = '#4ade80';
+
+            if (isCompleted) {
+                badgeText = 'Proyek Selesai';
+                badgeClass = 'bg-teal-50 text-[#2b9c96]';
+                barColor = '#2b9c96';
+            } else if (isCancelled) {
+                badgeText = 'Proyek Dibatalkan';
+                badgeClass = 'bg-red-100 text-red-600 border border-red-200';
+                barColor = '#f87171';
+            }
+
+            let paymentBadge = '';
+            const statusClean = (p.status_pembayaran || 'belum dibayar').toLowerCase().trim();
+
+            if (isCompleted) {
+                if (statusClean === 'sudah bayar' || statusClean === 'success') {
+                    paymentBadge = `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold border border-green-200 ml-2"><i class="ri-check-line"></i> Sudah Dibayar</span>`;
+                } else if (statusClean === 'proses' || statusClean === 'pending' || statusClean === 'process' || statusClean === 'sedang diproses') {
+                    paymentBadge = `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-bold border border-yellow-200 ml-2"><i class="ri-loader-4-line animate-spin"></i> Menunggu Konfirmasi</span>`;
+                } else if (statusClean === 'ditolak' || statusClean === 'rejected') {
+                    paymentBadge = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold border border-red-200 ml-2"><i class="ri-close-line"></i> Ditolak</span>`;
+                } else {
+                    paymentBadge = `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-[10px] font-bold border border-gray-200 ml-2"><i class="ri-wallet-3-line"></i> Belum Dibayar</span>`;
+                }
+            }
+
+            const rawDate = getValidDate(p);
+            const updatedDate = p.updated_at || p.UpdatedAt;
+            const overdueStatus = calculateOverdue(rawDate, p.status, updatedDate);
+            
+            const overdueTag = (overdueStatus && !isCancelled) 
+                ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded ${overdueStatus.class}">${overdueStatus.label}</span>` 
+                : "";   
+
+            let deadlineDisplay = "Belum ada";
+            if (rawDate) {
+                deadlineDisplay = new Date(rawDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+
+            const clientName = p.client?.nama_client || "Klien Anonim";
+            const clientPhoto = p.client?.foto_profil;
+            const clientId = p.client?.ID || p.client?.id || p.ClientID || p.client_id || '';
+            
+            const fallbackClientAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=2b9c96&color=fff`;
+            const clientAvatar = (clientPhoto && clientPhoto !== "") ? clientPhoto : fallbackClientAvatar;
+
+            let lastTx = null;
+            if (p.transactions && p.transactions.length > 0) {
+                lastTx = p.transactions.reduce((prev, current) => (prev.id > current.id) ? prev : current);
+            }
+
+            let actionButtons = `
+            <div class="flex flex-col gap-2 items-end w-full md:w-40">
+                <a href="/freelancer/workspace?project_id=${p.id}" class="bg-[#2b9c96] hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center">Lihat Detail</a>
+                <a href="/chat/room?project_id=${p.id}&target_id=${clientId}" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center flex items-center justify-center gap-1">
+                <i class="ri-message-3-line"></i> Pesan
+                </a>
+            </div>
+            `;
+
+            if (isCancelled) {
+                actionButtons = `
+                <div class="flex flex-col gap-2 items-end w-full md:w-40">
+                    <a href="/freelancer/workspace?project_id=${p.id}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center">Lihat Detail</a>
+                    <a href="/chat/room?project_id=${p.id}&target_id=${clientId}" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center flex items-center justify-center gap-1">
+                    <i class="ri-message-3-line"></i> Pesan
+                    </a>
+                </div>
+                `;
+            } else if (isCompleted) {
+                actionButtons = `
+                <div class="flex flex-col gap-2 items-end w-full md:w-40">
+                    <a href="/freelancer/workspace?project_id=${p.id}" class="bg-[#2b9c96] hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center">Lihat Detail</a>
+                    
+                    ${(statusClean === 'proses' || statusClean === 'pending' || statusClean === 'process' || statusClean === 'sedang diproses') ? 
+                    `<a href="/freelancer/verifikasi-pembayaran.html?tx_id=${lastTx ? lastTx.ID || lastTx.id : 0}&img=${encodeURIComponent(lastTx ? lastTx.bukti_transfer : '')}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center flex items-center justify-center gap-1">
+                        <i class="ri-checkbox-circle-line"></i> Verifikasi Bayar
+                    </a>` 
+                    : (statusClean === 'sudah bayar' || statusClean === 'success' ? 
+                        `<span class="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-[10px] font-bold border border-green-200 w-full text-center">Lunas</span>` : '')
+                    }
+                    
+                    <a href="/chat/room?project_id=${p.id}&target_id=${clientId}" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center flex items-center justify-center gap-1">
+                    <i class="ri-message-3-line"></i> Pesan
+                    </a>
+                </div>
+                `;
+            } else if (p.progress === 100) {
+                actionButtons = `
+                <div class="flex flex-col gap-2 items-end w-full md:w-40">
+                    <a href="/freelancer/workspace?project_id=${p.id}" class="bg-[#2b9c96] hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center">Lihat Detail</a>
+                    <a href="/freelancer/workspace?project_id=${p.id}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center">Ajukan Penyelesaian</a>
+                    <a href="/chat/room?project_id=${p.id}&target_id=${clientId}" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg text-[10px] font-bold shadow-sm transition w-full text-center flex items-center justify-center gap-1">
+                    <i class="ri-message-3-line"></i> Pesan
+                    </a>
+                </div>
+                `;
+            }
+
+            let ratingUI = '';
+            if (isCompleted) {
+                try {
+                    const resRating = await fetch(`/api/projects/${p.id}/rating`, {
+                    headers: { "Authorization": "Bearer " + token }
+                    });
+
+                    if (resRating.ok) {
+                    const ratingData = await resRating.json();
+                    const nilai = parseFloat(ratingData.nilai || 0);
+                    
+                    let starsHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= nilai) {
+                        starsHTML += '<i class="ri-star-fill text-yellow-400"></i>';
+                        } else {
+                        starsHTML += '<i class="ri-star-line text-gray-300"></i>';
+                        }
+                    }
+
+                    ratingUI = `
+                        <div class="absolute top-6 right-16 flex items-center gap-1 text-lg">
+                        <span class="text-black font-bold mr-2">${nilai}</span>
+                        ${starsHTML}
+                        </div>
+                    `;
+                    } else {
+                    ratingUI = `
+                        <div class="absolute top-6 right-16 flex items-center">
+                        <span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1 rounded-full border border-gray-200">Belum Dinilai</span>
+                        </div>
+                    `;
+                    }
+                } catch (err) {
+                    console.error("Gagal mengambil rating:", err);
+                }
+            }
+
+            const displayJudul = (p.job && p.job.job_no) 
+                ? `${p.job.judul} <span class="text-sm font-normal text-gray-500 ml-1">(${p.job.job_no})</span>` 
+                : (p.job && p.job.judul ? p.job.judul : "Job Tidak Tersedia");
+
+            container.innerHTML += `
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative transition hover:shadow-md">
+                
+                <div class="absolute top-6 left-6 flex items-center gap-2">
+                    <span class="text-[10px] font-bold px-3 py-1 rounded-full ${badgeClass}">${badgeText}</span>
+                    ${paymentBadge}
+                    ${overdueTag}
+                </div>
+                
+                ${ratingUI}
+                
+                <div class="absolute top-6 right-6 text-gray-400 hover:text-gray-800 cursor-pointer"><i class="ri-bookmark-line text-xl"></i></div>
+
+                <div class="flex flex-col md:flex-row gap-5 mt-10">
+                    <a href="/lihatprofileclient.html?id=${clientId}" class="cursor-pointer shrink-0 hover:opacity-80 transition">
+                    <img src="${clientAvatar}" onerror="this.onerror=null; this.src='${fallbackClientAvatar}';" class="w-14 h-14 rounded-full object-cover border border-gray-100">
+                    </a>
+                    <div class="flex-1">
+                    <h3 class="text-xl font-bold text-gray-900">${displayJudul}</h3>
+                    <a href="/lihatprofileclient.html?id=${clientId}" class="text-xs text-teal-600 hover:underline hover:text-teal-800 mt-0.5 block font-medium">
+                        ${clientName} <i class="ri-external-link-line text-[10px] ml-1"></i>
+                    </a>
+
+                    <div class="flex items-center gap-3 mt-4 pr-0 md:pr-32">
+                        <div class="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
+                        <div class="h-2.5 rounded-full" style="width: ${p.progress}%; background-color: ${barColor};"></div>
+                        </div>
+                        <span class="text-xs font-bold text-gray-600">${p.progress}%</span>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mt-8 gap-6">
+                    <div class="flex flex-wrap gap-6 text-xs font-semibold text-gray-500">
+                    <span class="flex items-center gap-1.5"><i class="ri-briefcase-line text-[#2b9c96] text-base"></i> ${p.job?.kategori || "-"}</span>
+                    <span class="flex items-center gap-1.5"><i class="ri-time-line text-[#2b9c96] text-base"></i> ${p.job?.tipe || "Full Time"}</span>
+                    <span class="flex items-center gap-1.5"><i class="ri-wallet-3-line text-[#2b9c96] text-base"></i> Rp ${p.job?.budget ? p.job.budget.toLocaleString('id-ID') : "0"}</span>
+                    <span class="flex items-center gap-1.5"><i class="ri-map-pin-line text-[#2b9c96] text-base"></i> ${p.job?.lokasi_pelaksanaan || "Remote"}</span>
+                    
+                    <span class="flex items-center gap-1.5"><i class="ri-calendar-line text-[#2b9c96] text-base"></i> Deadline: ${deadlineDisplay}</span>
+                    </div>
+                    ${actionButtons}
+                </div>
+                </div>
+            `;
+        }
+        renderPaginationUI("paginationProjects", currentPage, totalPages, "changePageProjects");
+    }
+
+    function changePageProjects(p) {
+        currentPage = p;
+        const activeBtn = document.querySelector('#filterGroup button.bg-\\[\\#2b9c96\\]');
+        const filterType = activeBtn
+            ? activeBtn.id.replace('btn-', '')
+            : 'all';
+
+        filterProjects(filterType, false);
+
+        window.scrollTo({
+            top: 500,
+            behavior: 'smooth'
+        });
+    }
+
+  function renderPaginationUI(containerId, currentPage, totalPages, funcName) {
+      const container = document.getElementById(containerId);
+
+      if (totalPages <= 1) {
+          container.classList.add("hidden");
+          return;
+      }
+
+      container.classList.remove("hidden");
+
+      let html = "";
+      html += `
+        <button 
+          type="button"
+          class="page-btn"
+          onclick="${funcName}(${Math.max(currentPage - 1, 1)})"
+        >
+          <i class="ri-arrow-left-s-line"></i>
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+          html += `
+            <button 
+              type="button"
+              class="page-btn ${i === currentPage ? 'active' : ''}"
+              onclick="${funcName}(${i})"
+            >
+              ${i}
+            </button>
+          `;
+      }
+
+      html += `
+        <button 
+          type="button"
+          class="page-btn"
+          onclick="${funcName}(${Math.min(currentPage + 1, totalPages)})"
+        >
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      `;
+
+      container.innerHTML = html;
+  }
+
+    function getReadNotifs() {
+        return JSON.parse(localStorage.getItem(`readNotifs_${userId}`)) || [];
+    }
+
+    function getReadMessageNotifs() {
+        return JSON.parse(localStorage.getItem("readMessageNotifs")) || [];
+    }
+
+    async function loadNotificationCount() {
+
+      const appRes = await fetch("/freelancer/applications", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const appData = await appRes.json();
+
+      let unreadCount = 0;
+
+      const readNotifs = getReadNotifs();
+
+      appData.forEach(app => {
+        const job = app.job || app.Job || {};
+
+        let isNotif = false;
+
+        if (app.status === "accepted" || app.status === "rejected") {
+          isNotif = true;
+        } else if (app.status === "pending" &&
+          (job.status === "dihapus" || job.status === "ditutup")) {
+          isNotif = true;
+        }
+
+        if (isNotif && !readNotifs.includes(app.id)) {
+          unreadCount++;
+        }
+      });
+
+      try {
+        const msgRes = await fetch("/api/chat/list?role=freelancer", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (msgRes.ok) {
+          const conversations = await msgRes.json();
+          const readMessages = getReadMessageNotifs();
+
+          conversations.forEach(conv => {
+            const messageKey =
+              `${conv.project_id}-${conv.target_user_id}-${conv.created_at}`;
+
+            if (!readMessages.includes(messageKey)) {
+              unreadCount++;
+            }
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+
+      const badge = document.getElementById("notifBadge");
+
+      if (unreadCount > 0) {
+        badge.innerText = unreadCount;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+    async function rejectPayment(txId) {
+        if (txId === 0) { alert("Data transaksi tidak ditemukan!"); return; }
+        if (!confirm("Apakah Anda yakin bukti pembayaran ini tidak sesuai?")) return;
+
+        const res = await fetch(`/api/projects/transactions/${txId}/status`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', "Authorization": "Bearer " + token},
+            body: JSON.stringify({status: 'rejected'})
+        });
+        
+        if (res.ok) {
+            alert("Status diubah ke Ditolak");
+            loadMyProjects();
+        } else {
+            alert("Gagal memperbarui status.");
+        }
+    }
+    
+
+    function goProfile() { window.location.href = "/freelancer/profile/view"; }
+    function goNotification() { window.location.href = "/freelancer/notification"; }
+    function logout() { 
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/"; 
+    }
+
+    function getReadMessageNotifs() {
+      return JSON.parse(localStorage.getItem("readMessageNotifs")) || [];
+    }
+    setInterval(() => {
+    if (token) {
+        loadMyProjects();
+        loadNotificationCount();
+    }
+  }, 5000);
+    loadNotificationCount();
+    loadMyProjects();
+
+  </script>
+</body>
+</html>

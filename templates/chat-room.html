@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruang Obrolan - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style> 
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; height: 100vh; margin: 0;} 
+    #chatBox { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-gray-50 flex flex-col h-screen">
+
+  <div class="bg-white px-6 py-4 border-b border-gray-200 flex items-center gap-4 shadow-sm z-20 flex-shrink-0">
+    <a href="javascript:history.back()" class="text-gray-500 hover:text-black text-xl"><i class="ri-arrow-left-line"></i></a>
+    <div>
+      <h2 class="font-bold text-gray-900">Ruang Obrolan</h2>
+      <p id="subHeader" class="text-xs text-gray-500">Memuat info...</p>
+    </div>
+  </div>
+
+  <div id="chatBox" class="p-6 space-y-4 flex-1 relative z-0">
+    <p class="text-center text-xs text-gray-400">Mulai percakapan Anda...</p>
+  </div>
+
+  <div id="editIndicator" class="hidden px-6 py-2 bg-teal-50 border-t border-teal-100 flex justify-between items-center text-xs text-teal-700 font-medium z-10 flex-shrink-0">
+    <span><i class="ri-edit-line mr-1"></i> Sedang mengedit pesan...</span>
+    <button type="button" onclick="cancelEdit()" class="text-red-500 hover:underline"><i class="ri-close-line"></i> Batal</button>
+  </div>
+
+  <form id="sendMessageForm" onsubmit="submitMessage(event)" class="bg-white p-4 border-t border-gray-200 flex items-center gap-3 z-20 flex-shrink-0">
+    <input type="text" id="messageInput" autocomplete="off" class="flex-1 bg-gray-100 border-none rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2b9c96]" placeholder="Tulis pesan Anda...">
+    <button type="submit" class="bg-[#2b9c96] hover:bg-teal-700 text-white w-12 h-12 rounded-full flex items-center justify-center transition shrink-0">
+      <i class="ri-send-plane-fill text-xl"></i>
+    </button>
+  </form>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const myRole = localStorage.getItem("role"); 
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('project_id');
+    const targetId = urlParams.get('target_id');
+
+    if (!token || !projectId || !targetId) {
+      alert("Parameter tidak lengkap atau belum login");
+      window.location.href = "/";
+    }
+
+    let myAvatarUrl = "";
+    let targetAvatarUrl = "";
+    let lastChatData = "";
+    let editingMessageId = null;
+
+    async function loadChatHeader() {
+      try {
+        const res = await fetch(`/api/projects/${projectId}`, { headers: { "Authorization": "Bearer " + token } });
+        if (res.ok) {
+          const data = await res.json();
+          const project = data.project;
+          const projectTitle = project.job.judul || "Proyek";
+          let targetName = "";
+          let myName = "";
+
+          if (myRole === "client") {
+            targetName = project.freelancer.nama || "Freelancer";
+            myName = project.client.nama_client || "Client";
+            targetAvatarUrl = project.freelancer.foto_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(targetName)}&background=cbd5e1&color=fff`;
+            myAvatarUrl = project.client.foto_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(myName)}&background=2b9c96&color=fff`;
+          } else {
+            targetName = project.client.nama_client || "Client";
+            myName = project.freelancer.nama || "Freelancer";
+            targetAvatarUrl = project.client.foto_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(targetName)}&background=cbd5e1&color=fff`;
+            myAvatarUrl = project.freelancer.foto_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(myName)}&background=2b9c96&color=fff`;
+          }
+
+          document.getElementById("subHeader").innerText = `${projectTitle} | Chat dengan ${targetName}`;
+        }
+      } catch (err) { document.getElementById("subHeader").innerText = `Proyek #${projectId}`; }
+    }
+
+    function escapeHTML(str) {
+        if (!str) return "";
+        return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    async function loadMessages() {
+        const res = await fetch(`/api/chat/history?project_id=${projectId}&target_id=${targetId}`, { headers: { "Authorization": "Bearer " + token } });
+        if (!res.ok) return;
+        const messages = await res.json();
+        const chatBox = document.getElementById("chatBox");
+
+        const currentChatData = JSON.stringify(messages);
+        if (currentChatData === lastChatData) return;
+        lastChatData = currentChatData;
+
+        let htmlContent = "";
+
+        if (messages.length === 0) {
+            chatBox.innerHTML = '<p class="text-center text-xs text-gray-400 mt-10">Belum ada pesan. Sapa lawan bicara Anda!</p>';
+            return;
+        }
+
+        messages.forEach(msg => {
+            const isMe = (msg.sender_role === myRole);
+            const msgId = msg.id || msg.ID;
+
+            const createdAt = msg.created_at || msg.CreatedAt;
+            const updatedAt = msg.updated_at || msg.UpdatedAt || msg.updatedAt;
+
+            const timeStr = new Date(createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const safeContent = escapeHTML(msg.content);
+            const isDeleted = msg.content === "🚫 Pesan ini telah dihapus" || msg.content === "Pesan ini telah dihapus";
+            let isEdited = false;
+            if (updatedAt && createdAt && !isDeleted) {
+                const cleanUpdated = String(updatedAt).split('.')[0];
+                const cleanCreated = String(createdAt).split('.')[0];
+
+                if (cleanUpdated !== cleanCreated && !cleanUpdated.startsWith("0001")) {
+                    isEdited = true;
+                }
+            }
+
+            const editedTag = isEdited ? `<span class="italic opacity-80 ml-1 font-normal text-[9px]">(diedit)</span>` : "";
+
+            if (isMe) {
+                const safeContentJS = (msg.content || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                let menuHTML = "";
+                if (!isDeleted) {
+                    menuHTML = `
+                    <button onclick="toggleMsgMenu(${msgId})" class="text-gray-400 hover:text-[#2b9c96] p-2 opacity-0 group-hover:opacity-100 transition focus:outline-none">
+                        <i class="ri-more-2-fill text-lg"></i>
+                    </button>
+                    <div id="msgMenu-${msgId}" class="hidden absolute right-8 bottom-0 mb-2 w-28 bg-white border border-gray-100 shadow-lg rounded-xl overflow-hidden z-20 text-xs">
+                        <button onclick="prepareEdit(${msgId}, '${safeContentJS}')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-gray-700 transition flex items-center gap-2">
+                            <i class="ri-edit-line"></i> Edit
+                        </button>
+                        <button onclick="deleteMsg(${msgId})" class="w-full text-left px-4 py-2.5 hover:bg-red-50 text-red-600 border-t border-gray-50 transition flex items-center gap-2">
+                            <i class="ri-delete-bin-line"></i> Hapus
+                        </button>
+                    </div>`;
+                }
+
+                let bubbleColor = isDeleted ? "bg-gray-200 text-gray-500 italic" : "bg-[#2b9c96] text-white";
+                let timeColor = isDeleted ? "text-gray-400" : "text-teal-100";
+
+                htmlContent += `
+                    <div class="flex justify-end items-end gap-2 mb-4 group relative">
+                        <div class="relative flex items-center">
+                            ${menuHTML}
+                        </div>
+                        <div class="max-w-[75%] ${bubbleColor} px-5 py-3 rounded-2xl rounded-tr-sm text-sm shadow-sm">
+                            <p class="leading-relaxed break-words">${safeContent}</p>
+                            <span class="block text-[9px] ${timeColor} text-right mt-1 font-medium">${timeStr} ${editedTag}</span>
+                        </div>
+                        <img src="${myAvatarUrl}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm border border-gray-100">
+                    </div>`;
+            } else {
+                let bubbleColor = isDeleted ? "bg-gray-100 text-gray-400 italic border border-gray-200" : "bg-white border border-gray-200 text-gray-800";
+                let timeColor = isDeleted ? "text-gray-400" : "text-gray-400";
+
+                htmlContent += `
+                    <div class="flex justify-start items-end gap-2 mb-4">
+                        <img src="${targetAvatarUrl}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=cbd5e1&color=fff';" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm border border-gray-100">
+                        <div class="max-w-[75%] ${bubbleColor} px-5 py-3 rounded-2xl rounded-tl-sm text-sm shadow-sm">
+                            <p class="leading-relaxed break-words">${safeContent}</p>
+                            <span class="block text-[9px] ${timeColor} mt-1 font-medium">${timeStr} ${editedTag}</span>
+                        </div>
+                    </div>`;
+            }
+        });
+
+        const wasAtBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 100;
+        chatBox.innerHTML = htmlContent;
+
+        if (wasAtBottom || lastChatData.length < 50) { 
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }
+
+    async function submitMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (editingMessageId) {
+            const res = await fetch(`/api/chat/${editingMessageId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ content: text })
+            });
+            if (res.ok) {
+                cancelEdit();
+                lastChatData = "";
+                await loadMessages();
+            } else {
+                alert("Gagal mengedit pesan.");
+            }
+        } else {
+            await fetch("/api/chat/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify({ project_id: parseInt(projectId), receiver_id: parseInt(targetId), content: text, sender_role: myRole })
+            });
+            input.value = "";
+            lastChatData = "";
+            await loadMessages();
+            
+            const chatBox = document.getElementById("chatBox");
+            if (chatBox) setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
+        }
+    }
+
+    function toggleMsgMenu(msgId) {
+        document.querySelectorAll('[id^="msgMenu-"]').forEach(menu => {
+            if (menu.id !== `msgMenu-${msgId}`) menu.classList.add('hidden');
+        });
+        const menu = document.getElementById(`msgMenu-${msgId}`);
+        if (menu) menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.group')) {
+            document.querySelectorAll('[id^="msgMenu-"]').forEach(menu => menu.classList.add('hidden'));
+        }
+    });
+
+    function prepareEdit(msgId, oldContent) {
+        toggleMsgMenu(msgId);
+        editingMessageId = msgId;
+        const input = document.getElementById("messageInput");
+        input.value = oldContent;
+        input.focus();
+        document.getElementById("editIndicator").classList.remove("hidden");
+    }
+
+    function cancelEdit() {
+        editingMessageId = null;
+        document.getElementById("messageInput").value = "";
+        document.getElementById("editIndicator").classList.add("hidden");
+    }
+
+    async function deleteMsg(msgId) {
+        toggleMsgMenu(msgId);
+        if (!msgId || msgId === "undefined") {
+            alert("Sistem gagal membaca ID pesan. Hubungi admin.");
+            return;
+        }
+        if (!confirm("Apakah Anda yakin ingin menghapus pesan ini?")) return;
+        
+        try {
+            const res = await fetch(`/api/chat/${msgId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (res.ok) {
+                lastChatData = ""; 
+                loadMessages();
+            } else {
+                alert("Gagal menghapus pesan.");
+            }
+        } catch(err) { alert("Terjadi kesalahan jaringan."); }
+    }
+
+    function checkURLTemplateText() {
+      const textParam = urlParams.get('text');
+      if (textParam) {
+        const inputField = document.getElementById("messageInput");
+        if (inputField) {
+          inputField.value = decodeURIComponent(textParam);
+          sendMessage(new Event('submit')); 
+          const cleanUrl = window.location.pathname + `?project_id=${projectId}&target_id=${targetId}`;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+      }
+    }
+
+    async function initChat() {
+        await loadChatHeader(); 
+        await loadMessages(); 
+        await checkURLTemplateText();  
+        setInterval(loadMessages, 3000); 
+    }
+
+    initChat();
+  </script>
+</body>
+</html>

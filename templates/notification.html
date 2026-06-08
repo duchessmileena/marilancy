@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifikasi - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .custom-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+    }
+
+    .job-card-modern {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.02);
+      transition: 0.3s;
+    }
+
+    .job-card-modern:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+      border-color: #e2e8f0;
+    }
+
+    .btn-teal {
+      background-color: #2b9c96;
+      color: white;
+    }
+    .btn-teal:hover {
+      background-color: #23827d;
+    }
+
+    .footer-dark {
+      background-color: #000000;
+      color: #e5e7eb;
+      padding: 60px 40px 30px 40px;
+      font-size: 14px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .footer-col h4 {
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 12px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .footer-col ul li:hover {
+      color: white;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .newsletter-input {
+      background-color: transparent;
+      border: 1px solid #4b5563;
+      color: white;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .newsletter-input:focus {
+      border-color: #2b9c96;
+    }
+
+    .newsletter-btn {
+      background-color: #2b9c96;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .newsletter-btn:hover {
+      background-color: #23827d;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      color: #6b7280;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center">
+    <div class="flex-1">
+      <a class="text-xl font-bold flex items-center gap-2" href="/freelancer">
+        <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center gap-8 text-sm font-medium">
+      <a href="/freelancer" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Dashboard</a>
+      <a href="/freelancer/projects" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Projects</a>
+      <a href="/freelancer/profile/view" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Applications</a>
+      <a href="/chat" onclick="setActive(this)" class="nav-link text-gray-400 hover:text-white">Messages</a>
+    </div>
+
+    <div class="flex-1 flex justify-end items-center gap-5 ">
+      <span id="userGreeting" class="text-sm font-medium"></span>
+      <div class="profile-box cursor-pointer" onclick="goProfile()">
+        <img id="profile_img"
+          src="https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff"
+          onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=2b9c96&color=fff';"
+          class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+      </div>
+      <button onclick="logout()" class="btn-teal px-5 py-2 rounded-md text-sm font-semibold transition">
+        Logout
+      </button>
+      <div class="relative cursor-pointer" onclick="goNotification()">
+        <i class="ri-notification-3-fill text-2xl text-yellow-500"></i>
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0 rounded-full hidden">
+          0
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bg-black text-white text-center py-16 mb-8 mt-16">
+    <h1 class="text-4xl font-bold">Notifikasi</h1>
+  </div>
+
+  <section class="max-w-4xl mx-auto px-4 mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white border border-gray-200 rounded-xl p-3 shadow-sm">
+      
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="filterNotifications('all')" 
+          id="filter-all"
+          class="filter-btn bg-[#2b9c96] text-white px-5 py-2 rounded-lg text-sm font-medium transition">
+          All
+        </button>
+
+        <button onclick="filterNotifications('application')" 
+          id="filter-application"
+          class="filter-btn text-gray-600 hover:bg-gray-100 px-5 py-2 rounded-lg text-sm font-medium transition">
+          Applications
+        </button>
+
+        <button onclick="filterNotifications('message')" 
+          id="filter-message"
+          class="filter-btn text-gray-600 hover:bg-gray-100 px-5 py-2 rounded-lg text-sm font-medium transition">
+          Messages
+        </button>
+      </div>
+
+      <button onclick="markAllNotificationsAsRead()" 
+        class="text-xs font-semibold text-white bg-gray-800 hover:bg-black px-4 py-2.5 rounded-lg transition shadow-sm flex items-center gap-1.5 w-full sm:w-auto justify-center">
+        <i class="ri-check-double-line text-sm"></i> Tandai Semua Sudah Dibaca
+      </button>
+
+    </div>
+  </section>
+
+  <section class="max-w-4xl mx-auto px-4 pb-20">
+    <div id="notifList" class="flex flex-col gap-2">
+      <p class="text-gray-500 text-center py-10">Memuat notifikasi...</p>
+    </div>
+  </section>
+
+  <footer class="footer-dark">
+    <div class="footer-container">
+      <div class="footer-col">
+        <a class="text-xl font-bold flex items-center gap-2 text-white mb-6" href="#"><i class="ri-briefcase-4-line text-2xl"></i> MariLancy</a>
+        <p class="text-gray-400 leading-relaxed max-w-xs">MariLancy adalah platform freelance yang menghubungkan mahasiswa dan talenta pemula dengan klien untuk mendapatkan pengalaman kerja nyata.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tentang Kami</h4>
+        <ul>
+          <li><a href="/tentang#platform" class="hover:text-white transition">Tentang Platform</a></li>
+          <li><a href="/tentang#tim" class="hover:text-white transition">Tim Pengembang</a></li>
+          <li><a href="/tentang#partners" class="hover:text-white transition">Partners</a></li>
+          <li><a href="/tentang#freelancer" class="hover:text-white transition">Untuk Freelancer</a></li>
+          <li><a href="/tentang#klien" class="hover:text-white transition">Untuk Klien</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kategori Proyek</h4>
+        <ul>
+          <li><a href="/kategori#desain-grafis" class="hover:text-white transition">Desain Grafis</a></li>
+          <li><a href="/kategori#web-development" class="hover:text-white transition">Web Development</a></li>
+          <li><a href="/kategori#content-writing" class="hover:text-white transition">Content Writing</a></li>
+          <li><a href="/kategori#social-media" class="hover:text-white transition">Social Media</a></li>
+          <li><a href="/kategori#digital-marketing" class="hover:text-white transition">Digital Marketing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Mulai Eksplorasi</h4>
+        <p class="text-gray-400 text-sm leading-relaxed mb-4">Temukan berbagai peluang proyek menarik dan mulai bangun portofoliomu sekarang.</p>
+        <a href="#" class="inline-flex items-center gap-2 bg-[#2b9c96] hover:bg-[#23827d] text-white px-5 py-2.5 rounded-lg transition font-medium text-sm shadow-sm hover:shadow-md">
+          <i class="ri-search-line"></i> Explore Jobs
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MariLancy. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="/legal#privasi" class="hover:text-white transition">Kebijakan Privasi</a>
+        <a href="/legal#syarat" class="hover:text-white transition">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const token = localStorage.getItem("token")
+    const role = localStorage.getItem("role")
+
+    if (!token) {
+      alert("Silakan login dulu")
+      window.location.href = "/"
+    }
+
+    if (role !== "freelancer") {
+      alert("Akses ditolak (bukan freelancer)")
+      window.location.href = "/"
+    }
+
+    let globalJobs = []
+    let currentDisplayedJobs = []
+    let myApplications = []
+    let allNotifications = []
+    let currentFilter = "all"
+
+
+    const userId = localStorage.getItem("userId") || "guest";
+
+    function getReadNotifs() {
+        return JSON.parse(localStorage.getItem(`readNotifs_${userId}`)) || [];
+    }
+
+    function markAsRead(appId) {
+        let readNotifs = getReadNotifs();
+        if (!readNotifs.includes(appId)) {
+            readNotifs.push(appId);
+            localStorage.setItem(`readNotifs_${userId}`, JSON.stringify(readNotifs));
+        }
+    }
+  
+
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options)
+      if (res.status === 401) {
+        alert("Session habis")
+        localStorage.clear()
+        window.location.href = "/"
+        return null
+      }
+      if (res.status === 403) {
+        alert("Akses ditolak")
+        window.location.href = "/"
+        return null
+      }
+      return await res.json()
+    }
+
+    async function loadProfile() {
+      const profile = await safeFetch("/freelancer/profile", {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+
+      if (!profile) return
+
+      const name = profile.nama || "User"
+      const shortName = name.split(' ')[0]
+      document.getElementById("userGreeting").innerText = `Hi, ${shortName}!`
+
+      const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(shortName)}&background=2b9c96&color=fff`;
+      const profileImgElement = document.getElementById("profile_img");
+
+      if (profile.foto_profil && profile.foto_profil !== "") {
+          profileImgElement.src = profile.foto_profil;
+          profileImgElement.onerror = function() {
+              this.onerror = null;
+              this.src = fallbackAvatar;
+          };
+      } else {
+          profileImgElement.src = fallbackAvatar;
+      }
+    }
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch("/freelancer/applications", {
+          headers: { "Authorization": "Bearer " + token }
+        })
+
+        const data = await res.json()
+        let notifications = []
+        const readNotifs = getReadNotifs();
+
+        data.forEach(app => {
+          const job = app.job || {}
+          if (job.status === "dihapus") return;
+
+          let finalStatus = app.status;
+          if (app.status === "accepted") {
+            finalStatus = "accepted";
+          } else if (app.status === "rejected") {
+            finalStatus = "rejected";
+          } else if (app.status === "pending") {
+            if (job.status === "ditutup") {
+              finalStatus = "ditolak (job ditutup)";
+            } else {
+              finalStatus = "pending";
+            }
+          }
+
+          if (finalStatus === "pending" || finalStatus === "withdrawn") return;
+
+          const clientName = job.client?.nama_client || job.client?.nama || job.client_name || "Klien";
+          const clientPhoto = job.client?.foto_profil;
+          const fallbackClientAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=2b9c96&color=fff`;
+          const clientAvatar = (clientPhoto && clientPhoto !== "") ? clientPhoto : fallbackClientAvatar;
+
+          let title = "Status Diupdate"
+          let textDesc = "Ada pembaruan pada status lamaranmu."
+
+          if (finalStatus === "accepted") {
+            title = "Lamaran Diterima"
+            textDesc = `Selamat! Lamaran kamu untuk proyek <b>${job.judul || "-"}</b> telah diterima oleh ${clientName}.`
+          } else if (finalStatus.includes("ditolak") || finalStatus === "rejected") {
+            title = "Lamaran Belum Sesuai"
+            if (finalStatus === "ditolak (job ditutup)") {
+              textDesc = `Mohon maaf, klien telah menutup rekrutmen untuk proyek <b>${job.judul || "-"}</b>.`;
+            } else {
+              textDesc = `Mohon maaf, lamaran kamu untuk proyek <b>${job.judul || "-"}</b> belum bisa dilanjutkan oleh ${clientName}.`;
+            }
+          }
+
+          notifications.push({
+            type: "application",
+            id: app.id,
+            jobId: job.id || 0,
+            avatar: clientAvatar,
+            fallbackAvatar: fallbackClientAvatar,
+            title,
+            textDesc,
+            created_at: app.updated_at && !String(app.updated_at).startsWith("0001") ? app.updated_at : (app.created_at && !String(app.created_at).startsWith("0001") ? app.created_at : new Date().toISOString()),
+            isRead: readNotifs.includes(app.id)
+          })
+        })
+
+        try {
+          const msgRes = await fetch("/api/chat/list?role=freelancer", {
+            headers: { "Authorization": "Bearer " + token }
+          })
+
+          if (msgRes.ok) {
+            const conversations = await msgRes.json();
+            const readMessages = getReadMessageNotifs();
+
+            const chatPromises = conversations.map(async (conv) => {
+              let targetName = "User";
+              let projectName = "Proyek #" + conv.project_id;
+              let targetPhoto = "";
+
+              try {
+                const projRes = await fetch(`/api/projects/${conv.project_id}`, {
+                  headers: { "Authorization": "Bearer " + token }
+                });
+                if (projRes.ok) {
+                  const projData = await projRes.json();
+                  const project = projData.project;
+                  targetName = project.client?.nama_client || "Klien";
+                  projectName = project.job?.judul || projectName;
+                  targetPhoto = project.client?.foto_profil || "";
+                }
+              } catch (err) {
+                console.error("Gagal melengkapi detail info chat notif:", err);
+              }
+
+              const messageKey = `${conv.project_id}-${conv.target_user_id}-${conv.created_at}`;
+              const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(targetName)}&background=2b9c96&color=fff`;
+              const avatar = (targetPhoto && targetPhoto.trim() !== "") ? targetPhoto : fallbackAvatar;
+
+              notifications.push({
+                type: "message",
+                id: messageKey,
+                senderId: conv.target_user_id,
+                avatar,
+                fallbackAvatar,
+                title: `Pesan Baru dari ${targetName}`,
+                textDesc: `<span class="bg-teal-50 text-teal-700 text-[10px] font-bold px-1.5 py-0.5 rounded border border-teal-100 mr-1.5">${projectName}</span> ${conv.content || "Mengirim sebuah pesan."}`,
+                created_at: conv.created_at || new Date().toISOString(),
+                isRead: readMessages.includes(messageKey)
+              });
+            });
+
+            await Promise.all(chatPromises);
+          }
+        } catch (err) {
+          console.error("Gagal load message notification:", err)
+        }
+
+        notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        allNotifications = notifications
+        renderNotifications()
+
+      } catch (err) {
+        console.error(err)
+        document.getElementById("notifList").innerHTML =
+          "<p class='text-red-500 text-center py-10'>Gagal memuat notifikasi.</p>"
+      }
+    }
+
+    function renderNotifications() {
+      let filtered = allNotifications
+
+      if (currentFilter !== "all") {
+        filtered = allNotifications.filter(n => n.type === currentFilter)
+      }
+
+      let html = ""
+
+      filtered.forEach(notif => {
+        const cardStyle = notif.isRead
+          ? "background: #f8fafc; opacity: 0.8;"
+          : "background: #ffffff;";
+
+        const dotIndicator = notif.isRead
+          ? ""
+          : `<div class="w-2.5 h-2.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>`;
+
+        let markReadBtn = "";
+        if (!notif.isRead) {
+          markReadBtn = `
+            <button onclick="event.stopPropagation(); manualMarkAsRead('${notif.type}', '${notif.id}');" 
+              class="mt-2 text-xs font-semibold text-[#2b9c96] hover:text-[#23827d] flex items-center gap-1 bg-teal-50 px-2.5 py-1 rounded-md transition-colors w-max">
+              <i class="ri-check-double-line"></i> Tandai Sudah Dibaca
+            </button>
+          `;
+        }
+
+        html += `
+          <div onclick="${notif.type === 'application'
+            ? `openApplication(${notif.jobId}, ${notif.id})`
+            : `openMessage('${notif.id}', ${notif.senderId})`
+          }"
+          class="job-card-modern cursor-pointer flex flex-col justify-between"
+          style="${cardStyle}">
+
+            <div class="flex justify-between items-start mb-4">
+              <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                ${getTimeLabel(notif.created_at)}
+              </span>
+              ${dotIndicator}
+            </div>
+
+            <div class="flex items-start gap-4">
+              <img
+                src="${notif.avatar || notif.fallbackAvatar}"
+                onerror="
+                  this.onerror=null;
+                  this.src='${notif.fallbackAvatar}';
+                "
+                class="w-12 h-12 rounded-full object-cover bg-gray-100 flex-shrink-0"
+                alt="Profile">
+
+              <div class="flex-1">
+                <h3 class="font-bold text-base md:text-lg text-gray-900 leading-tight">
+                  ${notif.title}
+                </h3>
+                <p class="text-sm text-gray-600 mt-1 leading-relaxed">
+                  ${notif.textDesc}
+                </p>
+                ${markReadBtn} </div>
+
+            </div>
+          </div>
+        `
+      })
+
+      document.getElementById("notifList").innerHTML =
+        html ||
+        `<div class="text-center py-20 bg-white rounded-2xl border border-gray-100">
+          <p class="text-gray-500 font-medium">Belum ada notifikasi.</p>
+        </div>`
+    }
+
+    function filterNotifications(type) {
+
+      currentFilter = type
+
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.classList.remove("bg-[#2b9c96]", "text-white")
+        btn.classList.add("text-gray-600")
+      })
+
+      const activeBtn = document.getElementById(`filter-${type}`)
+
+      activeBtn.classList.add("bg-[#2b9c96]", "text-white")
+      activeBtn.classList.remove("text-gray-600")
+
+      renderNotifications()
+    }
+
+    async function loadNotificationCount() {
+
+      const appRes = await fetch("/freelancer/applications", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const appData = await appRes.json();
+
+      let unreadCount = 0;
+
+      const readNotifs = getReadNotifs();
+
+      appData.forEach(app => {
+        const job = app.job || app.Job || {};
+
+        let isNotif = false;
+
+        if (app.status === "accepted" || app.status === "rejected") {
+          isNotif = true;
+        } else if (app.status === "pending" &&
+          (job.status === "dihapus" || job.status === "ditutup")) {
+          isNotif = true;
+        }
+
+        if (isNotif && !readNotifs.includes(app.id)) {
+          unreadCount++;
+        }
+      });
+
+      try {
+        const msgRes = await fetch("/api/chat/list?role=freelancer", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (msgRes.ok) {
+          const conversations = await msgRes.json();
+          const readMessages = getReadMessageNotifs();
+
+          conversations.forEach(conv => {
+            const messageKey =
+              `${conv.project_id}-${conv.target_user_id}-${conv.created_at}`;
+
+            if (!readMessages.includes(messageKey)) {
+              unreadCount++;
+            }
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+
+      const badge = document.getElementById("notifBadge");
+
+      if (unreadCount > 0) {
+        badge.innerText = unreadCount;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+
+    function openApplication(jobId, appId) {
+      markAsRead(appId);
+      window.location.href = `/freelancer/profile/view?tab=history&job=${jobId}&app=${appId}`
+    }
+
+    function getReadMessageNotifs() {
+      return JSON.parse(localStorage.getItem("readMessageNotifs")) || []
+    }
+
+    function markMessageAsRead(id) {
+      let read = getReadMessageNotifs()
+
+      if (!read.includes(id)) {
+        read.push(id)
+        localStorage.setItem("readMessageNotifs", JSON.stringify(read))
+      }
+    }
+    function manualMarkAsRead(type, id) {
+      if (type === 'application') {
+        markAsRead(parseInt(id));
+      } else {
+        markMessageAsRead(id);
+      }
+      
+      loadNotifications();
+      loadNotificationCount();
+    }
+    function goHome() {
+      const currentRole = localStorage.getItem("role");
+
+      if (currentRole === "freelancer") {
+        window.location.href = "/freelancer";
+      } else if (currentRole === "client") {
+        window.location.href = "/client";
+      } else {
+        window.location.href = "/guest"; 
+      }
+    }
+
+    function getTimeLabel(date) {
+
+      if (!date) return "New"
+
+      if (
+        !date ||
+        String(date).startsWith("0001")
+      ) {
+        return "New"
+      }
+
+      const parsedDate = new Date(date)
+
+      if (isNaN(parsedDate.getTime())) {
+        return "New"
+      }
+
+      if (isNaN(parsedDate.getTime())) {
+        return "New"
+      }
+
+      const diff = Math.floor((Date.now() - parsedDate.getTime()) / 60000)
+
+      if (diff < 1) return "Now"
+      if (diff < 60) return `${diff} min ago`
+      if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`
+      if (diff < 2880) return "Yesterday"
+
+      return `${Math.floor(diff / 1440)} days ago`
+    }
+
+    function markAllNotificationsAsRead() {
+      const unreadNotifs = allNotifications.filter(n => !n.isRead);
+
+      if (unreadNotifs.length === 0) {
+        alert("Semua notifikasi Anda sudah dibaca.");
+        return;
+      }
+
+      const isConfirm = confirm(`Apakah Anda yakin ingin menandai semua (${unreadNotifs.length}) notifikasi sebagai sudah dibaca?`);
+      if (!isConfirm) return;
+
+      unreadNotifs.forEach(notif => {
+        if (notif.type === 'application') {
+          markAsRead(parseInt(notif.id));
+        } else {
+          markMessageAsRead(notif.id);  
+        }
+      });
+
+      loadNotifications();
+      loadNotificationCount();
+      
+      alert("Semua notifikasi berhasil ditandai sudah dibaca!");
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userId");
+        window.location.href = "/";
+    }
+    function openMessage(messageKey, senderId) {
+      markMessageAsRead(messageKey)
+      window.location.href = `/chat?user=${senderId}`
+    }
+    
+    function goProfile() { window.location.href = "/freelancer/profile/view" }
+    function goNotification() {
+      window.location.href = "/freelancer/notification"
+    }
+
+    loadProfile()
+    loadNotifications()
+    loadNotificationCount()
+
+  </script>
+
+</body>
+</html>

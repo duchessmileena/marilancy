@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - MariLancy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d') no-repeat center center/cover;
+    }
+
+    .glass {
+      backdrop-filter: blur(18px);
+      background: rgba(0,0,0,0.55);
+    }
+  </style>
+</head>
+
+<body class="h-screen flex text-white">
+
+<div class="hidden md:flex w-1/2 items-center justify-center px-20 bg-black/80 backdrop-blur-sm">
+  <h1 class="text-5xl font-bold leading-tight test">
+    Mulai Karir <br>
+    Freelance Kamu <br>
+    di<span class="inline-block ml-2">MariLancy</span>
+  </h1>
+</div>
+
+<div class="w-full md:w-1/2 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+
+  <div class="w-[400px]">
+
+    <h1 class="text-5xl font-semibold mb-8 text-center">Create Account</h1>
+
+    <input id="nama"
+      class="w-full mb-4 p-4 rounded-xl bg-gray-200 text-black outline-none"
+      placeholder="Nama">
+
+    <input id="email"
+      class="w-full mb-4 p-4 rounded-xl bg-gray-200 text-black outline-none"
+      placeholder="Email">
+
+    <input id="password" type="password"
+      class="w-full mb-4 p-4 rounded-xl bg-gray-200 text-black outline-none"
+      placeholder="Password">
+
+    <select id="role" onchange="toggleJenisUsaha()"
+      class="w-full mb-4 p-4 rounded-xl text-black outline-none cursor-pointer">
+      <option value="freelancer">Freelancer</option>
+      <option value="client">Client</option>
+    </select>
+
+    <div id="jenis_usaha_container" class="hidden mb-6">
+      <select id="jenis_usaha" class="w-full p-4 rounded-xl bg-gray-200 text-black outline-none cursor-pointer">
+        <option value="">Pilih Jenis Usaha</option>
+        <option value="Micro Enterprise (Usaha Mikro)">Micro Enterprise (Usaha Mikro)</option>
+        <option value="Small Enterprise (Usaha Kecil)">Small Enterprise (Usaha Kecil)</option>
+        <option value="Medium Enterprise (Usaha Menengah)">Medium Enterprise (Usaha Menengah)</option>
+        <option value="Sole Proprietorship (Usaha Perseorangan)">Sole Proprietorship (Usaha Perseorangan)</option>
+        <option value="UD (Usaha Dagang)">UD (Usaha Dagang)</option>
+        <option value="CV">CV</option>
+        <option value="PT">PT</option>
+        <option value="PT Tbk">PT Tbk</option>
+        <option value="Cooperative (Koperasi)">Cooperative (Koperasi)</option>
+        <option value="Foundation (Yayasan)">Foundation (Yayasan)</option>
+        <option value="Government Institution">Government Institution</option>
+        <option value="BUMN / BUMD">BUMN / BUMD</option>
+        <option value="Joint Venture">Joint Venture</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <button onclick="register()"
+      class="w-full bg-teal-500 hover:bg-teal-600 p-4 rounded-xl font-semibold transition">
+      Register
+    </button>
+
+    <p id="error_msg" class="text-red-400 text-sm mt-3 hidden text-center font-semibold"></p>
+
+    <p class="text-center text-sm mt-6 text-gray-300">
+      Sudah punya akun?
+      <a href="/login" class="text-teal-400 hover:underline">Login</a>
+    </p>
+
+  </div>
+
+</div>
+
+<script>
+document.getElementById("nama").addEventListener("input", clearError)
+document.getElementById("email").addEventListener("input", clearError)
+document.getElementById("password").addEventListener("input", clearError)
+
+function toggleJenisUsaha() {
+  const role = document.getElementById("role").value;
+  const container = document.getElementById("jenis_usaha_container");
+  
+  if (role === "client") {
+    container.classList.remove("hidden");
+  } else {
+    container.classList.add("hidden");
+    document.getElementById("jenis_usaha").value = "";
+  }
+  clearError();
+}
+
+function clearError() {
+  const errorBox = document.getElementById("error_msg")
+  errorBox.classList.add("hidden")
+  errorBox.innerText = ""
+}
+
+function showError(msg) {
+  const errorBox = document.getElementById("error_msg")
+  errorBox.innerText = msg
+  errorBox.classList.remove("hidden")
+}
+
+function checkPasswordRules(password) {
+  if (password.length < 8) return "⚠️ Password minimal 8 karakter!";
+  if (!/[A-Z]/.test(password)) return "⚠️ Password harus mengandung minimal 1 huruf besar!";
+  if (!/[0-9]/.test(password)) return "⚠️ Password harus mengandung minimal 1 angka!";
+  if (!/[^a-zA-Z0-9]/.test(password)) return "⚠️ Password harus mengandung minimal 1 simbol (contoh: @, #, !)!";
+  return null;
+}
+
+function checkNameRules(nama) {
+  if (nama.length < 4) {
+    return "⚠️ Nama minimal terdiri dari 4 karakter!";
+  }
+  
+  if (!/^[A-Z]/.test(nama)) {
+    return "⚠️ Nama harus diawali dengan huruf kapital (contoh: Budi)!";
+  }
+  
+  if (!/[a-zA-Z]/.test(nama)) {
+    return "⚠️ Nama tidak boleh hanya berisi angka, harus mengandung huruf!";
+  }
+  
+  if (!/^[a-zA-Z0-9\s.,'-]+$/.test(nama)) {
+    return "⚠️ Nama mengandung karakter khusus yang tidak diizinkan!";
+  }
+  return null;
+}
+async function register() {
+  const nama = document.getElementById("nama").value.trim()
+  const email = document.getElementById("email").value.trim()
+  const password = document.getElementById("password").value.trim()
+  const role = document.getElementById("role").value
+  const jenisUsaha = document.getElementById("jenis_usaha").value
+
+  if (!nama || !email || !password) {
+    alert("⚠️ Semua field wajib diisi!")
+    showError("Semua field wajib diisi!")
+    return
+  }
+
+  const namaError = checkNameRules(nama);
+  if (namaError) {
+    alert(namaError);
+    showError(namaError);
+    return;
+  }
+
+  if (role === "client" && !jenisUsaha) {
+    alert("⚠️ Klien wajib memilih Jenis Usaha!")
+    showError("Klien wajib memilih Jenis Usaha!")
+    return
+  }
+
+  if (!email.toLowerCase().endsWith("@gmail.com")) {
+    alert("⚠️ Hanya email dengan format @gmail.com yang dapat didaftarkan.")
+    showError("Hanya email dengan format @gmail.com yang dapat didaftarkan.")
+    return
+  }
+
+  const passwordError = checkPasswordRules(password);
+  if (passwordError) {
+    alert(passwordError);
+    showError(passwordError);
+    return;
+  }
+
+  try {
+    const res = await fetch("/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nama, email, password, role, jenis_usaha: jenisUsaha })
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      alert(data.error || "Pendaftaran gagal.")
+      showError(data.error || "Pendaftaran gagal.")
+      return
+    }
+
+    alert("✅ Register berhasil, silakan login")
+    window.location.href = "/login"
+
+  } catch (err) {
+    console.error("❌ ERROR REGISTER:", err)
+    alert("Terjadi kesalahan pada server")
+    showError("Terjadi kesalahan pada server")
+  }
+}
+</script>
+
+</body>
+</html>

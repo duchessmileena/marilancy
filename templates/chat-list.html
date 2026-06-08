@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesan - MariLancy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    .chat-scroll::-webkit-scrollbar { width: 5px; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  </style>
+</head>
+<body class="h-screen overflow-hidden flex flex-col">
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-black text-white px-8 py-4 flex justify-between items-center h-18">
+      <div class="flex-1">
+        <a id="logoLink" class="text-xl font-bold flex items-center gap-2" href="#">
+          <i class="ri-briefcase-4-line text-2xl"></i> MariLancy
+        </a>
+      </div>
+
+      <div id="navLinks" class="flex-1 flex justify-center gap-8 text-sm font-medium"></div>
+
+      <div class="flex-1 flex justify-end items-center gap-5 ">
+        <span id="userGreeting" class="text-sm font-medium"></span>
+        <div class="profile-box cursor-pointer" onclick="goProfile()">
+          <img id="profile_img" src="https://ui-avatars.com/api/?name=User" class="profile-img w-10 h-10 rounded-full object-cover" alt="User">
+        </div>
+        <button onclick="logout()" class="bg-[#2b9c96] hover:bg-[#23827d] text-white px-5 py-2 rounded-md text-sm font-semibold transition">
+          Logout
+        </button>
+        <div id="notificationBtn" class="relative cursor-pointer hidden" onclick="goNotification()">
+          <i class="ri-notification-3-fill text-2xl text-yellow-500"></i>
+          <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0 rounded-full hidden">0</span>
+        </div>
+      </div>
+  </nav>
+
+<div class="flex flex-1 pt-24 h-full max-w-7xl w-full mx-auto px-4 py-6 gap-6 overflow-hidden">
+    
+    <div class="w-full md:w-5/12 flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-[82vh]">
+      <div class="p-5 border-b border-gray-100 bg-gray-50 flex-shrink-0">
+        <h1 class="text-xl font-bold text-gray-900">Pesan Saya</h1>
+      </div>
+      <div id="chatListContainer" class="flex-1 overflow-y-auto chat-scroll divide-y divide-gray-50">
+        <p class="text-center text-gray-500 py-10">Memuat pesan...</p>
+      </div>
+    </div>
+
+    <div id="chatRoomPreview" class="hidden md:flex w-7/12 flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-[82vh] relative">
+      
+      <div id="emptyState" class="flex flex-col flex-1 justify-center items-center p-8 text-center bg-gray-50/50">
+        <div class="w-20 h-20 bg-teal-50 text-[#2b9c96] rounded-full flex items-center justify-center text-4xl mb-4 shadow-sm border border-teal-100 animate-bounce">
+          <i class="ri-message-3-line"></i>
+        </div>
+        <h3 class="font-bold text-gray-800 text-lg">Mulai Percakapan</h3>
+        <p class="text-sm text-gray-400 mt-1 max-w-sm leading-relaxed">Pilih salah satu pesan di sebelah kiri untuk melihat ruang obrolan proyek secara langsung.</p>
+      </div>
+
+      <div id="activeChatContainer" class="hidden flex flex-col h-full w-full">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between flex-shrink-0">
+          <div class="flex items-center gap-3">
+            <img id="activeRoomAvatar" src="" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+            <div>
+              <h3 id="activeRoomName" class="font-bold text-gray-800 text-sm leading-tight">Nama Target</h3>
+              <span id="activeRoomProject" class="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded border border-teal-100 font-semibold mt-1 inline-block">Nama Proyek</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="messageHistoryBox" class="flex-1 overflow-y-auto chat-scroll p-6 bg-slate-50/50 space-y-4"></div>
+
+        <div id="editIndicator" class="hidden px-6 py-2 bg-teal-50 border-t border-teal-100 flex justify-between items-center text-xs text-teal-700 font-medium z-10 relative">
+          <span><i class="ri-edit-line mr-1"></i> Sedang mengedit pesan...</span>
+          <button type="button" onclick="cancelEdit()" class="text-red-500 hover:underline"><i class="ri-close-line"></i> Batal</button>
+        </div>
+
+        <form id="sendMessageForm" onsubmit="submitMessage(event)" class="p-4 border-t border-gray-100 flex gap-3 bg-white flex-shrink-0 items-center relative z-20">
+          <input type="text" id="messageInput" required autocomplete="off" placeholder="Ketik pesan Anda di sini..." class="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#2b9c96] bg-gray-50 focus:bg-white transition-colors">
+          <button type="submit" class="bg-[#2b9c96] hover:bg-[#23827d] text-white p-3 rounded-xl transition duration-200 flex items-center justify-center text-lg shadow-sm"><i class="ri-send-plane-2-fill"></i></button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role"); 
+
+    const userId = localStorage.getItem("userId") || "guest";
+    if (!token) window.location.href = "/";
+
+    let activeProjectId = null;
+    let activeTargetId = null;
+    let activeUniqueKey = null;
+
+    const detailsCache = {};
+    const latestMessageKeys = {};
+    let lastChatData = ""; 
+    let lastHistoryData = "";
+
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options)
+      if (res.status === 401) {
+        alert("Session habis");
+        localStorage.clear();
+        window.location.href = "/";
+        return null;
+      }
+      if (res.status === 403) { alert("Akses ditolak"); return null; }
+      return await res.json()
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "/"; }
+    function goHome() { window.location.href = role === "freelancer" ? "/freelancer" : role === "client" ? "/client" : "/guest"; }
+    function goProfile() { window.location.href = role === "freelancer" ? "/freelancer/profile/view" : "/client/profile/view"; }
+    function goNotification() { window.location.href = role === "freelancer" ? "/freelancer/notification" : "/client/notification"; }
+    function getReadMessageNotifs() {
+        return JSON.parse(localStorage.getItem("readMessageNotifs")) || [];
+    }
+    function getReadNotifs() {
+      return JSON.parse(localStorage.getItem(`readNotifs_${userId}`)) || [];
+    }
+
+    function renderNavbar() {
+        const navLinks = document.getElementById("navLinks");
+        const logoLink = document.getElementById("logoLink");
+        const notificationBtn = document.getElementById("notificationBtn");
+
+        if (role === "client") {
+            if (notificationBtn) notificationBtn.classList.add("hidden");
+            
+            logoLink.href = "/client";
+            navLinks.innerHTML = `
+                <a href="/client" class="nav-link text-gray-400 hover:text-white pb-1">Dashboard</a>
+                <a href="/client#post-job" class="nav-link text-gray-400 hover:text-white">Posting Job</a>
+                <a href="/client/projects" class="nav-link text-gray-400 hover:text-white">Projects</a>
+                <a href="/chat" class="text-white border-b-2 border-[#2b9c96] pb-1 font-semibold">Messages</a>
+            `;
+        } else {
+            if (notificationBtn) notificationBtn.classList.remove("hidden");
+            
+            logoLink.href = "/freelancer";
+            navLinks.innerHTML = `
+                <a href="/freelancer" class="nav-link text-gray-400 hover:text-white pb-1">Dashboard</a>
+                <a href="/freelancer/projects" class="nav-link text-gray-400 hover:text-white">Projects</a>
+                <a href="/freelancer/profile/view" class="nav-link text-gray-400 hover:text-white">Applications</a>
+                <a href="/chat" class="text-white border-b-2 border-[#2b9c96] pb-1 font-semibold">Messages</a>
+            `;
+        }
+    }
+    
+    async function loadNavbarData() {
+        if (!token) return;
+
+        const currentUserId = localStorage.getItem("userId") || "guest";
+
+        let chatData = [];
+        let appData = [];
+
+        try {
+            const [chatRes, appRes] = await Promise.all([
+                fetch(`/api/chat/list?role=${role}`, {
+                    headers: { "Authorization": "Bearer " + token }
+                }),
+
+                role === 'freelancer'
+                    ? fetch("/freelancer/applications", {
+                        headers: { "Authorization": "Bearer " + token }
+                    })
+                    : Promise.resolve(null)
+            ]);
+
+            if (chatRes && chatRes.ok) {
+                try {
+                    chatData = await chatRes.json();
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (appRes && appRes.ok) {
+                try {
+                    appData = await appRes.json();
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+        } catch (err) {
+            console.error("Gagal load API:", err);
+        }
+        const greetingEl = document.getElementById("userGreeting");
+        const profileImgElement = document.getElementById("profile_img");
+
+        try {
+            const profileEndpoint =
+                role === "client"
+                    ? "/client/profile"
+                    : "/freelancer/profile";
+
+            const profile = await safeFetch(profileEndpoint, {
+                headers: { "Authorization": "Bearer " + token }
+            });
+
+            if (profile) {
+                const name =
+                    role === "client"
+                        ? (profile.nama_client || "Klien")
+                        : (profile.nama || "Freelancer");
+
+                const firstName = name.split(" ")[0];
+
+                if (greetingEl) {
+                    greetingEl.innerText = `Hi, ${firstName}!`;
+                }
+
+                if (profileImgElement) {
+                    const fallbackAvatar =
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2b9c96&color=fff`;
+
+                    const imgUrl = profile.foto_profil || profile.galeri;
+
+                    profileImgElement.src =
+                        imgUrl && imgUrl.trim() !== ""
+                            ? imgUrl
+                            : fallbackAvatar;
+
+                    profileImgElement.onerror = function () {
+                        this.onerror = null;
+                        this.src = fallbackAvatar;
+                    };
+                }
+            }
+        } catch (err) {
+            console.error("Gagal load profile:", err);
+        }
+
+        const chats = Array.isArray(chatData) ? chatData : [];
+        const readMessages = getReadMessageNotifs();
+        const unreadChatCount = chats.filter(chat => {
+
+            const messageKey =
+              `${chat.project_id}-${chat.target_user_id}-${chat.created_at}`;
+
+            return !readMessages.includes(messageKey);
+
+        }).length;
+
+
+        let unreadAppsCount = 0;
+        if (role === "freelancer" && Array.isArray(appData)) {
+            const readNotifs =
+                JSON.parse(localStorage.getItem(`readNotifs_${currentUserId}`)) || [];
+            unreadAppsCount = appData.filter(app => {
+                const job = app.job || app.Job || {};
+                const appStatus =
+                    (app.status || "").toLowerCase();
+                const jobStatus =
+                    (job.status || "").toLowerCase();
+                const isNotif =
+                    (appStatus === "accepted" ||
+                    appStatus === "rejected") ||
+                    (appStatus === "pending" &&
+                    (jobStatus === "dihapus" ||
+                      jobStatus === "ditutup"));
+
+                return isNotif &&
+                      !readNotifs.map(Number).includes(Number(app.id));
+
+            }).length;
+        }
+
+        const total = unreadChatCount + unreadAppsCount;
+
+        const badge = document.getElementById("notifBadge");
+        const notificationBtn = document.getElementById("notificationBtn");
+
+        if (role === "client") {
+            if (notificationBtn) {
+                notificationBtn.classList.add("hidden");
+            }
+            return;
+        }
+
+        if (badge) {
+            if (total > 0) {
+                badge.innerText = total;
+                badge.classList.remove("hidden");
+
+                if (notificationBtn) {
+                    notificationBtn.classList.remove("hidden");
+                }
+            } else {
+                badge.classList.add("hidden");
+
+                if (notificationBtn) {
+                    notificationBtn.classList.remove("hidden");
+                }
+            }
+        }
+
+        console.log(
+            `[DEBUG] Notif => Chat(${unreadChatCount}) + Apps(${unreadAppsCount}) = ${total}`
+        );
+    }
+
+
+    async function fetchAndUpdateDetails(uniqueId, projectId, targetUserId) {
+        try {
+            const projRes = await fetch(`/api/projects/${projectId}`, { headers: { "Authorization": "Bearer " + token } });
+            if (projRes.ok) {
+                const data = await projRes.json();
+                const project = data.project;
+
+                let projectName = project.job.judul || "Proyek #" + projectId;
+                let targetName = "User " + targetUserId;
+
+                targetName = role === "client" 
+                    ? (project.freelancer?.nama || "Freelancer") 
+                    : (project.client?.nama_client || "Klien");
+
+                const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(targetName)}&background=2b9c96&color=fff`;
+
+                let rawAvatarUrl = role === "client" 
+                    ? project.freelancer?.foto_profil 
+                    : project.client?.foto_profil;
+                let avatarUrl = (rawAvatarUrl && rawAvatarUrl.trim() !== "") ? rawAvatarUrl : fallbackAvatar;
+
+                detailsCache[uniqueId] = { targetName, projectName, avatarUrl };
+
+                if (document.getElementById(`targetName-${uniqueId}`)) document.getElementById(`targetName-${uniqueId}`).innerText = targetName;
+                if (document.getElementById(`projectName-${uniqueId}`)) document.getElementById(`projectName-${uniqueId}`).innerText = projectName;
+                
+                const listAvatarImg = document.getElementById(`avatarImg-${uniqueId}`);
+                if (listAvatarImg) {
+                    listAvatarImg.src = avatarUrl;
+                    listAvatarImg.onerror = function() {
+                        this.onerror = null;
+                        this.src = fallbackAvatar;
+                    };
+                }
+
+                if (activeUniqueKey === uniqueId) {
+                    document.getElementById("activeRoomName").innerText = targetName;
+                    document.getElementById("activeRoomProject").innerText = projectName;
+                    
+                    const roomAvatarImg = document.getElementById("activeRoomAvatar");
+                    if (roomAvatarImg) {
+                        roomAvatarImg.src = avatarUrl;
+                        roomAvatarImg.onerror = function() {
+                            this.onerror = null;
+                            this.src = fallbackAvatar;
+                        };
+                    }
+                }
+            }
+        } catch (err) { console.log(err); }
+    }
+
+    async function loadChatList() {
+      try {
+          const res = await fetch(`/api/chat/list?role=${role}`, {
+            headers: { "Authorization": "Bearer " + token }
+          });
+
+          const container = document.getElementById("chatListContainer");
+          if (!container) return;
+
+          if (res.ok) {
+            const chats = await res.json();
+
+            const currentChatData = JSON.stringify(chats);
+            if (currentChatData === lastChatData) return;
+            lastChatData = currentChatData;
+
+            if (!chats || chats.length === 0) {
+              container.innerHTML = `
+                <p class="text-center text-gray-500 py-10">
+                  Belum ada percakapan.
+                </p>
+              `;
+              return;
+            }
+
+            let htmlContent = "";
+            chats.forEach((chat) => {
+              const uniqueId = `${chat.project_id}-${chat.target_user_id}`;
+              const messageKey =
+                `${chat.project_id}-${chat.target_user_id}-${chat.created_at}`;
+              latestMessageKeys[uniqueId] = messageKey;
+              const readMessages = getReadMessageNotifs();
+              const isUnread = !readMessages.includes(messageKey);
+              let displayUnreadCount = isUnread ? 1 : 0;
+              const unreadBadge = displayUnreadCount > 0
+                  ? `<span class="min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-[#2b9c96] text-white text-[10px] font-bold">${displayUnreadCount}</span>`
+                  : "";
+      
+              const formattedDate = new Date(chat.created_at)
+                .toLocaleDateString('id-ID', {
+                  day: 'numeric',
+                  month: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                });
+
+              const activeClass =
+                (activeUniqueKey === uniqueId)
+                ? "bg-teal-50/70 border-l-4 border-[#2b9c96]"
+                : "";
+
+              let cached = detailsCache[uniqueId];
+              let tempTargetName = cached?.targetName || "Memuat nama...";
+              let tempProjectName = cached?.projectName || "Memuat proyek...";
+              let fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(tempTargetName)}&background=2b9c96&color=fff`;
+              let tempAvatar = cached?.avatarUrl || fallbackAvatar;
+
+              if (!cached) {
+                fetchAndUpdateDetails(uniqueId, chat.project_id, chat.target_user_id);
+              }
+
+              htmlContent += `
+                <div
+                  onclick="openChatRoom(${chat.project_id}, ${chat.target_user_id}, '${uniqueId}')"
+                  class="flex items-center gap-4 p-4 hover:bg-gray-50 transition cursor-pointer ${activeClass}"
+                >
+                  <img
+                    id="avatarImg-${uniqueId}"
+                    src="${tempAvatar}"
+                    class="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm"
+                    onerror="this.src='${fallbackAvatar}'"
+                  >
+                  <div class="flex-1 overflow-hidden">
+                    <div class="flex justify-between items-center mb-0.5">
+                      <h3 id="targetName-${uniqueId}" class="text-sm font-bold text-gray-900 truncate">
+                        ${tempTargetName}
+                      </h3>
+                      <div class="flex items-center gap-2">
+                        ${unreadBadge}
+                        <span class="text-[10px] text-gray-400 font-medium">
+                          ${formattedDate}
+                        </span>
+                      </div>
+                    </div>
+                    <span id="projectName-${uniqueId}" class="text-[9px] bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded font-semibold truncate inline-block mb-1">
+                      ${tempProjectName}
+                    </span>
+                    <p class="text-xs truncate ${displayUnreadCount > 0 ? 'text-gray-800 font-semibold' : 'text-gray-500'}">
+                      ${escapeHTML(chat.content)}
+                    </p>
+                  </div>
+                </div>
+              `;
+            });
+
+            container.innerHTML = htmlContent;
+          }
+
+      } catch (err) {
+          console.error(err);
+      }
+    }
+    async function openChatRoom(projectId, targetId, uniqueId) {
+        activeProjectId = projectId;
+        activeTargetId = targetId;
+        activeUniqueKey = uniqueId;
+
+        const messageKey = latestMessageKeys[uniqueId];
+
+        if (messageKey) {
+          markMessageAsRead(messageKey);
+        }
+
+        loadNavbarData();
+        lastHistoryData = "";
+
+        document.getElementById("emptyState").classList.add("hidden");
+        document.getElementById("activeChatContainer").classList.remove("hidden");
+
+        if(detailsCache[uniqueId]) {
+          const targetName = detailsCache[uniqueId].targetName;
+          
+          document.getElementById("activeRoomName").innerText = targetName;
+          document.getElementById("activeRoomProject").innerText = detailsCache[uniqueId].projectName;
+          
+          const roomAvatarImg = document.getElementById("activeRoomAvatar");
+          roomAvatarImg.src = detailsCache[uniqueId].avatarUrl;
+
+          roomAvatarImg.onerror = function() {
+              this.onerror = null;
+              this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(targetName)}&background=2b9c96&color=fff`;
+          };
+        }
+
+        loadChatList();
+        await loadMessageHistory();
+
+        const box = document.getElementById("messageHistoryBox");
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function escapeHTML(str) {
+        if (!str) return "";
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    async function loadMessageHistory() {
+        if (!activeProjectId || !activeTargetId) return;
+
+        try {
+            const res = await fetch(`/api/chat/history?project_id=${activeProjectId}&target_id=${activeTargetId}&role=${role}`, {
+                headers: { "Authorization": "Bearer " + token }
+            });
+
+            const chatInput = document.getElementById("messageInput");
+            const sendFormBtn = document.querySelector("#sendMessageForm button");
+
+            if (res.status === 403) {
+                if (chatInput) {
+                    chatInput.disabled = true;
+                    chatInput.placeholder = "Percakapan dikunci. Akun ini ditangguhkan.";
+                    chatInput.className = "flex-1 bg-red-50 border border-red-200 text-red-500 rounded-xl px-4 py-3 text-sm cursor-not-allowed";
+                }
+                if (sendFormBtn) {
+                    sendFormBtn.disabled = true;
+                    sendFormBtn.className = "bg-gray-300 text-gray-400 p-3 rounded-xl cursor-not-allowed text-lg shadow-none";
+                }
+                
+                const box = document.getElementById("messageHistoryBox");
+                box.innerHTML = `<div class="bg-red-50 text-red-700 text-xs text-center py-3 px-4 rounded-xl border border-red-100 font-medium mb-4"><i class="ri-error-warning-line mr-1"></i> Keamanan: Sesi obrolan dibekukan karena akun lawan bicara Anda dinonaktifkan oleh sistem.</div>` + box.innerHTML;
+                return;
+            }
+
+            if (chatInput && chatInput.disabled) {
+                chatInput.disabled = false;
+                chatInput.placeholder = "Ketik pesan Anda di sini...";
+                chatInput.className = "flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#2b9c96] bg-gray-50 focus:bg-white transition-colors";
+                if (sendFormBtn) {
+                    sendFormBtn.disabled = false;
+                    sendFormBtn.className = "bg-[#2b9c96] hover:bg-[#23827d] text-white p-3 rounded-xl transition duration-200 flex items-center justify-center text-lg shadow-sm";
+                }
+            }
+
+            if (res.ok) {
+                const messages = await res.json();
+            
+                const currentHistoryData = JSON.stringify(messages);
+                if (currentHistoryData === lastHistoryData) return;
+                lastHistoryData = currentHistoryData;
+
+                const box = document.getElementById("messageHistoryBox");
+                let htmlContent = "";
+
+                if (!messages || messages.length === 0) {
+                    box.innerHTML = `<p class="text-center text-gray-400 text-xs py-10 italic">Belum ada obrolan. Mulai sapa ulasan pertama Anda!</p>`;
+                    return;
+                }
+
+                messages.forEach(msg => {
+                    const isMe = (msg.sender_role || "").toLowerCase() === (role || "").toLowerCase();
+                    const createdAt = msg.created_at || msg.CreatedAt;
+                    const updatedAt = msg.updated_at || msg.UpdatedAt || msg.updatedAt;
+
+                    const timeStr = new Date(createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    const safeContent = escapeHTML(msg.content);
+                    const msgId = msg.id || msg.ID;
+
+                    const isDeleted = msg.content === "Pesan ini telah dihapus" || msg.content === "Pesan ini telah dihapus";
+                    
+                    let isEdited = false;
+                    if (updatedAt && createdAt && !isDeleted) {
+                        const tCreate = new Date(createdAt).getTime();
+                        const tUpdate = new Date(updatedAt).getTime();
+
+                        if (!isNaN(tUpdate) && !isNaN(tCreate) && (tUpdate - tCreate > 2000)) {
+                            isEdited = true;
+                        }
+                    }
+                    
+                    const editedTag = isEdited ? `<span class="italic opacity-80 ml-1 font-normal">(diedit)</span>` : "";
+
+                    if (isMe) {
+                        const safeContentJS = (msg.content || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        
+                        let menuHTML = "";
+                        if (!isDeleted) {
+                            menuHTML = `
+                            <button onclick="toggleMsgMenu(${msgId})" class="text-gray-400 hover:text-[#2b9c96] p-2 opacity-0 group-hover:opacity-100 transition focus:outline-none">
+                                <i class="ri-more-2-fill text-lg"></i>
+                            </button>
+                            <div id="msgMenu-${msgId}" class="hidden absolute right-8 bottom-0 mb-2 w-28 bg-white border border-gray-100 shadow-lg rounded-xl overflow-hidden z-20 text-xs">
+                                <button onclick="prepareEdit(${msgId}, '${safeContentJS}')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-gray-700 transition flex items-center gap-2">
+                                    <i class="ri-edit-line"></i> Edit
+                                </button>
+                                <button onclick="deleteMsg(${msgId})" class="w-full text-left px-4 py-2.5 hover:bg-red-50 text-red-600 border-t border-gray-50 transition flex items-center gap-2">
+                                    <i class="ri-delete-bin-line"></i> Hapus
+                                </button>
+                            </div>`;
+                        }
+
+                        let bubbleColor = isDeleted ? "bg-gray-200 text-gray-500 italic" : "bg-[#2b9c96] text-white";
+                        let timeColor = isDeleted ? "text-gray-400" : "text-teal-100";
+
+                        htmlContent += `
+                            <div class="flex justify-end items-end gap-2 mb-2 group relative">
+                                <div class="relative flex items-center">
+                                    ${menuHTML}
+                                </div>
+                                <div class="max-w-[70%] ${bubbleColor} px-4 py-2.5 rounded-2xl rounded-tr-none text-sm shadow-sm">
+                                  <p class="leading-relaxed break-words">${safeContent}</p>
+                                  <span class="block text-[9px] ${timeColor} text-right mt-1 font-medium">${timeStr} ${editedTag}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        let bubbleColor = isDeleted ? "bg-gray-100 text-gray-400 italic border border-gray-200" : "bg-white border border-gray-100 text-gray-800";
+                        let timeColor = isDeleted ? "text-gray-400" : "text-gray-400";
+
+                        htmlContent += `
+                            <div class="flex justify-start items-end gap-2 mb-2">
+                                <div class="max-w-[70%] ${bubbleColor} px-4 py-2.5 rounded-2xl rounded-tl-none text-sm shadow-sm">
+                                  <p class="leading-relaxed break-words">${safeContent}</p>
+                                  <span class="block text-[9px] ${timeColor} mt-1 font-medium">${timeStr} ${editedTag}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                const wasAtBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + 100;
+                box.innerHTML = htmlContent;
+
+                if (wasAtBottom) {
+                    box.scrollTop = box.scrollHeight;
+                }
+            }
+        } catch (err) { console.error(err); }
+    }
+
+    async function submitMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        
+        const currentProjId = typeof activeProjectId !== 'undefined' ? activeProjectId : projectId;
+        const currentTargetId = typeof activeTargetId !== 'undefined' ? activeTargetId : targetId;
+        
+        if (!text || !currentProjId || !currentTargetId) return;
+
+        if (editingMessageId) {
+            try {
+                const res = await fetch(`/api/chat/${editingMessageId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ content: text })
+                });
+                if (res.ok) {
+                    cancelEdit();
+                    lastHistoryData = ""; lastChatData = "";
+                    if (typeof loadMessageHistory === "function") loadMessageHistory();
+                    if (typeof loadMessages === "function") loadMessages();
+                    if (typeof loadChatList === "function") loadChatList();
+                } else {
+                    alert("Gagal mengedit pesan.");
+                }
+            } catch(err) { alert("Terjadi kesalahan jaringan."); }
+            return;
+        }
+
+        try {
+            const payload = {
+                project_id: parseInt(currentProjId),
+                receiver_id: parseInt(currentTargetId),
+                content: text,
+                sender_role: role 
+            };
+            const res = await fetch("/api/chat/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                alert(errorData.error || "Gagal mengirim pesan.");
+                return;
+            }
+
+            input.value = "";
+            lastHistoryData = ""; lastChatData = "";
+            
+            if (typeof loadMessageHistory === "function") loadMessageHistory();
+            if (typeof loadMessages === "function") loadMessages();
+            if (typeof loadChatList === "function") loadChatList();
+
+            const box = document.getElementById("messageHistoryBox") || document.getElementById("chatBox");
+            if (box) setTimeout(() => box.scrollTop = box.scrollHeight, 100);
+
+        } catch (err) { 
+            alert("Terjadi kesalahan jaringan."); 
+        }
+    }
+
+    function globalPeriodicSync() {
+        loadChatList();
+        if (!activeProjectId || !activeTargetId) return;
+        loadMessageHistory();
+    }
+
+    function getReadMessageNotifs() {
+      return JSON.parse(localStorage.getItem("readMessageNotifs")) || []
+    }
+
+    function markMessageAsRead(id) {
+      let read = getReadMessageNotifs()
+
+      if (!read.includes(id)) {
+        read.push(id)
+        localStorage.setItem("readMessageNotifs", JSON.stringify(read))
+      }
+    }
+    function toggleMsgMenu(msgId) {
+        document.querySelectorAll('[id^="msgMenu-"]').forEach(menu => {
+            if (menu.id !== `msgMenu-${msgId}`) menu.classList.add('hidden');
+        });
+        const menu = document.getElementById(`msgMenu-${msgId}`);
+        if (menu) menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.group')) {
+            document.querySelectorAll('[id^="msgMenu-"]').forEach(menu => menu.classList.add('hidden'));
+        }
+    });
+
+    let editingMessageId = null;
+
+    function prepareEdit(msgId, oldContent) {
+        toggleMsgMenu(msgId);
+        editingMessageId = msgId;
+        
+        const input = document.getElementById("messageInput");
+        input.value = oldContent;
+        input.focus();
+        
+        document.getElementById("editIndicator").classList.remove("hidden");
+    }
+
+    function cancelEdit() {
+        editingMessageId = null;
+        document.getElementById("messageInput").value = "";
+        document.getElementById("editIndicator").classList.add("hidden");
+    }
+
+    async function deleteMsg(msgId) {
+        toggleMsgMenu(msgId); 
+        
+        if (!msgId || msgId === "undefined") {
+            alert("Sistem gagal membaca ID pesan. Hubungi admin.");
+            return;
+        }
+
+        if (!confirm("Apakah Anda yakin ingin menghapus pesan ini?")) return;
+
+        try {
+            const res = await fetch(`/api/chat/${msgId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            
+            if (res.ok) {
+                lastHistoryData = "";
+                lastChatData = "";
+                if (typeof loadMessageHistory === "function") loadMessageHistory();
+                if (typeof loadMessages === "function") loadMessages();
+            } else {
+                try {
+                    const data = await res.json(); 
+                    alert(data.error || "Gagal menghapus pesan.");
+                } catch(err) {
+                    alert(`Error Server! Pastikan route DELETE /api/chat/:id sudah ditambahkan di Golang. (Status: ${res.status})`);
+                }
+            }
+        } catch(err) { 
+            console.error(err);
+            alert("Terjadi kesalahan jaringan. Cek koneksi atau server Anda."); 
+        }
+    }
+
+    renderNavbar();
+    if(token) loadNavbarData();
+    loadChatList();
+
+    setInterval(globalPeriodicSync, 3000);
+  </script>
+</body>
+</html>
