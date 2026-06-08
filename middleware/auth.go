@@ -19,7 +19,7 @@ func GenerateToken(id uint, role string) string {
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	})
 
-	t, err := token.SignedString(config.GetJWTSecret())
+	t, err := token.SignedString([]byte(config.JWT_SECRET))
 	if err != nil {
 		fmt.Println("❌ TOKEN SIGN ERROR:", err)
 		return ""
@@ -54,7 +54,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method")
 			}
-			return config.GetJWTSecret(), nil
+			return []byte(config.JWT_SECRET), nil
 		})
 
 		if err != nil || !token.Valid {
