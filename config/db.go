@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,21 +13,19 @@ var DB *gorm.DB
 
 func ConnectDB() {
 
-	dsn := "root:@tcp(127.0.0.1:3306)/?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("DB ERROR (initial):", err)
+		log.Fatal("DB ERROR:", err)
 	}
 
-	db.Exec("CREATE DATABASE IF NOT EXISTS marilancy")
-
-	dsn2 := "root:@tcp(127.0.0.1:3306)/marilancy?charset=utf8mb4&parseTime=True&loc=Local"
-
-	db2, err := gorm.Open(mysql.Open(dsn2), &gorm.Config{})
-	if err != nil {
-		log.Fatal("DB ERROR (final):", err)
-	}
-
-	DB = db2
+	DB = db
 }
