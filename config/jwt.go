@@ -6,7 +6,7 @@ func GetJWTSecret() []byte {
 	secret := os.Getenv("JWT_SECRET")
 
 	if secret == "" {
-		secret = "marilancy-secret-dev"
+		secret = "marilancy-dev-secret"
 	}
 
 	return []byte(secret)

@@ -176,7 +176,7 @@ func Login(c *gin.Context) {
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	})
 
-	tokenString, err := token.SignedString([]byte(config.JWT_SECRET))
+	tokenString, err := token.SignedString(config.GetJWTSecret())
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Gagal generate token"})
 		return
